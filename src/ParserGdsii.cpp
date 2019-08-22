@@ -1,12 +1,12 @@
 /**
- * Author:  		Jude de Villiers
+ * Authors:  		Jude de Villiers
  * Origin:  		E&E Engineering - Stellenbosch University
- * For:					Supertools, Coldflux Project - IARPA
+ * For:				Supertools, Coldflux Project - IARPA
  * Created: 		2019-03-20
  * Modified:
- * license: 
- * Description: Library file containing GDSII reading and writing functions.
- * File:				ParserGdsii.cpp
+ * license: 		MIT
+ * Description: 	Library file containing GDSII reading and writing functions.
+ * File:			ParserGdsii.cpp
  */
 
 #include "ParserGdsii.hpp"

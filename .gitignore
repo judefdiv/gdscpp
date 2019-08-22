@@ -1,5 +1,48 @@
-old/
-data/
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Vscode folder is user-speciic
+.vscode/
+# Build folder
 build/
-*.sublime-project
-*.sublime-workspace
+# Sourcetrail data
+Sourcetrail/
+# Data Folder
+data/
+# Logfile
+logfile.txt
+# gds files
+FabJTL.gds
+# I only really want to push the source code and library headers. 
+# Each person must make their own cmakelists in their program.
+CMakeLists.txt
