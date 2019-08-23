@@ -195,6 +195,8 @@ int gdscpp::GDSrecord2ASCII(char *recIn){
 		string foo = "";
 		sizeBlk++;
 		for(i = 4; i <= sizeBlk; i++){
+			if(recIn[i] == '\0')	// if string record's size is odd, it must be padded with NULL
+				continue;
   		foo = foo + recIn[i];
   	}
   	cout << ":{\""<< foo << "\"}" << endl;

@@ -252,140 +252,6 @@ int GDSwriteRea(int record, double arrInt[], int cnt){
 }
 
 /**
- * [GDSfloatCalc - converts decimal number to the correct GDS float format]
- * @param  inVar [The double variable that must be converted]
- * @return       [The float in GDS format]
- */
-
-/**
- * BUG loss of extreme precession, use UNIT function for unit header;
- */
-
-unsigned long long GDSfloatCalc(double inVar){
-	uint64_t GDSdec = 0;
-	unsigned long long integral;
-	double deci;
-	unsigned long long sign = 0;
-	unsigned long long exponent = 80;
-	unsigned long long mantissa = 0;
-
-	if(inVar == 0)
-		return 0;
-
-	if(inVar < 0){
-		inVar *= -1;
-		sign = 1;
-	}
-
-	integral = inVar;
-	deci = inVar - integral;
-
-	// Calculating the decimal
-	for(int i = 63; i >= 0; i--){
-		deci *= 2;
-		if(deci >= 1){
-			GDSdec = GDSdec | bitShiftL(1, i);
-			deci--;
-		}
-		if(deci == 0)
-			break;
-	}
-
-	mantissa = integral;
-	for(int i = 15; i >= 0; i--){
-		if((bitShiftR(mantissa, 59) & 0xffff) > 0) break;
-		mantissa = mantissa << 4;
-		exponent--;
-		mantissa = mantissa | (bitShiftR(GDSdec, 4 * i) & 0xf);
-	}
-
-	sign = bitShiftL(sign, 63);
-	exponent = bitShiftL(exponent, 56);
-	mantissa = bitShiftR(mantissa, 8);
-
-	return sign | exponent | mantissa;
-}
-
-/**
- * [bitShiftR - bit shift to the right, > 30]
- * @param  inVar [variable to be shifted to the right]
- * @return       [shifted variable]
- */
-
-unsigned long long bitShiftR(unsigned long long inVar, int cnt){
-
-	if(cnt > 32){		// tempULL = (1 << i);
-	inVar = inVar >> 30;
-	inVar = inVar >> 2;
-	inVar = inVar >> (cnt - 32);
-	}
-	else if(cnt > 30){
-		inVar = inVar >> 30;
-		inVar = inVar >> (cnt - 30);
-	}
-	else{
-		inVar = inVar >> cnt;
-	}
-
-	return inVar;
-}
-
-/**
- * [bitShiftL - bit shift to the left, > 30]
- * @param  inVar [variable to be shifted to the left]
- * @return       [shifted variable]
- */
-
-unsigned long long bitShiftL(unsigned long long inVar, int cnt){
-
-	if(cnt > 32){		// tempULL = (1 << i);
-	inVar = inVar << 30;
-	inVar = inVar << 2;
-	inVar = inVar <<( cnt - 32);
-	}
-	else if(cnt > 30){
-		inVar = inVar << 30;
-		inVar = inVar << (cnt - 30);
-	}
-	else{
-		inVar = inVar << cnt;
-	}
-
-	return inVar;
-}
-
-/**
- * [GDSwriteUnits - Hard coding the UNIT record for precision]
- */
-
-void GDSwriteUnits(){
-	unsigned char data[20];
-
-	data[0] = 0x00;
-	data[1] = 0x14;
-	data[2] = 0x03;
-	data[3] = 0x05;
-	data[4] = 0x3e;
-	data[5] = 0x41;
-	data[6] = 0x89;
-	data[7] = 0x37;
-	data[8] = 0x4b;
-	data[9] = 0xc6;
-	data[10] = 0xa7;
-	data[11] = 0xf0;
-	data[12] = 0x39;
-	data[13] = 0x44;
-	data[14] = 0xb8;
-	data[15] = 0x2f;
-	data[16] = 0xa0;
-	data[17] = 0x9b;
-	data[18] = 0x5a;
-	data[19] = 0x50;
-
-	fwrite(data, 1, 20, gdsFileWrite);
-}
-
-/**
  * [GDSwriteRec - Writes record value to file]
  * @param record [GDS record type]
  */
@@ -466,176 +332,219 @@ void writeGDS(string fileName){
 // }
 
 /**
- * [GDSrecord2ASCII - Read a single record]
- * @param recIn [Char pointer to the start of binary GDS record]
+ * [GDS2ASCII - Reads a single record and outputs it to the appropriate variable]
+ * @param  recIn   [Char pointer to the start of binary GDS record]
+ * @param  GDSKey  [The GDS key value of the record]
+ * @param  bitarr  [Bitset of 16 bits]
+ * @param  integer [Vector of 2 & 4 Byte signed integers]
+ * @param  B8Real  [Vector of 8 Byte real value]
+ * @param  words   [A string value]
+ * @return         [0 - Exit Success; 1 - Exit Failure]
  */
 
-// int GDSrecord2ASCII(char *recIn){
-// 	MapGDSkeys();
+int GDS2ASCII(char *recIn, uint32_t& GDSKey, bitset<16>& bitarr, vector<char>& integer, vector<double>& B8Real, string& words){
+	uint32_t sizeBlk;
+  uint32_t i = 0;
+  uint8_t dataType;
 
-//   uint32_t sizeBlk;
-//   uint32_t hexKey;
-//   uint32_t i = 0;
-//   int intOut = 0;
-//   uint8_t dataType;
-//   string lineOut = "";
+	sizeBlk = (((unsigned char)recIn[0] << 8) | (unsigned char)recIn[1]) - 2;
+	GDSKey = ((recIn[2] << 8) | recIn[3]);
+	dataType = GDSKey;
+	i = 4;
 
-// 	sizeBlk = (((unsigned char)recIn[0] << 8) | (unsigned char)recIn[1]) - 2;
-// 	hexKey = ((recIn[2] << 8) | recIn[3]);
-// 	dataType = hexKey;
-// 	i = 4;
+	bitarr.reset();
+	integer.clear();
+	B8Real.clear();
+	words = "";
 
-// 	if(GDSkeys.find(hexKey) == GDSkeys.end()){			// remove for speed increase
-// 		cout << "Key not found: 0x" << hex << hexKey << dec << endl;
-// 		return 0;
-// 	}
+	if(dataType == 0){
+		// no data
+	}
+	else if(dataType == 1){
+		// 16 bitset
+		bitarr = (recIn[i] << 8) | (recIn[i+1]);
+	}
+	else if(dataType == 2){
+		//2 byte signed int
+		for(i = 4; i <= sizeBlk; i = i + 2){
+			integer.push_back(conBytes(recIn, i, 2));
+		}
+	}
+	else if(dataType == 3){
+		//4 byte signed int
+		for(i = 4; i <= sizeBlk; i = i + 4){
+			integer.push_back(conBytes(recIn, i, 4));
+		}
+	}
+	else if(dataType == 4){
+		//4 byte real (NOT USED)
+		return 1;
+	}
+	else if(dataType == 5){
+		//8 byte real
+		double val = 0;
+		int sign = 0;
+		double exp = 0;
+		double mantissa = 0;
 
-// 	cout << "[" << GDSkeys.find(hexKey)->second << "]";
-
-// 	if(dataType == 0){
-// 		// no data
-// 		cout << endl;
-// 	}
-// 	else if(dataType == 1){
-// 		//bit array
-// 		bitset<8> bitsIn0(recIn[i++]);
-// 		bitset<8> bitsIn1(recIn[i]);
-// 		lineOut = "0b" + bitsIn0.to_string() + " 0b" + bitsIn1.to_string();
-// 		cout << ":{" << lineOut << "}" << endl;
-// 	}
-// 	else if(dataType == 2){
-// 		//2 byte signed int
-// 		for(i = 4; i <= sizeBlk; i = i + 2){
-// 			intOut = conBytes(recIn, i, 2);
-// 			lineOut = lineOut + to_string(intOut) + ", ";
-// 		}
-// 		lineOut.pop_back();
-// 		lineOut.pop_back();
-// 		cout << ":{" << lineOut << "}" << endl;
-// 	}
-// 	else if(dataType == 3){
-// 		//4 byte signed int
-// 		for(i = 4; i <= sizeBlk; i = i + 4){
-// 			intOut = conBytes(recIn, i, 4);
-// 			lineOut = lineOut + to_string(intOut) + ", ";
-// 		}
-// 		lineOut.pop_back();
-// 		lineOut.pop_back();
-// 		cout << ":{" << lineOut << "}" << endl;
-// 	}
-// 	else if(dataType == 4){
-// 		//4 byte real (NOT USED)
-// 		cout << "Unsupported 4 byte real variable." << endl;
-// 	}
-// 	else if(dataType == 5){
-// 		//8 byte real
-// 		double val = 0;
-// 		int sign = 0;
-// 		double exp = 0;
-// 		double mantissa = 0;
-
-// 		cout << ":{";
-// 		for(i = 4; i <= sizeBlk; i = i + 8){
+		for(i = 4; i <= sizeBlk; i = i + 8){
 			
-// 			sign = (unsigned char)recIn[i] >> 7;
-// 			exp = (unsigned char)recIn[i] & 0b01111111;
-// 			mantissa = conBytesLL(recIn, i+1, 7);
+			sign = (unsigned char)recIn[i] >> 7;
+			exp = (unsigned char)recIn[i] & 0b01111111;
+			mantissa = conBytesLL(recIn, i+1, 7);
 
-// 			val = mantissa / pow(2, 56) * pow(16, exp -64);
-// 			if(sign) val *= -1;
+			val = mantissa / pow(2, 56) * pow(16, exp -64);
+			if(sign) val *= -1;
 
-// 			cout.precision(12);
-// 			cout << val;
-// 			if(i != sizeBlk-6)
-// 				cout << ", ";
-// 		}
-// 		cout << "}" << endl;
-// 	}
-// 	else if(dataType == 6){
-// 		// ASCII string
-// 		string foo = "";
-// 		sizeBlk++;
-// 		for(i = 4; i <= sizeBlk; i++){
-//   		foo = foo + recIn[i];
-//   	}
-//   	cout << ":{\""<< foo << "\"}" << endl;
-// 	}
-// 	else{
-// 		cout << "Smoke detected." << endl;
-// 	}
+			B8Real.push_back(val);
+		}
+	}
+	else if(dataType == 6){
+		// ASCII string
+		string foo = "";
+		sizeBlk++;
+		for(i = 4; i <= sizeBlk; i++){
+			if(recIn[i] == '\0')	// if string record's size is odd, it must be padded with NULL
+				continue;
+  		foo = foo + recIn[i];
+  	}
+  	words = foo;
+	}
+	else{
+		cout << "Unknown data type." << endl;
+		return 1;
+	}
 
-// 	return 1;
-// }
+	return 0;
+}
 
 /**
- * [copyGDS - Copies the structure from a GDS file to another]
- * @param fileName [Name of file to be read]
+ * BUG loss of extreme precession, use UNIT function for unit header;
  */
 
-// void copyGDSstrs(string fileName){
-// 	static set<string> StoredStr;
-// 	cout << "Copying structures from -> " << fileName << endl;
-// 	openGDSread(fileName);
+unsigned long long GDSfloatCalc(double inVar){
+	uint64_t GDSdec = 0;
+	unsigned long long integral;
+	double deci;
+	unsigned long long sign = 0;
+	unsigned long long exponent = 80;
+	unsigned long long mantissa = 0;
 
-//   char *readBlk;
-//   uint32_t sizeBlk;
-//   uint32_t hexKey;
-//   bool cpEN = false;
-//   bool firstLine = true;
-//   string strName;
+	if(inVar == 0)
+		return 0;
 
-// 	gdsFileRead.seekg(0, ios::beg);
+	if(inVar < 0){
+		inVar *= -1;
+		sign = 1;
+	}
 
-// 	do{
-// 		readBlk = new char [2];
-// 		gdsFileRead.read(readBlk, 2);										// Get the size of the record
-// 		sizeBlk = (((unsigned char)readBlk[0] << 8) | (unsigned char)readBlk[1]);			// Interpret the size of the record
+	integral = inVar;
+	deci = inVar - integral;
 
-// 		gdsFileRead.seekg(-2, ios::cur);
-// 		readBlk = new char [sizeBlk];										// Reading in the full length of the record excluding the size
-// 		gdsFileRead.read(readBlk, sizeBlk);
+	// Calculating the decimal
+	for(int i = 63; i >= 0; i--){
+		deci *= 2;
+		if(deci >= 1){
+			GDSdec = GDSdec | bitShiftL(1, i);
+			deci--;
+		}
+		if(deci == 0)
+			break;
+	}
 
-// 		hexKey = (((unsigned char)readBlk[2] << 8) | (unsigned char)readBlk[3]);
+	mantissa = integral;
+	for(int i = 15; i >= 0; i--){
+		if((bitShiftR(mantissa, 59) & 0xffff) > 0) break;
+		mantissa = mantissa << 4;
+		exponent--;
+		mantissa = mantissa | (bitShiftR(GDSdec, 4 * i) & 0xf);
+	}
 
-// 		if(hexKey == GDS_BGNSTR){												// Beginning of structure
-// 			cpEN = true;
-// 			firstLine = true;
-// 		}
+	sign = bitShiftL(sign, 63);
+	exponent = bitShiftL(exponent, 56);
+	mantissa = bitShiftR(mantissa, 8);
 
-// 		if(cpEN && hexKey == GDS_STRNAME){							// get the name of the structure
-// 			strName = "";
-// 			for(uint8_t i = 4; i < sizeBlk; i++){
-// 	  		strName = strName + readBlk[i];
-// 	  	}
-	  	
-// 	  	if(StoredStr.find(strName) != StoredStr.end()){	//found
-// 	  		cout << "Structure: \""<< strName << "\"" << " already copied." << endl;
-// 	  		cpEN = false;
-// 	  	}
-// 	  	else{		// didnt find
-// 	  		cout << "Structure: \""<< strName << "\""  << " copying" << endl;
-// 	  		StoredStr.insert(strName);
-// 	  		GDSwriteInt(GDS_BGNSTR, gsdTime(), 12);
-// 	  	}
+	return sign | exponent | mantissa;
+}
 
-// 	  	firstLine = false;
-// 		}
+/**
+ * [GDSwriteUnits - Hard coding the UNIT record for precision]
+ */
 
-// 		if(cpEN && !firstLine){																				// Write(copy) the GSD record
-// 			fwrite(readBlk, 1, sizeBlk, gdsFileWrite);		
-// 			// GDSrecord2ASCII(readBlk);
-// 		}
+void GDSwriteUnits(){
+	unsigned char data[20];
 
-// 		if(hexKey == GDS_ENDSTR){	 											//end of structure
-// 			cpEN = false;
-// 		}
+	data[0] = 0x00;
+	data[1] = 0x14;
+	data[2] = 0x03;
+	data[3] = 0x05;
+	data[4] = 0x3e;
+	data[5] = 0x41;
+	data[6] = 0x89;
+	data[7] = 0x37;
+	data[8] = 0x4b;
+	data[9] = 0xc6;
+	data[10] = 0xa7;
+	data[11] = 0xf0;
+	data[12] = 0x39;
+	data[13] = 0x44;
+	data[14] = 0xb8;
+	data[15] = 0x2f;
+	data[16] = 0xa0;
+	data[17] = 0x9b;
+	data[18] = 0x5a;
+	data[19] = 0x50;
 
-// 	} while(hexKey != GDS_ENDLIB);
+	fwrite(data, 1, 20, gdsFileWrite);
+}
 
-// 	delete[] readBlk;
-// 	closeGDSread();
-// 	// cout << "Copying terminated" << endl;
-// }
+/**
+ * [bitShiftR - bit shift to the right, > 30]
+ * @param  inVar [variable to be shifted to the right]
+ * @return       [shifted variable]
+ */
+
+unsigned long long bitShiftR(unsigned long long inVar, int cnt){
+
+	if(cnt > 32){		// tempULL = (1 << i);
+	inVar = inVar >> 30;
+	inVar = inVar >> 2;
+	inVar = inVar >> (cnt - 32);
+	}
+	else if(cnt > 30){
+		inVar = inVar >> 30;
+		inVar = inVar >> (cnt - 30);
+	}
+	else{
+		inVar = inVar >> cnt;
+	}
+
+	return inVar;
+}
+
+/**
+ * [bitShiftL - bit shift to the left, > 30]
+ * @param  inVar [variable to be shifted to the left]
+ * @return       [shifted variable]
+ */
+
+unsigned long long bitShiftL(unsigned long long inVar, int cnt){
+
+	if(cnt > 32){		// tempULL = (1 << i);
+	inVar = inVar << 30;
+	inVar = inVar << 2;
+	inVar = inVar <<( cnt - 32);
+	}
+	else if(cnt > 30){
+		inVar = inVar << 30;
+		inVar = inVar << (cnt - 30);
+	}
+	else{
+		inVar = inVar << cnt;
+	}
+
+	return inVar;
+}
 
 /**
  * [conBytes - Concatenates the array of bytes]
