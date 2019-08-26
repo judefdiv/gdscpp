@@ -6,10 +6,10 @@
  * Modified:
  * license: 
  * Description: Library file containing GDSII reading and writing functions.
- * File:				ParserGdsii.cpp
+ * File:				gdsParser.cpp
  */
 
-#include "ParserGdsii.hpp"
+#include "gdsParser.hpp"
 
 ifstream gdsFileRead;
 FILE *gdsFileWrite;

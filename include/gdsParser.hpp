@@ -9,8 +9,8 @@
  * File:				ParserGdsii.hpp
  */
 
-#ifndef ParserGdsii
-#define ParserGdsii
+#ifndef gdsParser
+#define gdsParser
 
 #include <string>
 #include <iostream>

@@ -15,7 +15,7 @@
 // #include <map>
 #include <iomanip> 				// setprecision()
 
-#include "gdscpp.hpp"
+#include "gdsClass.hpp"
 
 #define versionNo 0.1
 #define outfileName "data/results/gds/"				// Default file output name

@@ -1,3 +1,4 @@
+
 /**
  * Author:  		
  * Origin:  		E&E Engineering - Stellenbosch University
@@ -9,7 +10,7 @@
  * File:				gdscpp.cpp
  */
 
-#include "gdscpp.hpp"
+#include "gdsClass.hpp"
 
 /**
  * Constructor

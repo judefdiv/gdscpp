@@ -6,7 +6,7 @@
  * Modified:
  * license: 
  * Description: .
- * File:				gdscpp.hpp
+ * File:				gdsClass.hpp
  */
 
 #ifndef gdscppheader
@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <map>
 #include <bitset>
-#include "ParserGdsii.hpp"
+#include "gdsParser.hpp"
 
 using namespace std;
 
