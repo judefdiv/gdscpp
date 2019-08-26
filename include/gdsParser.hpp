@@ -33,17 +33,17 @@ int GDS2ASCII(char *recIn, uint32_t& GDSKey, bitset<16>& bitarr, vector<char>& i
 int openGDSread(string fileName);						// must integrate...
 int closeGDSread();													// must integrate...
 
-// Creating GDS files
-int openGDSwrite(string fileName);					// must integrate...
-int closeGDSwrite();												// must integrate...
-void writeGDS(string fileName);							// test script, can be removed
-void copyGDSstrs(string fileName);					// unsure, important function
+// // Creating GDS files
+// int openGDSwrite(string fileName);					// must integrate...
+// int closeGDSwrite();												// must integrate...
+// void writeGDS(string fileName);							// test script, can be removed
+// void copyGDSstrs(string fileName);					// unsure, important function
 
-int GDSwriteRec(int record);																// low level, must integrate
-int GDSwriteInt(int record, int arrInt[], int cnt);					// low level, must integrate
-int GDSwriteStr(int record, string inStr);									// low level, must integrate
-int GDSwriteBitArr(int record, bitset<16> inBits);					// low level, must integrate
-int GDSwriteRea(int record, double arrInt[], int cnt);			// low level, must integrate
+// int GDSwriteRec(int record);																// low level, must integrate
+// int GDSwriteInt(int record, int arrInt[], int cnt);					// low level, must integrate
+// int GDSwriteStr(int record, string inStr);									// low level, must integrate
+// int GDSwriteBitArr(int record, bitset<16> inBits);					// low level, must integrate
+// int GDSwriteRea(int record, double arrInt[], int cnt);			// low level, must integrate
 void GDSwriteUnits();																				// low level, cheat for precession lost
 
 unsigned long long GDSfloatCalc(double inVar);											// low level
