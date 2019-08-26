@@ -1,3 +1,4 @@
+
 /**
  * Authors:  		Jude de Villiers & Heinrich Herbst
  * Origin:  		E&E Engineering - Stellenbosch University
@@ -9,7 +10,7 @@
  * File:			gdscpp.cpp
  */
 
-#include "gdscpp.hpp"
+#include "gdsClass.hpp"
 
 /**
  * Constructor
@@ -207,11 +208,12 @@ int gdscpp::GDSrecord2ASCII(char *recIn)
 		// ASCII string
 		string foo = "";
 		sizeBlk++;
-		for (i = 4; i <= sizeBlk; i++)
-		{
-			foo = foo + recIn[i];
-		}
-		cout << ":{\"" << foo << "\"}" << endl;
+		for(i = 4; i <= sizeBlk; i++){
+			if(recIn[i] == '\0')	// if string record's size is odd, it must be padded with NULL
+				continue;
+  		foo = foo + recIn[i];
+  	}
+  	cout << ":{\""<< foo << "\"}" << endl;
 	}
 	else
 	{

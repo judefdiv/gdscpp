@@ -15,7 +15,7 @@
 // #include <map>
 #include <iomanip> // setprecision()
 
-#include "gdscpp.hpp"
+#include "gdsClass.hpp"
 
 #define versionNo 0.1
 #define InfilePath "data/" // Default file output name

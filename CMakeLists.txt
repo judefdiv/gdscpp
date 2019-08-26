@@ -12,8 +12,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(SOURCES
   src/main.cpp
-  src/gdscpp.cpp
-  src/ParserGdsii.cpp
+  src/gdsCpp.cpp
+  src/gdsClass.cpp
+  src/gdsParser.cpp
+  src/gdsImport.cpp
+  src/gdsExport.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
