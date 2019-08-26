@@ -1,12 +1,12 @@
 /**
- * Author:  		
+ * Author:  		Jude de Villiers & Heinrich Herbst
  * Origin:  		E&E Engineering - Stellenbosch University
- * For:					Supertools, Coldflux Project - IARPA
+ * For:				Supertools, Coldflux Project - IARPA
  * Created: 		2019-08-22
  * Modified:
- * license: 
+ * license:
  * Description: .
- * File:				gdsClass.hpp
+ * File:			gdsClass.hpp
  */
 
 #ifndef gdscppheader
