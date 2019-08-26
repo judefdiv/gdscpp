@@ -28,6 +28,7 @@ class gdsBOUNDARY;
 class gdsPATH;
 class gdsNODE;
 class gdsSREF;
+class gdsTEXT;
 
 class gdscpp{
 	private:
@@ -59,6 +60,7 @@ class gdsSTR{
 		vector<gdsBOUNDARY> BOUNDARY;
 		vector<gdsPATH> PATH;
 		vector<gdsNODE> NODE;
+		vector<gdsTEXT> TEXT;
 
 };
 
@@ -111,15 +113,27 @@ class gdsNODE{
 		gdsNODE();
 		~gdsNODE(){};
 
-		unsigned int plex = 0;
+		unsigned int plex = 0;	// optional
 		unsigned int layer = 0;
 		unsigned int nodetype = 0;
+		// A maximum of 50 coordinates
 		vector<int> xCor;
 		vector<int> yCor;
-		// int xCor = 0;
-		// int yCor = 0;
 		unsigned int propattr = 0;
 		string propvalue = "\0";
+};
+
+class gdsTEXT{
+	private:
+
+	public:
+		gdsTEXT();
+		~gdsTEXT(){};
+		string textbody = "\0";
+		unsigned int layer = 0;
+		double scale = 1;
+		int xCor;
+		int yCor;
 };
 
 
