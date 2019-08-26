@@ -70,7 +70,7 @@ class gdsSREF{
 		~gdsSREF(){};
 
 		string name = "\0";
-		bitset<16> STRANS;
+		bool reflection = false;
 		double angle = 0;
 		double scale = 1;
 		int xCor;

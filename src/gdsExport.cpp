@@ -43,7 +43,7 @@ int gdsExport::gdsCreate(string FileName){
 		gdsStrStart(this->STR[i].name);
 			// References
 			for(unsigned int j = 0; j < this->STR[i].SREF.size(); j++){
-				gdsSREF(this->STR[i].SREF[j].name, false, this->STR[i].SREF[j].scale, this->STR[i].SREF[j].angle, this->STR[i].SREF[j].xCor, this->STR[i].SREF[j].yCor);
+				gdsSREF(this->STR[i].SREF[j].name, this->STR[i].SREF[j].reflection, this->STR[i].SREF[j].scale, this->STR[i].SREF[j].angle, this->STR[i].SREF[j].xCor, this->STR[i].SREF[j].yCor);
 			}
 			// Boundaries
 			for(unsigned int j = 0; j < this->STR[i].BOUNDARY.size(); j++){
