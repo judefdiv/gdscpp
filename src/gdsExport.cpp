@@ -39,10 +39,24 @@ int gdsExport::gdsCreate(string FileName){
 
 
 	for(unsigned int i = 0; i < this->STR.size(); i++){
-		gdsStrStart("StrName");
-			gdsSREF("RefName", false, 1, 0, 0, 0);
-			gdsBoundary(1, 0, 0);
-			gdsPath(1, 30, 0, 0);
+		// Start of the structure
+		gdsStrStart(this->STR[i].name);
+			// References
+			for(unsigned int j = 0; j < this->STR[i].SREF.size(); j++){
+				gdsSREF(this->STR[i].SREF[j].name, false, this->STR[i].SREF[j].scale, this->STR[i].SREF[j].angle, this->STR[i].SREF[j].xCor, this->STR[i].SREF[j].yCor);
+			}
+			// Boundaries
+			for(unsigned int j = 0; j < this->STR[i].BOUNDARY.size(); j++){
+				gdsBoundary(this->STR[i].BOUNDARY[j].layer, this->STR[i].BOUNDARY[j].xCor, this->STR[i].BOUNDARY[j].yCor);
+			}
+			// Paths
+			for(unsigned int j = 0; j < this->STR[i].PATH.size(); j++){
+				gdsPath(this->STR[i].PATH[j].layer, this->STR[i].PATH[j].width, this->STR[i].PATH[j].xCor, this->STR[i].PATH[j].yCor);
+			}
+			// Nodes
+			for(unsigned int j = 0; j < this->STR[i].PATH.size(); j++){
+				
+			}
 		gdsStrEnd();
 
 	}

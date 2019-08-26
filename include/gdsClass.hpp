@@ -33,7 +33,7 @@ class gdscpp{
 	private:
 		map<int,string> GDSkeys;
 		vector<gdsSTR> STR;
-		int GDSrecord2ASCII(char *recIn);
+		int GDSrecord2ASCII(char *recIn);	// Does NOT belong here
 
 	public:
 		gdscpp();
@@ -41,10 +41,8 @@ class gdscpp{
 
 		void setSTR(vector<gdsSTR>& exVec){STR = exVec;};
 		void getSTR(vector<gdsSTR>& exVec){exVec = STR;};
-		// int gdsRead(string fileName);
-		// int gdsWrite(string fileName);
 
-		int quick2ASCII(string fileName);		// does not store data, legacy code
+		int quick2ASCII(string fileName);		// does not store data, legacy code. Does NOT belong here
 
 		void to_str();
 };
@@ -71,7 +69,7 @@ class gdsSREF{
 		gdsSREF();
 		~gdsSREF(){};
 
-		unsigned int sname = 0;
+		string name = "\0";
 		bitset<16> STRANS;
 		double angle = 0;
 		double scale = 1;
@@ -101,6 +99,7 @@ class gdsPATH{
 
 		unsigned int layer = 0;
 		unsigned int dataType = 0;
+		unsigned int width = 0;
 		vector<int> xCor;
 		vector<int> yCor;
 };
