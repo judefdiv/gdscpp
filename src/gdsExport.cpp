@@ -26,32 +26,32 @@ gdsExport::gdsExport(vector<gdsSTR>& inVec){
  */
 
 int gdsExport::gdsCreate(string FileName){
-	// Initializing the writing
-	this->fileName = FileName;
-	gdsFile = fopen(FileName.c_str(), "wb");
+	// // Initializing the writing
+	// this->fileName = FileName;
+	// gdsFile = fopen(FileName.c_str(), "wb");
 	
-	// if(!gdsFile.is_open()){
-	// 	cout << "Error: GDS file \"" << FileName << "\" FAILED to be opened for writing." << endl;
+	// // if(!gdsFile.is_open()){
+	// // 	cout << "Error: GDS file \"" << FileName << "\" FAILED to be opened for writing." << endl;
 
-	this->gdsBegin();
+	// this->gdsBegin();
 
-	// gdsCopyStr("ImportFileStrs.gds2");
+	// // gdsCopyStr("ImportFileStrs.gds2");
 
 
-	for(unsigned int i = 0; i < this->STR.size(); i++){
-		gdsStrStart("StrName");
-			gdsSREF("RefName", false, 1, 0, 0, 0);
-			gdsBoundary(1, 0, 0);
-			gdsPath(1, 30, 0, 0);
-		gdsStrEnd();
+	// for(unsigned int i = 0; i < this->STR.size(); i++){
+	// 	gdsStrStart("StrName");
+	// 		gdsSREF("RefName", false, 1, 0, 0, 0);
+	// 		gdsBoundary(1, 0, 0);
+	// 		gdsPath(1, 30, 0, 0);
+	// 	gdsStrEnd();
 
-	}
+	// }
 
-	this->gdsEnd();
+	// this->gdsEnd();
 
-	// Terminating the writing
-	fclose(gdsFile);
-	cout << "Creating \"" << this->fileName << "\" done." << endl;
+	// // Terminating the writing
+	// fclose(gdsFile);
+	// cout << "Creating \"" << this->fileName << "\" done." << endl;
 
 	return 0;
 }

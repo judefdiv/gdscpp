@@ -37,7 +37,7 @@ private:
 	int GDSrecord2ASCII(char *recIn);
 
 public:
-	gdscpp();
+	gdscpp();	// Function to map keys
 	~gdscpp(){};
 
 		void setSTR(vector<gdsSTR>& exVec){STR = exVec;};

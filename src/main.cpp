@@ -4,7 +4,7 @@
  * For:				Supertools, Coldflux Project - IARPA
  * Created: 		2019-08-21
  * Modified:
- * license: 		MIT
+ * license: 		
  * Description: 	Primary file for the program.
  * File:			main.cpp
  */
