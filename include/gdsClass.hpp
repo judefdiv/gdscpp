@@ -39,8 +39,10 @@ class gdscpp{
 		gdscpp();
 		~gdscpp(){};
 
-		int gdsRead(string fileName);
-		int gdsWrite(string fileName);
+		void setSTR(vector<gdsSTR>& exVec){STR = exVec;};
+		void getSTR(vector<gdsSTR>& exVec){exVec = STR;};
+		// int gdsRead(string fileName);
+		// int gdsWrite(string fileName);
 
 		int quick2ASCII(string fileName);		// does not store data, legacy code
 
@@ -49,67 +51,76 @@ class gdscpp{
 
 class gdsSTR{
 	private:
+
+	public:
+		gdsSTR();
+		~gdsSTR(){};
+
 		string name = "\0";
 		vector<gdsSREF> SREF;
 		vector<gdsBOUNDARY> BOUNDARY;
 		vector<gdsPATH> PATH;
 		vector<gdsNODE> NODE;
 
-	public:
-		gdsSTR();
-		~gdsSTR(){};
 };
 
 class gdsSREF{
 	private:
-		unsigned int sname = 0;
-		// bitset STRANS; 					// 2 bytes
-		float angle = 0;					// double?
-		long long xCor;
-		long long yCor;
 
 	public:
 		gdsSREF();
 		~gdsSREF(){};
+
+		unsigned int sname = 0;
+		bitset<16> STRANS;
+		double angle = 0;
+		double scale = 1;
+		int xCor;
+		int yCor;
 };
 
 class gdsBOUNDARY{
 	private:
-		unsigned int layer = 0;
-		unsigned int dataType = 0;
-		vector<long long> xCor;
-		vector<long long> yCor;
 
 	public:
 		gdsBOUNDARY();
 		~gdsBOUNDARY(){};
+
+		unsigned int layer = 0;
+		unsigned int dataType = 0;
+		vector<int> xCor;
+		vector<int> yCor;
 };
 
 class gdsPATH{
 	private:
-		unsigned int layer = 0;
-		unsigned int dataType = 0;
-		vector<long long> xCor;
-		vector<long long> yCor;
 
 	public:
 		gdsPATH();
 		~gdsPATH(){};
+
+		unsigned int layer = 0;
+		unsigned int dataType = 0;
+		vector<int> xCor;
+		vector<int> yCor;
 };
 
 class gdsNODE{
 	private:
-		unsigned int plex = 0;
-		unsigned int layer = 0;
-		unsigned int nodetype = 0;
-		vector<long long> xCor;
-		vector<long long> yCor;		
-		unsigned int propattr = 0;
-		string propvalue = "\0";
 
 	public:
 		gdsNODE();
 		~gdsNODE(){};
+
+		unsigned int plex = 0;
+		unsigned int layer = 0;
+		unsigned int nodetype = 0;
+		vector<int> xCor;
+		vector<int> yCor;
+		// int xCor = 0;
+		// int yCor = 0;
+		unsigned int propattr = 0;
+		string propvalue = "\0";
 };
 
 
