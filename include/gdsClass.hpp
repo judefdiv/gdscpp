@@ -1,12 +1,12 @@
 /**
- * Author:  		Jude de Villiers & Heinrich Herbst
- * Origin:  		E&E Engineering - Stellenbosch University
- * For:				Supertools, Coldflux Project - IARPA
- * Created: 		2019-08-22
+ * Author:  			Jude de Villiers & Heinrich Herbst
+ * Origin:  			E&E Engineering - Stellenbosch University
+ * For:					Supertools, Coldflux Project - IARPA
+ * Created: 			2019-08-22
  * Modified:
  * license:
  * Description: .
- * File:			gdsClass.hpp
+ * File:				gdsClass.hpp
  */
 
 #ifndef gdscppheader
@@ -30,7 +30,8 @@ class gdsNODE;
 class gdsSREF;
 class gdsTEXT;
 
-class gdscpp
+// Class which holds the entirety of the gds file data
+class gdscpp								
 {
 private:
 	map<int, string> GDSkeys;		  						// Holds the keys for record identification
@@ -38,7 +39,7 @@ private:
 	string Library_name;									
 	int Generations;										// Not really useful. Keep as 3 by default
 	int units[2];											////To calculate the size of a user unit in meters, divide the second number by the first.								
-	vector<gdsSTR> STR;				  						// Holds the structure information
+	vector<gdsSTR> STR;				  						// Holds the all the structures of the GDS
 	int GDSrecord2ASCII(char *recIn); 						// Does NOT belong here
 
 public:
@@ -61,11 +62,14 @@ class gdsSTR{
 		~gdsSTR(){};
 
 		string name = "\0";
-		vector<gdsSREF> SREF;
 		vector<gdsBOUNDARY> BOUNDARY;
 		vector<gdsPATH> PATH;
-		vector<gdsNODE> NODE;
+		vector<gdsSREF> SREF;
+		//vector<gdsAREF> AREF;		// TODO Implement at later  stage
 		vector<gdsTEXT> TEXT;
+		vector<gdsNODE> NODE;
+		//vector<gdsAREF> BOX;		// TODO Implement at later stage
+		
 
 };
 
