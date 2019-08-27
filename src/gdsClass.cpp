@@ -131,25 +131,20 @@ int gdscpp::GDSrecord2ASCII(char *recIn)
 		cout << "Key not found: 0x" << hex << hexKey << dec << endl;
 		return EXIT_FAILURE;
 	}
-
-	cout << "[" << this->GDSkeys.find(hexKey)->second << "]";
-
-	if (dataType == 0)
+	cout << "[" << this->GDSkeys.find(hexKey)->second << "]";				// Place brackets and repeat record
+	if (dataType == 0)														// no data
 	{
-		// no data
 		cout << endl;
 	}
-	else if (dataType == 1)
+	else if (dataType == 1)													//bit array
 	{
-		//bit array
 		bitset<8> bitsIn0(recIn[i++]);
 		bitset<8> bitsIn1(recIn[i]);
 		lineOut = "0b" + bitsIn0.to_string() + " 0b" + bitsIn1.to_string();
 		cout << ":{" << lineOut << "}" << endl;
 	}
-	else if (dataType == 2)
+	else if (dataType == 2)													// Two byte signed int
 	{
-		//2 byte signed int
 		for (i = 4; i <= sizeBlk; i = i + 2)
 		{
 			intOut = conBytes(recIn, i, 2);
@@ -159,9 +154,8 @@ int gdscpp::GDSrecord2ASCII(char *recIn)
 		lineOut.pop_back();
 		cout << ":{" << lineOut << "}" << endl;
 	}
-	else if (dataType == 3)
+	else if (dataType == 3)													// Four byte signed int
 	{
-		//4 byte signed int
 		for (i = 4; i <= sizeBlk; i = i + 4)
 		{
 			intOut = conBytes(recIn, i, 4);
@@ -171,14 +165,12 @@ int gdscpp::GDSrecord2ASCII(char *recIn)
 		lineOut.pop_back();
 		cout << ":{" << lineOut << "}" << endl;
 	}
-	else if (dataType == 4)
+	else if (dataType == 4)													// Four byte real (NOT USED)
 	{
-		//4 byte real (NOT USED)
 		cout << "Unsupported 4 byte real variable." << endl;
 	}
-	else if (dataType == 5)
+	else if (dataType == 5)													// Eight byte real
 	{
-		//8 byte real
 		double val = 0;
 		int sign = 0;
 		double exp = 0;
@@ -203,9 +195,8 @@ int gdscpp::GDSrecord2ASCII(char *recIn)
 		}
 		cout << "}" << endl;
 	}
-	else if (dataType == 6)
+	else if (dataType == 6)													// ASCII string
 	{
-		// ASCII string
 		string foo = "";
 		sizeBlk++;
 		for(i = 4; i <= sizeBlk; i++){

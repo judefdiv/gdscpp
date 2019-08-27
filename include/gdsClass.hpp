@@ -30,20 +30,25 @@ class gdsNODE;
 class gdsSREF;
 class gdsTEXT;
 
-class gdscpp{
-	private:
-		map<int,string> GDSkeys;
-		vector<gdsSTR> STR;
-		int GDSrecord2ASCII(char *recIn);	// Does NOT belong here
+class gdscpp
+{
+private:
+	map<int, string> GDSkeys;		  						// Holds the keys for record identification
+	int BGNLIB_data[12];
+	string Library_name;									
+	int Generations;										// Not really useful. Keep as 3 by default
+	int units[2];											////To calculate the size of a user unit in meters, divide the second number by the first.								
+	vector<gdsSTR> STR;				  						// Holds the structure information
+	int GDSrecord2ASCII(char *recIn); 						// Does NOT belong here
 
 public:
-	gdscpp();	// Function to map keys
+	gdscpp();												// Function to map keys
 	~gdscpp(){};
 
-		void setSTR(vector<gdsSTR>& exVec){STR = exVec;};
-		void getSTR(vector<gdsSTR>& exVec){exVec = STR;};
+	void setSTR(vector<gdsSTR> &exVec) { STR = exVec; }; 	// Function for setting the structure
+	void getSTR(vector<gdsSTR> &exVec) { exVec = STR; };	//				getting
 
-		int quick2ASCII(string fileName);		// does not store data, legacy code. Does NOT belong here
+	int quick2ASCII(string fileName); 						// does not store data, legacy code. Does NOT belong here
 
 	void to_str();
 };
