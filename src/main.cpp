@@ -4,7 +4,7 @@
  * For:					Supertools, Coldflux Project - IARPA
  * Created: 		2019-08-21
  * Modified:
- * license: 
+ * license:
  * Description: Primary file for the program.
  * File:				main.cpp
  */
@@ -15,14 +15,14 @@
 // #include <map>
 #include <iomanip> 				// setprecision()
 
-#include "gdsClass.hpp"
+#include "gdsCpp.hpp"
 
 #define versionNo 0.1
 #define outfileName "data/results/gds/"				// Default file output name
 using namespace std;
 
-/** 
- * Declaring functions 
+/**
+ * Declaring functions
  */
 
 void welcomeScreen();
@@ -50,8 +50,8 @@ int main(int argc, char* argv[]){
 int RunTool(int argCount, char** argValues){
 	welcomeScreen();
 
-	if(argCount <= 1){		
-		return 0; 
+	if(argCount <= 1){
+		return 0;
 	}
 
 	set<string> validCommands = {"-g", "-i", "-v", "-h"};
@@ -124,7 +124,7 @@ int RunTool(int argCount, char** argValues){
 			return 1;
 		}
 		cout << "Input argument error." << endl;
-		return 0;		
+		return 0;
 	}
 	else if(!command.compare("-h")){
 		helpScreen();
