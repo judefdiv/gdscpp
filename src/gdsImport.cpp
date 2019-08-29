@@ -27,25 +27,43 @@
 *                                       [ENDLIB]        [ ]
 */
 // =============================== ELEMENT RECORDS ==================================
+// Element records form part of a structure
 // --------------------------------- 1: BOUNDARY        [ ]--------------------------
+//              PLEX       //Ignore for now - seems to only be used with nodes
+//              LAYER
+//              DATATYPE
+//              XY
 // ----------------------------------- 2: PATH          [ ]--------------------------
+//              PLEX       //Ignore for now - seems to only be used with nodes
+//              LAYER
+//              DATATYPE
+//              PATHTYPE
+//              WIDTH
+//              XY
 // --------------------------- 3: STRUCTURE REFERENCE   [ ]--------------------------
-// ----------------------------- 4: ARRAY REFERENCE     [ ]--------------------------
-//              PLEX
 //              SNAME
-//              STRANS Transformation
+//              STRANS Transformation )
+//              MAG                   )
+//              ANGLE                 )
+//              XY
+// ----------------------------- 4: ARRAY REFERENCE     [ ]--------------------------
+//              PLEX       //Ignore for now - seems to only be used with nodes
+//              SNAME
+//              STRANS Transformation )
+//              MAG                   )
+//              ANGLE                 )
 //              COLROW
 //              XY
 // ----------------------------------- 5: TEXT          [ ]--------------------------
-//              PLEX
+//              PLEX       //Ignore for now - seems to only be used with nodes
 //              LAYER
 //              TEXTTYPE
 //              PRESENTATION
 //              PATHTYPE
 //              WIDTH
-//              STRANS
-//              MAG
-//              ANGLE
+//              STRANS Transformation )
+//              MAG                   )
+//              ANGLE                 )
 //              XY
 //              STRING
 //              PROPATTR
@@ -56,7 +74,7 @@
 //              NODETYPE
 //              XY
 // ----------------------------------- 7: BOX           [ ]--------------------------
-//              PLEX
+//              PLEX       //Ignore for now - seems to only be used with nodes
 //              LAYER
 //              BOXTYPE
 //              XY

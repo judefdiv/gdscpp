@@ -23,12 +23,16 @@
 
 using namespace std;
 
-class gdsSTR;
-class gdsBOUNDARY;
-class gdsPATH;
-class gdsNODE;
-class gdsSREF;
-class gdsTEXT;
+class gdscpp;                                  // All encompassing master class
+class gdsInfo;                                 // Subclass of gds file
+class gdsSTR;                                  // Subclass containing all structures
+class gdsBOUNDARY;                             // x2subclass belonging to gdsSTR
+class gdsPATH;                                 // ''
+class gdsNODE;                                 // ''
+class gdsSREF;                                 // ''
+class gdsTEXT;                                 // ''
+class gdsNODE;                                 // ''  TODO implement class
+class gdsBOX;                                  // ''  TODO implement class
 
 #include "gdsParser.hpp"
 #include "gdsForge.hpp"
@@ -36,8 +40,9 @@ class gdsTEXT;
 
 class gdscpp{  // (GDS file)
   private:
-    vector<gdsSTR> STR;
-    int GDSrecord2ASCII(char *recIn); // Does it belong here???
+    gdsInfo INFO;                             // Holds gds file into information
+    vector<gdsSTR> STR;                       // Holds all the structures of the gds file
+    int GDSrecord2ASCII(char *recIn);         // Does it belong here???   
 
   public:
     gdscpp();
@@ -49,7 +54,22 @@ class gdscpp{  // (GDS file)
     int read(string fileName);
     int write(string fileName);
 
-    int quick2ASCII(string fileName);   // does not store data, legacy code.
+    int quick2ASCII(string fileName);       // does not store data, legacy code.
+
+    void to_str();
+};
+
+class gdsInfo{
+  private:
+    int version_number=7;                     // GDS version number. Default to 7
+    int last_modified[6] = {0,0,0,0,0,0};     // Default to current datetime if unread
+    int last_accessed[6] = {0,0,0,0,0,0};     // Default to current datetime if unread
+    string library_name = "Untitled_library"; // Default libname
+    int generations = 3;                      // Default generations. Don't really use
+    double units[2] = {0.001, 1e-09};         // micron default 
+  public:
+    gdsInfo();
+    ~gdsInfo(){};
 
     void to_str();
 };
@@ -64,12 +84,15 @@ class gdsSTR{
     void to_str();
 
     string name = "\0";
-    vector<gdsSREF> SREF;
+    
     vector<gdsBOUNDARY> BOUNDARY;
     vector<gdsPATH> PATH;
-    vector<gdsNODE> NODE;
+    vector<gdsSREF> SREF;
+    vector<gdsAREF> AREF;
     vector<gdsTEXT> TEXT;
-
+    vector<gdsNODE> NODE;
+    vector<gdsBOX> BOX;
+    
 };
 
 class gdsSREF{
@@ -87,6 +110,24 @@ class gdsSREF{
     double scale = 1;
     int xCor;
     int yCor;
+};
+
+class gdsAREF{
+  private:
+
+  public:
+    gdsAREF();
+    ~gdsAREF(){};
+
+    void to_str();
+
+                              // PLEX
+    string name = "\0";       // SNAME
+    bool reflection = false;  // STRANS
+    double angle = 0;         //  subSTRANS
+    double scale = 1;         //  subSTRANS
+    int xCor;                 // XY
+    int yCor;                 // XY
 };
 
 class gdsBOUNDARY{
