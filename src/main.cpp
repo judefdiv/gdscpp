@@ -4,9 +4,9 @@
  * For:				Supertools, Coldflux Project - IARPA
  * Created: 		2019-08-21
  * Modified:
- * license: 		
- * Description: 	Primary file for the program.
- * File:			main.cpp
+ * license:
+ * Description: Primary file for the program.
+ * File:				main.cpp
  */
 
 #include <iostream> //stream
@@ -15,14 +15,14 @@
 // #include <map>
 #include <iomanip> // setprecision()
 
-#include "gdsClass.hpp"
+#include "gdsCpp.hpp"
 
 #define versionNo 0.1
 #define InfilePath "data/" // Default file output name
 using namespace std;
 
-/** 
- * Declaring functions 
+/**
+ * Declaring functions
  */
 
 void welcomeScreen();

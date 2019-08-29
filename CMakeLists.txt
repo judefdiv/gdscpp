@@ -16,12 +16,12 @@ set(SOURCES
   src/gdsClass.cpp
   src/gdsParser.cpp
   src/gdsImport.cpp
-  src/gdsExport.cpp
+  src/gdsForge.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Ensures that the header files of the project is included
-target_include_directories(${PROJECT_NAME} PRIVATE 
+target_include_directories(${PROJECT_NAME} PRIVATE
   ${PROJECT_SOURCE_DIR}/include
 )

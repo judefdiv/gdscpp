@@ -4,7 +4,7 @@
  * For:				Supertools, Coldflux Project - IARPA
  * Created: 		2019-03-20
  * Modified:
- * license: 
+ * license:
  * Description: Library file containing GDSII reading and writing functions.
  * File:				gdsParser.cpp
  */
@@ -13,9 +13,6 @@
 
 ifstream gdsFileRead;
 string gdsFileNameRead = "\0";
-
-
-// map<int,string> GDSkeys;
 
 /**
  * [openGDSread - Creates/opens the binary file]
@@ -41,7 +38,7 @@ int openGDSread(string fileName){
  * @return [Returns 1 if all good else 0 if error]
  */
 
-int closeGDSread(){ 
+int closeGDSread(){
 	if(gdsFileNameRead == "\0"){
 		cout << "GDS file was not opened." << endl;
 		return 0;
@@ -54,7 +51,7 @@ int closeGDSread(){
 
 
 /**
- * [GDS2ASCII - Reads a single record and outputs it to the appropriate variable]
+ * [GDSdistil - Reads a single record and outputs it to the appropriate variable]
  * @param  recIn   [Char pointer to the start of binary GDS record]
  * @param  GDSKey  [The GDS key value of the record]
  * @param  bitarr  [Bitset of 16 bits]
@@ -64,7 +61,7 @@ int closeGDSread(){
  * @return         [0 - Exit Success; 1 - Exit Failure]
  */
 
-int GDS2ASCII(char *recIn, uint32_t& GDSKey, bitset<16>& bitarr, vector<char>& integer, vector<double>& B8Real, string& words){
+int GDSdistil(char *recIn, uint32_t& GDSKey, bitset<16>& bitarr, vector<char>& integer, vector<double>& B8Real, string& words){
 	uint32_t sizeBlk;
   uint32_t i = 0;
   uint8_t dataType;
@@ -110,7 +107,7 @@ int GDS2ASCII(char *recIn, uint32_t& GDSKey, bitset<16>& bitarr, vector<char>& i
 		double mantissa = 0;
 
 		for(i = 4; i <= sizeBlk; i = i + 8){
-			
+
 			sign = (unsigned char)recIn[i] >> 7;
 			exp = (unsigned char)recIn[i] & 0b01111111;
 			mantissa = conBytesLL(recIn, i+1, 7);
@@ -295,4 +292,64 @@ int * gsdTime(){
 	}
 
 	return timeIO;
+}
+/**
+ * [GDSkey2ASCII - Converters a GDS header to text]
+ * @param  inHex [Teh GDS header value]
+ * @return       [The equivalent string for the hex value if found else NULL]
+ */
+
+string GDSkey2ASCII(unsigned int inHex){
+	static map<int,string> GDSkeys;
+	static map<int,string>::iterator it;
+
+	static bool readInYet = false;
+
+	if(!readInYet){
+		readInYet = true;
+	  GDSkeys[0x0002] = "HEADER";
+	  GDSkeys[0x0102] = "BGNLIB";
+	  GDSkeys[0x0206] = "LIBNAME";
+	  GDSkeys[0x0305] = "UNITS";
+	  GDSkeys[0x0400] = "ENDLIB";
+	  GDSkeys[0x0502] = "BGNSTR";
+	  GDSkeys[0x0606] = "STRNAME";
+	  GDSkeys[0x0700] = "ENDSTR";
+	  GDSkeys[0x0800] = "BOUNDARY";
+	  GDSkeys[0x0900] = "PATH";
+	  GDSkeys[0x0a00] = "SREF";
+	  GDSkeys[0x0b00] = "AREF";
+	  GDSkeys[0x0c00] = "TEXT";
+	  GDSkeys[0x0d02] = "LAYER";
+	  GDSkeys[0x0e02] = "DATATYPE";
+	  GDSkeys[0x0f03] = "WIDTH";
+	  GDSkeys[0x1003] = "XY";
+	  GDSkeys[0x1100] = "ENDEL";
+	  GDSkeys[0x1206] = "SNAME";
+	  GDSkeys[0x1302] = "COLROW";
+	  GDSkeys[0x1500] = "NODE";
+	  GDSkeys[0x1602] = "TEXTTYPE";
+	  GDSkeys[0x1701] = "PRESENTATION";
+	  GDSkeys[0x1906] = "STRING";
+	  GDSkeys[0x1a01] = "STRANS";
+	  GDSkeys[0x1b05] = "MAG";
+	  GDSkeys[0x1c05] = "ANGLE";
+	  GDSkeys[0x1f06] = "REFLIBS";
+	  GDSkeys[0x2006] = "FONTS";
+	  GDSkeys[0x2102] = "PATHTYPE";
+	  GDSkeys[0x2202] = "GENERATIONS";
+	  GDSkeys[0x2306] = "ATTRTABLE";
+	  GDSkeys[0x2601] = "EFLAGS";
+	  GDSkeys[0x2a02] = "NODETYPE";
+	  GDSkeys[0x2b02] = "PROPATTR";
+	  GDSkeys[0x2c06] = "PROPVALUE";
+	  GDSkeys[0x2f03] = "PLEX";
+	}
+
+	it = GDSkeys.find(inHex);
+
+  if(it == GDSkeys.end())
+    return "\0";
+
+	return it->second;
 }
