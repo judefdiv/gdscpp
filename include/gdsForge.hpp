@@ -37,6 +37,9 @@ class gdsForge{
 		vector<gdsSTR> STR;
 
 		// Surface level
+		// int drawVia(string ViaName, int CorX, int CorY);
+		// int drawCompPin(string CompName, int CorX, int CorY);
+		gdsBOUNDARY draw2ptBox(int layer, int blX, int blY, int trX, int trY);
 
 		// Lowish level
 		void gdsBegin();

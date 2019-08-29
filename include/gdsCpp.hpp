@@ -34,7 +34,7 @@ class gdsTEXT;
 #include "gdsForge.hpp"
 #include "gdsImport.hpp"
 
-class gdscpp{
+class gdscpp{  // (GDS file)
   private:
     vector<gdsSTR> STR;
     int GDSrecord2ASCII(char *recIn); // Does it belong here???
@@ -61,6 +61,8 @@ class gdsSTR{
     gdsSTR();
     ~gdsSTR(){};
 
+    void to_str();
+
     string name = "\0";
     vector<gdsSREF> SREF;
     vector<gdsBOUNDARY> BOUNDARY;
@@ -77,6 +79,8 @@ class gdsSREF{
     gdsSREF();
     ~gdsSREF(){};
 
+    void to_str();
+
     string name = "\0";
     bool reflection = false;
     double angle = 0;
@@ -92,6 +96,8 @@ class gdsBOUNDARY{
     gdsBOUNDARY();
     ~gdsBOUNDARY(){};
 
+    void to_str();
+
     unsigned int layer = 0;
     unsigned int dataType = 0;
     vector<int> xCor;
@@ -104,6 +110,8 @@ class gdsPATH{
   public:
     gdsPATH();
     ~gdsPATH(){};
+
+    void to_str();
 
     unsigned int layer = 0;
     unsigned int dataType = 0;
@@ -118,6 +126,8 @@ class gdsNODE{
   public:
     gdsNODE();
     ~gdsNODE(){};
+
+    void to_str();
 
     unsigned int plex = 0;  // optional
     unsigned int layer = 0;
@@ -135,6 +145,9 @@ class gdsTEXT{
   public:
     gdsTEXT();
     ~gdsTEXT(){};
+
+    void to_str();
+
     string textbody = "\0";
     unsigned int layer = 0;
     double scale = 1;

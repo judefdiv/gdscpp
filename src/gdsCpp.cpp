@@ -200,3 +200,121 @@ int gdscpp::GDSrecord2ASCII(char *recIn){
 
   return 0;
 }
+
+/**
+ * [gdscpp::to_str - Displays all the stored data in the class]
+ */
+
+void gdscpp::to_str(){
+  cout << "GDScpp class:" << endl;
+
+  for(unsigned int i = 0; i < this->STR.size(); i++){
+    this->STR[i].to_str();
+  }
+}
+
+/**
+ * [gdsSTR::to_str - Displays all the stored data in the class]
+ */
+
+void gdsSTR::to_str(){
+  cout << "GDS STR class:" << endl;
+
+  for(unsigned int i = 0; i < this->SREF.size(); i++){
+    this->SREF[i].to_str();
+  }
+
+  for(unsigned int i = 0; i < this->BOUNDARY.size(); i++){
+    this->BOUNDARY[i].to_str();
+  }
+
+  for(unsigned int i = 0; i < this->PATH.size(); i++){
+    this->PATH[i].to_str();
+  }
+
+  for(unsigned int i = 0; i < this->NODE.size(); i++){
+    this->NODE[i].to_str();
+  }
+
+  for(unsigned int i = 0; i < this->TEXT.size(); i++){
+    this->TEXT[i].to_str();
+  }
+}
+
+/**
+ * [gdsSREF::to_str - Displays all the stored data in the class]
+ */
+
+void gdsSREF::to_str(){
+  cout << "GDS REF class:" << endl;
+
+  cout << "  Name: " << this->name << endl;
+  cout << "  reflection: " << this->reflection << endl;
+  cout << "  angle: " << this->angle << endl;
+  cout << "  scale: " << this->scale << endl;
+  cout << "  xCor: " << this->xCor << endl;
+  cout << "  yCor: " << this->yCor << endl;
+}
+
+/**
+ * [gdsBOUNDARY::to_str - Displays all the stored data in the class]
+ */
+
+void gdsBOUNDARY::to_str(){
+  cout << "GDS BOUNDARY class:" << endl;
+
+  cout << "  layer: " << this->layer << endl;
+
+  cout << "  xCor:\tyCor:" << endl;
+  for(unsigned int i = 0; i < this->xCor.size(); i++){
+    cout << this->xCor[i] << "\t" << this->xCor[i] << endl;
+  }
+}
+
+/**
+ * [gdsPATH::to_str - Displays all the stored data in the class]
+ */
+
+void gdsPATH::to_str(){
+  cout << "GDS PATH class:" << endl;
+
+  cout << "  layer: " << this->layer << endl;
+  cout << "  width: " << this->width << endl;
+
+  cout << "  xCor:\tyCor:" << endl;
+  for(unsigned int i = 0; i < this->xCor.size(); i++){
+    cout << this->xCor[i] << "\t" << this->xCor[i] << endl;
+  }
+}
+
+/**
+ * [gdsNODE::to_str - Displays all the stored data in the class]
+ */
+
+void gdsNODE::to_str(){
+  cout << "GDS NODE class:" << endl;
+
+  cout << "  layer: " << this->layer << endl;
+  cout << "  nodetype: " << this->nodetype << endl;
+  cout << "  propattr: " << this->propattr << endl;
+  cout << "  propvalue: " << this->propvalue << endl;
+
+  cout << "  xCor:\tyCor:" << endl;
+  for(unsigned int i = 0; i < this->xCor.size(); i++){
+    cout << this->xCor[i] << "\t" << this->xCor[i] << endl;
+  }
+}
+
+/**
+ * [gdsTEXT::to_str - Displays all the stored data in the class]
+ */
+
+void gdsTEXT::to_str(){
+  cout << "GDS TEXT class:" << endl;
+
+  cout << "  layer: " << this->layer << endl;
+  cout << "  textbody: " << this->textbody << endl;
+  cout << "  scale: " << this->scale << endl;
+  cout << "  xCor: " << this->xCor << endl;
+  cout << "  yCor: " << this->yCor << endl;
+}
