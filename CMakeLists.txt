@@ -9,7 +9,6 @@ set(SOURCES
   src/main.cpp
   src/gdsCpp.cpp
   src/gdsParser.cpp
-  src/gdsImport.cpp
   src/gdsForge.cpp
 )
 

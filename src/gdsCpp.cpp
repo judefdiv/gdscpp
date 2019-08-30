@@ -17,12 +17,80 @@
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
 
-// int gdscpp::read(string fileName){
-//   gdsImport foo;
-//   foo.read(fileName, STR);
+int gdscpp::import(string fileName){
+  ifstream gdsFile;
+  gdsFile.open(fileName, ios::in|ios::binary);
 
-//   return 0;
-// }
+  if(!gdsFile.is_open()){
+    cout << "GDS file \"" << fileName << "\" FAILED to be opened." << endl;
+    return EXIT_FAILURE;
+  }
+
+  cout << "Importing \"" << fileName << "\" into GDSCpp." << endl;
+
+  char            *current_readBlk;
+  uint32_t        current_sizeBlk;
+  uint32_t        current_GDSKey;
+  bitset<16>      current_bitarr;
+  vector<char>    current_integer;
+  vector<double>  current_B8Real;
+  string          current_words   ="\0";
+
+  gdsFile.seekg(0, ios::beg);
+  do{
+    current_readBlk = new char [2];
+    gdsFile.read(current_readBlk, 2);
+
+    current_sizeBlk = (((unsigned char)current_readBlk[0] << 8) | (unsigned char)current_readBlk[1]);
+
+    gdsFile.seekg(-2, ios::cur);
+    current_readBlk = new char [current_sizeBlk];
+    gdsFile.read(current_readBlk, current_sizeBlk);
+
+    if(GDSdistill(current_readBlk, current_GDSKey, current_bitarr, current_integer, current_B8Real, current_words)){
+      cout << "GDS read error" << endl;
+      break;
+    }
+    else    // Highest tier of data import: HEADER, BGNLIB, LIBNAME, GENERATIONS, UNITS, BGNSTR, ENDDLIB
+    {
+      if(GDSrecord2ASCII(current_readBlk)){         //
+        cout << "GDS read error" << endl;           // \   Remove this once debugging finished 
+        break;                                      // /
+      }                                             //
+      switch (current_GDSKey)
+      {
+      case GDS_HEADER:
+        //version_number = current_integer; // TODO: Continue from here
+        break;
+      case GDS_BGNLIB:
+
+        break;
+      case GDS_LIBNAME:
+
+        break;
+      case GDS_GENERATIONS:
+      
+        break;
+      case GDS_UNITS:
+
+        break;
+      case GDS_BGNSTR:
+      
+        break;
+      case GDS_ENDLIB:
+        cout << "Reached end of library." << endl;
+        break;
+
+      default:
+        cout << "Unrecognized record." << endl;
+        break;
+      }
+    }
+  } while(current_GDSKey != GDS_ENDLIB);
+  delete[] current_readBlk;
+  cout << "GDS file successfully imported." << endl;
+   return 0;
+}
 
 /**
  * [gdscpp::write - Creating a GDS file from STR class]

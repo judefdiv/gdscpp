@@ -16,7 +16,6 @@ using namespace std;
 
 // ==================== Class declarations =====================
 class gdscpp;                                  // All encompassing master class
-class gdsInfo;                                 // Subclass of gds file
 class gdsSTR;                                  // Subclass containing all structures
 class gdsBOUNDARY;                             // x2subclass belonging to gdsSTR
 class gdsPATH;                                 // ''
@@ -36,7 +35,6 @@ class gdsBOX;                                  // ''
 #include <bitset>
 #include "gdsParser.hpp"
 #include "gdsForge.hpp"
-#include "gdsImport.hpp"
 
 // ===================== Class Definitions ====================
 /*
@@ -62,7 +60,7 @@ class gdscpp{  // (GDS file)
     void setSTR(vector<gdsSTR>& exVec){STR = exVec;};
     void getSTR(vector<gdsSTR>& exVec){exVec = STR;};
 
-    int read(string fileName);
+    int import(string fileName);
     int write(string fileName);
 
     int quick2ASCII(string fileName);       // does not store data, legacy code.
