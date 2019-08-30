@@ -14,6 +14,7 @@
 
 using namespace std;
 
+// ==================== Class declarations =====================
 class gdscpp;                                  // All encompassing master class
 class gdsInfo;                                 // Subclass of gds file
 class gdsSTR;                                  // Subclass containing all structures
@@ -37,6 +38,7 @@ class gdsBOX;                                  // ''
 #include "gdsForge.hpp"
 #include "gdsImport.hpp"
 
+// ===================== Class Definitions ====================
 /*
 This is the highest class, holding all the information of a single .gds file.
 */
