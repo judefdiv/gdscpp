@@ -24,10 +24,14 @@
 #include <bitset>
 
 #include "gdsCpp.hpp"
-
 #include "gdsParser.hpp"
 
 using namespace std;
+
+// Functions to easily draw in GDSfiles
+gdsBOUNDARY draw2ptBox(int layer, int blX, int blY, int trX, int trY);
+gdsBOUNDARY drawBoundary(int layer, vector<int> corX, vector<int> corY);
+gdsPATH drawPath(int layer, unsigned int width, vector<int> corX, vector<int> corY);
 
 class gdsForge{
 	private:
@@ -37,9 +41,6 @@ class gdsForge{
 		vector<gdsSTR> STR;
 
 		// Surface level
-		// int drawVia(string ViaName, int CorX, int CorY);
-		// int drawCompPin(string CompName, int CorX, int CorY);
-		gdsBOUNDARY draw2ptBox(int layer, int blX, int blY, int trX, int trY);
 
 		// Lowish level
 		void gdsBegin();
@@ -62,16 +63,14 @@ class gdsForge{
 		void GDSwriteUnits();																		// <--- must be removed...
 
 	public:
-		// gdsForge(vector<gdsSTR>& inVec);
 		gdsForge();
 		~gdsForge(){};
 
-		// int gdsCreate(string FileName);
 		int gdsCreate(string FileName, vector<gdsSTR>& inVec);
 
 		void to_str();
 };
 
-void copyGDSstrs(string fileName);					// unsure, important function
+// void copyGDSstrs(string fileName);					// unsure, important function
 
 #endif

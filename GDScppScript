@@ -1,0 +1,14 @@
+#!/bin/bash
+
+clear
+
+echo "------------- Script to for GDScpp ---------------"
+
+cd build
+cmake .. && \
+make && \
+cd ../
+# ./build/gdscpp -i ./data/LSmitll_jtlt.gds
+./build/gdscpp -g -o ./data/test.gds
+
+echo "------------------ Script ended -------------------"

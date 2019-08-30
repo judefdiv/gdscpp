@@ -16,6 +16,7 @@
 #include <iomanip> // setprecision()
 
 #include "gdsCpp.hpp"
+#include "gdsForge.hpp"	// used to testing function
 
 #define versionNo 0.1
 #define InfilePath "data/" // Default file output name
@@ -27,7 +28,8 @@ using namespace std;
 
 void welcomeScreen();
 void helpScreen();
-int RunTool(int argCount, char **argValues);
+int RunTool(int argCount, char** argValues);
+void testGDS(string fileName);
 
 /**
  * Main loop
@@ -89,10 +91,19 @@ int RunTool(int argCount, char **argValues)
 		}
 	}
 
-	if (command.compare("-load")==0)
-	{ //Interpret
-		if (gdsFName.compare("\0"))
-		{
+	// Run the commands
+	if(!command.compare("-g")){
+		if(outFName.compare("\0")){
+			testGDS(outFName);
+			return 1;
+		}
+		else{
+			cout << "Input argument error." << endl;
+			return 0;
+		}
+	}
+	else if(!command.compare("-i")){
+		if(gdsFName.compare("\0")){
 			gdscpp gdsfile;
 			gdsfile.quick2ASCII(gdsFName);
 			return EXIT_SUCCESS;
@@ -103,10 +114,18 @@ int RunTool(int argCount, char **argValues)
 			return EXIT_FAILURE;
 		}
 	}
-	else if (!command.compare("-version"))
-	{
-		if (argCount == 1 + 1)
-		{
+	else if(!command.compare("-t")){
+		if(gdsFName.compare("\0")){
+
+			return 1;
+		}
+		else{
+			cout << "Input argument error." << endl;
+			return 0;
+		}
+	}
+	else if(!command.compare("-v")){
+		if(argCount == 1 + 1){
 			cout << setprecision(2);
 			cout << "Version: " << versionNo << endl;
 			return EXIT_SUCCESS;
@@ -129,8 +148,27 @@ int RunTool(int argCount, char **argValues)
 	return EXIT_FAILURE;
 }
 
-void helpScreen()
-{
+void testGDS(string fileName){
+	gdscpp fooGDS;
+
+	vector<gdsSTR> arrSTR;
+	arrSTR.resize(1);
+
+	vector<int> arrX;
+	vector<int> arrY;
+
+	// gdsBOUNDARY draw2ptBox(int layer, int blX, int blY, int trX, int trY);
+	// gdsBOUNDARY drawBoundary(int layer, vector<int> corX, vector<int> corY);
+	// gdsPATH drawPath(int layer, unsigned int width, vector<int> corX, vector<int> corY);
+
+	arrSTR[0].BOUNDARY.push_back(draw2ptBox(1, -100, -100, 100, 100));
+
+	fooGDS.setSTR(arrSTR);
+
+	fooGDS.write(fileName);
+}
+
+void helpScreen(){
 	cout << "===============================================================================" << endl;
 	cout << "Usage: GDScpp [ OPTION ] [ filenames ]" << endl;
 	cout << "-load  Reads in specified file and displays content." << endl;

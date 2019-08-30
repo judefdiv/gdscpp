@@ -34,6 +34,13 @@ class gdsTEXT;                                 // ''
 class gdsNODE;                                 // ''  
 class gdsBOX;                                  // ''  
 
+#include <string>
+#include <iostream>
+#include <vector>
+#include <stdio.h>
+#include <map>
+#include <fstream>
+#include <bitset>
 #include "gdsParser.hpp"
 #include "gdsForge.hpp"
 #include "gdsImport.hpp"
@@ -43,8 +50,15 @@ This is the highest class, holding all the information of a single .gds file.
 */
 class gdscpp{  // (GDS file)
   private:
-    gdsInfo INFO;                             // Holds gds file into information
     vector<gdsSTR> STR;                       // Holds all the structures of the gds file
+
+  int version_number=7;                     // GDS version number. Default to 7
+    int last_modified[6] = {0,0,0,0,0,0};     // Default to current datetime if unread
+    int last_accessed[6] = {0,0,0,0,0,0};     // Default to current datetime if unread
+    string library_name = "Untitled_library"; // Default libname
+    int generations = 3;                      // Default generations. Don't really use
+    double units[2] = {0.001, 1e-09};         // micron default 
+
     int GDSrecord2ASCII(char *recIn);         // Does it belong here???   
 
   public:
@@ -58,24 +72,6 @@ class gdscpp{  // (GDS file)
     int write(string fileName);
 
     int quick2ASCII(string fileName);       // does not store data, legacy code.
-
-    void to_str();
-};
-
-/*
-Class which holds all the general info about the gds file.
-*/
-class gdsInfo{
-  private:
-    int version_number=7;                     // GDS version number. Default to 7
-    int last_modified[6] = {0,0,0,0,0,0};     // Default to current datetime if unread
-    int last_accessed[6] = {0,0,0,0,0,0};     // Default to current datetime if unread
-    string library_name = "Untitled_library"; // Default libname
-    int generations = 3;                      // Default generations. Don't really use
-    double units[2] = {0.001, 1e-09};         // micron default 
-  public:
-    gdsInfo();
-    ~gdsInfo(){};
 
     void to_str();
 };

@@ -20,6 +20,30 @@ gdscpp::gdscpp(){
 
 }
 
+gdsSTR::gdsSTR(){
+
+}
+
+gdsSREF::gdsSREF(){
+
+}
+
+gdsBOUNDARY::gdsBOUNDARY(){
+
+}
+
+gdsPATH::gdsPATH(){
+
+}
+
+gdsNODE::gdsNODE(){
+
+}
+
+gdsTEXT::gdsTEXT(){
+
+}
+
 /**
  * [gdscpp::read description]
  * @param  fileName [The file name of the GDS file that is going to be read in]
@@ -39,10 +63,10 @@ int gdscpp::read(string fileName){
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
 
-// int gdscpp::write(string fileName){
-//     gdsForge foo;
-//     return foo.gdsCreate(fileName, STR);
-// }
+int gdscpp::write(string fileName){
+  gdsForge foo;
+  return foo.gdsCreate(fileName, this->STR);
+}
 
 
 /**
