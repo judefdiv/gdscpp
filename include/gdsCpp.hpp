@@ -27,6 +27,7 @@ class gdsNODE;                                 // ''
 class gdsBOX;                                  // ''  
 
 // ========================== Includes ========================
+
 #include <string>
 #include <iostream>
 #include <vector>
@@ -53,7 +54,7 @@ class gdscpp{  // (GDS file)
     int generations = 3;                      // Default generations. Don't really use
     double units[2] = {0.001, 1e-09};         // micron default 
 
-    int GDSrecord2ASCII(char *recIn);         // Does it belong here???   
+    int GDSrecord2ASCII(char *recIn);         // Does it belong here??? 
 
   public:
     gdscpp();
@@ -73,6 +74,7 @@ class gdscpp{  // (GDS file)
 /*
 Subclass of gdscpp which holds a structure's information.
 */
+
 class gdsSTR{
   private:
 
@@ -144,6 +146,7 @@ class gdsPATH{
 /*
 Subclass of a gdsSTR class which stores structure reference structures.
 */
+
 class gdsSREF{
   private:
 
@@ -210,6 +213,40 @@ class gdsTEXT{
 /*
 Subclass of a gdsSTR class which stores node structures.
 */
+
+};
+
+class gdsBOUNDARY{
+  private:
+
+  public:
+    gdsBOUNDARY();
+    ~gdsBOUNDARY(){};
+
+    void to_str();
+
+    unsigned int layer = 0;
+    unsigned int dataType = 0;
+    vector<int> xCor;
+    vector<int> yCor;
+};
+
+class gdsPATH{
+  private:
+
+  public:
+    gdsPATH();
+    ~gdsPATH(){};
+
+    void to_str();
+
+    unsigned int layer = 0;
+    unsigned int dataType = 0;
+    unsigned int width = 0;
+    vector<int> xCor;
+    vector<int> yCor;
+};
+
 class gdsNODE{
   private:
 
@@ -249,6 +286,22 @@ class gdsBOX{
     vector<int> yCor;
     unsigned int propattr = 0;
     string propvalue = "\0";
+};
+  
+class gdsTEXT{
+  private:
+
+  public:
+    gdsTEXT();
+    ~gdsTEXT(){};
+
+    void to_str();
+
+    string textbody = "\0";
+    unsigned int layer = 0;
+    double scale = 1;
+    int xCor;
+    int yCor;
 };
 
 #endif

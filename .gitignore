@@ -1,3 +1,5 @@
+old/
+data/
+build/
 *.sublime-project
 *.sublime-workspace
-/data
