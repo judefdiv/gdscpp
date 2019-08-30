@@ -56,7 +56,7 @@ class gdscpp{  // (GDS file)
     int GDSrecord2ASCII(char *recIn);         // Does it belong here???   
 
   public:
-    gdscpp();
+    gdscpp(){};
     ~gdscpp(){};
 
     void setSTR(vector<gdsSTR>& exVec){STR = exVec;};
@@ -77,7 +77,7 @@ class gdsSTR{
   private:
 
   public:
-    gdsSTR();
+    gdsSTR(){};
     ~gdsSTR(){};
 
     void to_str();
@@ -101,7 +101,7 @@ class gdsBOUNDARY{
   private:
 
   public:
-    gdsBOUNDARY();
+    gdsBOUNDARY(){};
     ~gdsBOUNDARY(){};
 
     void to_str();
@@ -126,7 +126,7 @@ class gdsPATH{
   private:
 
   public:
-    gdsPATH();
+    gdsPATH(){};
     ~gdsPATH(){};
 
     void to_str();
@@ -148,7 +148,7 @@ class gdsSREF{
   private:
 
   public:
-    gdsSREF();
+    gdsSREF(){};
     ~gdsSREF(){};
 
     void to_str();
@@ -170,7 +170,7 @@ class gdsAREF{
   private:
 
   public:
-    gdsAREF();
+    gdsAREF(){};
     ~gdsAREF(){};
 
     void to_str();
@@ -193,7 +193,7 @@ class gdsTEXT{
   private:
 
   public:
-    gdsTEXT();
+    gdsTEXT(){};
     ~gdsTEXT(){};
 
     void to_str();
@@ -214,7 +214,7 @@ class gdsNODE{
   private:
 
   public:
-    gdsNODE();
+    gdsNODE(){};
     ~gdsNODE(){};
 
     void to_str();
@@ -236,7 +236,7 @@ class gdsBOX{
   private:
 
   public:
-    gdsBOX();
+    gdsBOX(){};
     ~gdsBOX(){};
 
     void to_str();

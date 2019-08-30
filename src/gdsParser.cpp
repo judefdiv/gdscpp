@@ -51,7 +51,7 @@ int closeGDSread(){
 
 
 /**
- * [GDSdistil - Reads a single record and outputs it to the appropriate variable]
+ * [GDSdistill - Reads a single record and outputs it to the appropriate variable]
  * @param  recIn   [Char pointer to the start of binary GDS record]
  * @param  GDSKey  [The GDS key value of the record]
  * @param  bitarr  [Bitset of 16 bits]
@@ -61,7 +61,7 @@ int closeGDSread(){
  * @return         [0 - Exit Success; 1 - Exit Failure]
  */
 
-int GDSdistil(char *recIn, uint32_t& GDSKey, bitset<16>& bitarr, vector<char>& integer, vector<double>& B8Real, string& words){
+int GDSdistill(char *recIn, uint32_t& GDSKey, bitset<16>& bitarr, vector<char>& integer, vector<double>& B8Real, string& words){
 	uint32_t sizeBlk;
   uint32_t i = 0;
   uint8_t dataType;

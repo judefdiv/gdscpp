@@ -28,7 +28,7 @@ using namespace std;
 int openGDSread(string fileName);           // must integrate...
 int closeGDSread();                         // must integrate...
 
-int GDSdistil(char *recIn, uint32_t& GDSKey, bitset<16>& bitarr, vector<char>& integer, vector<double>& B8Real, string& words);
+int GDSdistill(char *recIn, uint32_t& GDSKey, bitset<16>& bitarr, vector<char>& integer, vector<double>& B8Real, string& words);
 
 unsigned long long GDSfloatCalc(double inVar);											// low level
 unsigned long long bitShiftR(unsigned long long inVar, int cnt);		// ultra low level

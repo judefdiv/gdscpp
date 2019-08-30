@@ -11,51 +11,18 @@
 
 #include "gdsCpp.hpp"
 
-
-/**
- *  Constructor
- */
-
-gdscpp::gdscpp(){
-
-}
-
-gdsSTR::gdsSTR(){
-
-}
-
-gdsSREF::gdsSREF(){
-
-}
-
-gdsBOUNDARY::gdsBOUNDARY(){
-
-}
-
-gdsPATH::gdsPATH(){
-
-}
-
-gdsNODE::gdsNODE(){
-
-}
-
-gdsTEXT::gdsTEXT(){
-
-}
-
 /**
  * [gdscpp::read description]
  * @param  fileName [Teh file name of the GDS file that is going to be read in]
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
 
-int gdscpp::read(string fileName){
-  // gdsImport foo;
-  // foo.read(fileName, STR);
+// int gdscpp::read(string fileName){
+//   gdsImport foo;
+//   foo.read(fileName, STR);
 
-  return 0;
-}
+//   return 0;
+// }
 
 /**
  * [gdscpp::write - Creating a GDS file from STR class]
