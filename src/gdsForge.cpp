@@ -15,9 +15,9 @@
  * Constructor
  */
 
-// gdsForge::gdsForge(vector<gdsSTR>& inVec){
-// 	this->STR = inVec;
-// }
+gdsForge::gdsForge(){
+
+}
 
 /**
  * [gdsForge::gdsCreate - Generates/creates/exports the GDS file]
@@ -78,93 +78,46 @@ int gdsForge::gdsCreate(string FileName, vector<gdsSTR>& inVec){
 }
 
 /***********************************************************************************
- ******************************** Surface Level ************************************
+ ********************* Functions to easily draw in GDSfiles ************************
  ***********************************************************************************/
 
-// /**
-//  * [drawVia - Draws the via]
-//  * @param  ViaName [The name of the via to be drawn]
-//  * @param  CorX    [Centre X coordinate of the via]
-//  * @param  CorY    [Centre Y coordinate of the via]
-//  * @return         [1 - Successful; 0 - Failed]
-//  */
+/**
+ * [drawBoundary - Easily create a GDS boundary]
+ * @param  layer [The layer number]
+ * @param  corX  [The X-coordinates]
+ * @param  corY  [The Y-coordinates]
+ * @return       [Class of GDS boundary which can be used in a GDS structure]
+ */
 
-// int drawVia(string ViaName, int CorX, int CorY){
-// 	if(ViaName == "\0"){
-// 		return 0;
-// 	}
-// 	int pts[4];
-// 	int index;
-// 	vector<lef_via> fooVia;
+gdsBOUNDARY drawBoundary(int layer, vector<int> corX, vector<int> corY){
+	gdsBOUNDARY foo;
 
-// 	getViaVec(fooVia);
+	foo.layer = layer;
+	foo.xCor = corX;
+	foo.yCor = corY;
 
-// 	for(index = 0; index < fooVia.size(); index++){
-// 		if(fooVia[index].get_varName() == ViaName){
-// 			break;
-// 		}
-// 	}
+	return foo;
+}
 
-// 	pts[0] = fooVia[index].layerDim[0][0]*1000 + CorX;
-// 	pts[1] = fooVia[index].layerDim[0][1]*1000 + CorY;
-// 	pts[2] = fooVia[index].layerDim[0][2]*1000 + CorX;
-// 	pts[3] = fooVia[index].layerDim[0][3]*1000 + CorY;
+/**
+ * [drawPath - Easily create a GDS path]
+ * @param  layer [The layer number]
+ * @param  width [The thickness of the track]
+ * @param  corX  [The X-coordinates]
+ * @param  corY  [The Y-coordinates]
+ * @return       [Class of GDS path which can be used in a GDS structure]
+ */
 
-// 	draw2ptBoc(getLayerNo(fooVia[index].LayerNames[0]), pts[0], pts[1], pts[2], pts[3]);
+gdsPATH drawPath(int layer, unsigned int width, vector<int> corX, vector<int> corY){
+	gdsPATH foo;
 
-// 	pts[0] = fooVia[index].layerDim[2][0]*1000 + CorX;
-// 	pts[1] = fooVia[index].layerDim[2][1]*1000 + CorY;
-// 	pts[2] = fooVia[index].layerDim[2][2]*1000 + CorX;
-// 	pts[3] = fooVia[index].layerDim[2][3]*1000 + CorY;
+	foo.layer = layer;
+	foo.width = width;
+	foo.xCor = corX;
+	foo.yCor = corY;
 
-// 	draw2ptBoc(getLayerNo(fooVia[index].LayerNames[2]), pts[0], pts[1], pts[2], pts[3]);
-
-// 	return 1;
-// }
-
-// /**
-//  * [drawComp - Draws the components]
-//  * @param  CompName [The name of the component to be drawn]
-//  * @param  CorX     [Centre X coordinate of the via]
-//  * @param  CorY     [Centre Y coordinate of the via]
-//  * @return          [1 - Successful; 0 - Failed]
-//  */
-
-// int drawCompPin(string CompName, int CorX, int CorY){
-// 	vector<lef_macro> cl_macro;					// lef passer
-// 	vector<macro_pin> PINs;
-
-// 	int pts[4];
-
-// 	getMacroVec(cl_macro);
-
-// 	// int ptsX[5];
-// 	// int ptsY[5];
-
-// 	int index = 0;
-
-// 	for(index = 0; index < cl_macro.size(); index++){
-// 		if(cl_macro[index].get_varName() == CompName){
-// 			break;
-// 		}
-// 	}
-
-// 	cl_macro[index].get_varPIN(PINs);
-
-// 	for(int i = 0; i < PINs.size(); i++){
-// 		for(int j = 0; j < PINs[i].PORT.size(); j++){
-// 			pts[0] =  (PINs[i].PORT[j].dim[0] * 1000) + (CorX * 10);
-// 			pts[1] =  (PINs[i].PORT[j].dim[1] * 1000) + (CorY * 10);
-// 			pts[2] =  (PINs[i].PORT[j].dim[2] * 1000) + (CorX * 10);
-// 			pts[3] =  (PINs[i].PORT[j].dim[3] * 1000) + (CorY * 10);
-
-// 			draw2ptBoc(getLayerNo(PINs[i].PORT[j].name), pts[0], pts[1], pts[2], pts[3]);
-// 		}
-// 	}
-
-// 	// gdsBoundary(6, ptsX, ptsY, 5);
-// 	return 1;
-// }
+	return foo;
+}
 
 /**
  * [draw2ptBox - Draws a boundary box with 2 points]
@@ -177,36 +130,24 @@ int gdsForge::gdsCreate(string FileName, vector<gdsSTR>& inVec){
  */
 
 gdsBOUNDARY draw2ptBox(int layer, int blX, int blY, int trX, int trY){
-	// int ptsX[5];
-	// int ptsY[5];
+	vector<int> ptsX;
+	vector<int> ptsY;
 
-	// ptsX[0] = blX;
-	// ptsY[0] = blY;
-	// ptsX[1] = trX;
-	// ptsY[1] = blY;
-	// ptsX[2] = trX;
-	// ptsY[2] = trY;
-	// ptsX[3] = blX;
-	// ptsY[3] = trY;
-	// ptsX[4] = blX;
-	// ptsY[4] = blY;
+	ptsX.resize(5);
+	ptsY.resize(5);
 
-	gdsBOUNDARY foo;
+	ptsX[0] = blX;
+	ptsY[0] = blY;
+	ptsX[1] = trX;
+	ptsY[1] = blY;
+	ptsX[2] = trX;
+	ptsY[2] = trY;
+	ptsX[3] = blX;
+	ptsY[3] = trY;
+	ptsX[4] = blX;
+	ptsY[4] = blY;
 
-	foo.layer = layer;
-
-	foo.xCor.push_back(blX);
-	foo.yCor.push_back(blY);
-	foo.xCor.push_back(trX);
-	foo.yCor.push_back(blY);
-	foo.xCor.push_back(trX);
-	foo.yCor.push_back(trY);
-	foo.xCor.push_back(blX);
-	foo.yCor.push_back(trY);
-	foo.xCor.push_back(blX);
-	foo.yCor.push_back(blY);
-
-	return foo;
+	return drawBoundary(layer, ptsX, ptsY);
 }
 
 /***********************************************************************************

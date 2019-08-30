@@ -9,7 +9,6 @@ project(gdscpp)                                  # creates ${PROJECT_NAME}
 set(SOURCES
   src/main.cpp
   src/gdsCpp.cpp
-  src/gdsClass.cpp
   src/gdsParser.cpp
   src/gdsImport.cpp
   src/gdsForge.cpp

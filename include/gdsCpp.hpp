@@ -12,15 +12,6 @@
 #ifndef gdsCpp
 #define gdsCpp
 
-#include <string>
-#include <iostream>
-#include <vector>
-#include <stdio.h>
-#include <map>
-
-#include <fstream>
-#include <bitset>
-
 using namespace std;
 
 class gdsSTR;
@@ -30,6 +21,13 @@ class gdsNODE;
 class gdsSREF;
 class gdsTEXT;
 
+#include <string>
+#include <iostream>
+#include <vector>
+#include <stdio.h>
+#include <map>
+#include <fstream>
+#include <bitset>
 #include "gdsParser.hpp"
 #include "gdsForge.hpp"
 #include "gdsImport.hpp"

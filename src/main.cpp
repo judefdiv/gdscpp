@@ -16,6 +16,7 @@
 #include <iomanip> 				// setprecision()
 
 #include "gdsCpp.hpp"
+#include "gdsForge.hpp"	// used to testing function
 
 #define versionNo 0.1
 #define outfileName "data/results/gds/"				// Default file output name
@@ -28,6 +29,7 @@ using namespace std;
 void welcomeScreen();
 void helpScreen();
 int RunTool(int argCount, char** argValues);
+void testGDS(string fileName);
 
 /**
  * Main loop
@@ -98,7 +100,7 @@ int RunTool(int argCount, char** argValues){
 	// Run the commands
 	if(!command.compare("-g")){
 		if(outFName.compare("\0")){
-			// runDie2Sim(lefFName, defFName, outFName);
+			testGDS(outFName);
 			return 1;
 		}
 		else{
@@ -110,6 +112,16 @@ int RunTool(int argCount, char** argValues){
 		if(gdsFName.compare("\0")){
 			gdscpp gdsfile;
 			gdsfile.quick2ASCII(gdsFName);
+			return 1;
+		}
+		else{
+			cout << "Input argument error." << endl;
+			return 0;
+		}
+	}
+	else if(!command.compare("-t")){
+		if(gdsFName.compare("\0")){
+
 			return 1;
 		}
 		else{
@@ -137,6 +149,26 @@ int RunTool(int argCount, char** argValues){
 
 	cout << "I am smelling smoke." << endl;
 	return 0;
+}
+
+void testGDS(string fileName){
+	gdscpp fooGDS;
+
+	vector<gdsSTR> arrSTR;
+	arrSTR.resize(1);
+
+	vector<int> arrX;
+	vector<int> arrY;
+
+	// gdsBOUNDARY draw2ptBox(int layer, int blX, int blY, int trX, int trY);
+	// gdsBOUNDARY drawBoundary(int layer, vector<int> corX, vector<int> corY);
+	// gdsPATH drawPath(int layer, unsigned int width, vector<int> corX, vector<int> corY);
+
+	arrSTR[0].BOUNDARY.push_back(draw2ptBox(1, -100, -100, 100, 100));
+
+	fooGDS.setSTR(arrSTR);
+
+	fooGDS.write(fileName);
 }
 
 void helpScreen(){
