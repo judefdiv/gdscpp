@@ -28,16 +28,19 @@ class gdsInfo;                                 // Subclass of gds file
 class gdsSTR;                                  // Subclass containing all structures
 class gdsBOUNDARY;                             // x2subclass belonging to gdsSTR
 class gdsPATH;                                 // ''
-class gdsNODE;                                 // ''
 class gdsSREF;                                 // ''
+class gdsAREF;                                 // ''
 class gdsTEXT;                                 // ''
-class gdsNODE;                                 // ''  TODO implement class
-class gdsBOX;                                  // ''  TODO implement class
+class gdsNODE;                                 // ''  
+class gdsBOX;                                  // ''  
 
 #include "gdsParser.hpp"
 #include "gdsForge.hpp"
 #include "gdsImport.hpp"
 
+/*
+This is the highest class, holding all the information of a single .gds file.
+*/
 class gdscpp{  // (GDS file)
   private:
     gdsInfo INFO;                             // Holds gds file into information
@@ -59,6 +62,9 @@ class gdscpp{  // (GDS file)
     void to_str();
 };
 
+/*
+Class which holds all the general info about the gds file.
+*/
 class gdsInfo{
   private:
     int version_number=7;                     // GDS version number. Default to 7
@@ -74,6 +80,9 @@ class gdsInfo{
     void to_str();
 };
 
+/*
+Subclass of gdscpp which holds a structure's information.
+*/
 class gdsSTR{
   private:
 
@@ -95,6 +104,56 @@ class gdsSTR{
     
 };
 
+/*
+Subclass of a gdsSTR class which stores boundary structures.
+*/
+class gdsBOUNDARY{
+  private:
+
+  public:
+    gdsBOUNDARY();
+    ~gdsBOUNDARY(){};
+
+    void to_str();
+
+    unsigned int layer = 0;
+    unsigned int dataType = 0;
+    vector<int> xCor;
+    vector<int> yCor;
+    unsigned int propattr = 0;
+    string propvalue = "\0";
+};
+
+/*
+Subclass of a gdsSTR class which stores path structures.
+
+Pathtype: This record contains a value that describes the type of path endpoints. The value is
+0 for square-ended paths that endflush with their endpoints
+1 for round-ended paths
+2 for square-ended paths that extend a half-width beyond their endpoints
+*/
+class gdsPATH{
+  private:
+
+  public:
+    gdsPATH();
+    ~gdsPATH(){};
+
+    void to_str();
+
+    unsigned int layer = 0;
+    unsigned int dataType = 0;
+    unsigned int pathtype = 0;
+    unsigned int width = 0;
+    vector<int> xCor;
+    vector<int> yCor;
+    unsigned int propattr = 0;
+    string propvalue = "\0";
+};
+
+/*
+Subclass of a gdsSTR class which stores structure reference structures.
+*/
 class gdsSREF{
   private:
 
@@ -110,8 +169,13 @@ class gdsSREF{
     double scale = 1;
     int xCor;
     int yCor;
+    unsigned int propattr = 0;
+    string propvalue = "\0";
 };
 
+/*
+Subclass of a gdsSTR class which stores array reference structures.
+*/
 class gdsAREF{
   private:
 
@@ -128,39 +192,34 @@ class gdsAREF{
     double scale = 1;         //  subSTRANS
     int xCor;                 // XY
     int yCor;                 // XY
+    unsigned int propattr = 0;
+    string propvalue = "\0";
 };
 
-class gdsBOUNDARY{
+/*
+Subclass of a gdsSTR class which stores text structures.
+*/
+class gdsTEXT{
   private:
 
   public:
-    gdsBOUNDARY();
-    ~gdsBOUNDARY(){};
+    gdsTEXT();
+    ~gdsTEXT(){};
 
     void to_str();
 
+    string textbody = "\0";
     unsigned int layer = 0;
-    unsigned int dataType = 0;
-    vector<int> xCor;
-    vector<int> yCor;
+    double scale = 1;
+    int xCor;
+    int yCor;
+    unsigned int propattr = 0;
+    string propvalue = "\0";
 };
 
-class gdsPATH{
-  private:
-
-  public:
-    gdsPATH();
-    ~gdsPATH(){};
-
-    void to_str();
-
-    unsigned int layer = 0;
-    unsigned int dataType = 0;
-    unsigned int width = 0;
-    vector<int> xCor;
-    vector<int> yCor;
-};
-
+/*
+Subclass of a gdsSTR class which stores node structures.
+*/
 class gdsNODE{
   private:
 
@@ -180,20 +239,26 @@ class gdsNODE{
     string propvalue = "\0";
 };
 
-class gdsTEXT{
+/*
+Subclass of a gdsSTR class which stores box structures.
+*/
+class gdsBOX{
   private:
 
   public:
-    gdsTEXT();
-    ~gdsTEXT(){};
+    gdsBOX();
+    ~gdsBOX(){};
 
     void to_str();
 
-    string textbody = "\0";
+    unsigned int plex = 0;  // optional
     unsigned int layer = 0;
-    double scale = 1;
-    int xCor;
-    int yCor;
+    unsigned int boxtype = 0;
+    // A maximum of 50 coordinates
+    vector<int> xCor;
+    vector<int> yCor;
+    unsigned int propattr = 0;
+    string propvalue = "\0";
 };
 
 #endif
