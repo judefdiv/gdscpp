@@ -35,6 +35,8 @@ int gdscpp::import(string fileName){
   vector<char>    current_integer;
   vector<double>  current_B8Real;
   string          current_words   ="\0";
+  ostringstream unit_stringstream;
+  unit_stringstream.precision(12);
 
   gdsFile.seekg(0, ios::beg);
   do{
@@ -60,19 +62,24 @@ int gdscpp::import(string fileName){
       switch (current_GDSKey)
       {
       case GDS_HEADER:
-        //version_number = current_integer; // TODO: Continue from here
+        version_number = (int)current_integer[0]; // TODO: Continue from here
         break;
       case GDS_BGNLIB:
-
+        std::transform(current_integer.begin(), current_integer.end(), std::back_inserter(last_modified), [](char a){ return (int)a;});
         break;
       case GDS_LIBNAME:
-
+        library_name = current_words;
         break;
       case GDS_GENERATIONS:
-      
+        generations = (int)current_integer[0];
         break;
       case GDS_UNITS:
-
+        unit_stringstream << current_B8Real[0];
+        units[0]=unit_stringstream.str();
+        unit_stringstream.str("");
+        unit_stringstream.clear();
+        unit_stringstream << current_B8Real[1];
+        units[1]=unit_stringstream.str();
         break;
       case GDS_BGNSTR:
       

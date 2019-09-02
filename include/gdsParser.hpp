@@ -25,6 +25,12 @@
 
 using namespace std;
 
+template< typename T >
+T magic_round_to_even( T x ) {
+  static T magic = 1.5 * std::pow( 2.0L, std::numeric_limits< T >::digits);
+  return ( x + magic ) - magic;
+}
+
 int openGDSread(string fileName);           // must integrate...
 int closeGDSread();                         // must integrate...
 

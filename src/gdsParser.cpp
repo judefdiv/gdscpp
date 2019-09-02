@@ -111,7 +111,6 @@ int GDSdistill(char *recIn, uint32_t& GDSKey, bitset<16>& bitarr, vector<char>& 
 			sign = (unsigned char)recIn[i] >> 7;
 			exp = (unsigned char)recIn[i] & 0b01111111;
 			mantissa = conBytesLL(recIn, i+1, 7);
-
 			val = mantissa / pow(2, 56) * pow(16, exp -64);
 			if(sign) val *= -1;
 

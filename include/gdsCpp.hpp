@@ -9,6 +9,76 @@
  * File:				gdsCpp.hpp
  */
 
+// ############################ DETAILED DESCRIPTION ################################
+// To understand format better: http://boolean.klaasholwerda.nl/interface/bnf/gdsformat.html
+// =============================== GENERAL RECORDS ==================================
+/*                                      <Record>     < Done? >
+*                                       [HEADER]        [X]
+*                                       [BGNLIB]        [X]
+*                                       [LIBNAME]       [ ]
+*                                       [REFLIBS]       [ ](Don't bother here unless needed.)
+*                                       [FONTS]         [ ](Don't bother here unless needed.)
+*                                       [ATTRTABLE]     [ ](Don't bother here unless needed.)
+*                                       [GENERATIONS]   [ ]
+*                                       [<FormatType>]  [ ](Don't bother here unless needed.)
+*                                       [UNITS]         [ ]
+*                                       [BGNSTR]        [ ]
+*                                       [STRNAME]       [ ]
+*                                       [ENDLIB]        [ ]
+*/
+// =============================== ELEMENT RECORDS ==================================
+// Element records form part of a structure
+// --------------------------------- 1: BOUNDARY        [ ]--------------------------
+//              PLEX       //Ignore for now - seems to only be used with nodes
+//              LAYER
+//              DATATYPE
+//              XY
+// ----------------------------------- 2: PATH          [ ]--------------------------
+//              PLEX       //Ignore for now - seems to only be used with nodes
+//              LAYER
+//              DATATYPE
+//              PATHTYPE
+//              WIDTH
+//              XY
+// --------------------------- 3: STRUCTURE REFERENCE   [ ]--------------------------
+//              SNAME
+//              STRANS Transformation )
+//              MAG                   )
+//              ANGLE                 )
+//              XY
+// ----------------------------- 4: ARRAY REFERENCE     [ ]--------------------------
+//              PLEX       //Ignore for now - seems to only be used with nodes
+//              SNAME
+//              STRANS Transformation )
+//              MAG                   )
+//              ANGLE                 )
+//              COLROW
+//              XY
+// ----------------------------------- 5: TEXT          [ ]--------------------------
+//              PLEX       //Ignore for now - seems to only be used with nodes
+//              LAYER
+//              TEXTTYPE
+//              PRESENTATION
+//              PATHTYPE
+//              WIDTH
+//              STRANS Transformation )
+//              MAG                   )
+//              ANGLE                 )
+//              XY
+//              STRING
+//              PROPATTR
+//              PROPVALUE
+// ----------------------------------- 6: NODE          [ ]--------------------------
+//              PLEX
+//              LAYER
+//              NODETYPE
+//              XY
+// ----------------------------------- 7: BOX           [ ]--------------------------
+//              PLEX       //Ignore for now - seems to only be used with nodes
+//              LAYER
+//              BOXTYPE
+//              XY
+
 #ifndef gdsCpp
 #define gdsCpp
 
@@ -28,11 +98,13 @@ class gdsBOX;                                  // ''
 // ========================== Includes ========================
 #include <string>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <stdio.h>
 #include <map>
 #include <fstream>
 #include <bitset>
+#include <algorithm>
 #include "gdsParser.hpp"
 #include "gdsForge.hpp"
 
@@ -44,12 +116,12 @@ class gdscpp{  // (GDS file)
   private:
     vector<gdsSTR> STR;                       // Holds all the structures of the gds file
 
-  int version_number=7;                     // GDS version number. Default to 7
-    int last_modified[6] = {0,0,0,0,0,0};     // Default to current datetime if unread
-    int last_accessed[6] = {0,0,0,0,0,0};     // Default to current datetime if unread
+  int version_number=7;                       // GDS version number. Default to 7
+    vector<int> last_modified;               // TODO: Default to current datetime if unread
+    int last_accessed[6] = {0,0,0,0,0,0};     // TODO: Default to current datetime if unread
     string library_name = "Untitled_library"; // Default libname
     int generations = 3;                      // Default generations. Don't really use
-    double units[2] = {0.001, 1e-09};         // micron default 
+    string units[2] = {"\0", "\0"};         // micron default 
 
     int GDSrecord2ASCII(char *recIn);         // Does it belong here???   
 
