@@ -16,18 +16,16 @@ using namespace std;
 
 // ==================== Class declarations =====================
 class gdscpp;                                  // All encompassing master class
-class gdsInfo;                                 // Subclass of gds file
 class gdsSTR;                                  // Subclass containing all structures
 class gdsBOUNDARY;                             // x2subclass belonging to gdsSTR
 class gdsPATH;                                 // ''
 class gdsSREF;                                 // ''
 class gdsAREF;                                 // ''
 class gdsTEXT;                                 // ''
-class gdsNODE;                                 // ''  
-class gdsBOX;                                  // ''  
+class gdsNODE;                                 // ''
+class gdsBOX;                                  // ''
 
 // ========================== Includes ========================
-
 #include <string>
 #include <iostream>
 #include <vector>
@@ -37,7 +35,6 @@ class gdsBOX;                                  // ''
 #include <bitset>
 #include "gdsParser.hpp"
 #include "gdsForge.hpp"
-#include "gdsImport.hpp"
 
 // ===================== Class Definitions ====================
 /*
@@ -52,18 +49,18 @@ class gdscpp{  // (GDS file)
     int last_accessed[6] = {0,0,0,0,0,0};     // Default to current datetime if unread
     string library_name = "Untitled_library"; // Default libname
     int generations = 3;                      // Default generations. Don't really use
-    double units[2] = {0.001, 1e-09};         // micron default 
+    double units[2] = {0.001, 1e-09};         // micron default
 
-    int GDSrecord2ASCII(char *recIn);         // Does it belong here??? 
+    int GDSrecord2ASCII(char *recIn);         // Does it belong here???
 
   public:
-    gdscpp();
+    gdscpp(){};
     ~gdscpp(){};
 
     void setSTR(vector<gdsSTR>& exVec){STR = exVec;};
     void getSTR(vector<gdsSTR>& exVec){exVec = STR;};
 
-    int read(string fileName);
+    int import(string fileName);
     int write(string fileName);
 
     int quick2ASCII(string fileName);       // does not store data, legacy code.
@@ -79,13 +76,13 @@ class gdsSTR{
   private:
 
   public:
-    gdsSTR();
+    gdsSTR(){};
     ~gdsSTR(){};
 
     void to_str();
 
     string name = "\0";
-    
+
     vector<gdsBOUNDARY> BOUNDARY;
     vector<gdsPATH> PATH;
     vector<gdsSREF> SREF;
@@ -93,7 +90,7 @@ class gdsSTR{
     vector<gdsTEXT> TEXT;
     vector<gdsNODE> NODE;
     vector<gdsBOX> BOX;
-    
+
 };
 
 /*
@@ -103,7 +100,7 @@ class gdsBOUNDARY{
   private:
 
   public:
-    gdsBOUNDARY();
+    gdsBOUNDARY(){};
     ~gdsBOUNDARY(){};
 
     void to_str();
@@ -128,7 +125,7 @@ class gdsPATH{
   private:
 
   public:
-    gdsPATH();
+    gdsPATH(){};
     ~gdsPATH(){};
 
     void to_str();
@@ -151,7 +148,7 @@ class gdsSREF{
   private:
 
   public:
-    gdsSREF();
+    gdsSREF(){};
     ~gdsSREF(){};
 
     void to_str();
@@ -169,11 +166,12 @@ class gdsSREF{
 /*
 Subclass of a gdsSTR class which stores array reference structures.
 */
+
 class gdsAREF{
   private:
 
   public:
-    gdsAREF();
+    gdsAREF(){};
     ~gdsAREF(){};
 
     void to_str();
@@ -192,11 +190,12 @@ class gdsAREF{
 /*
 Subclass of a gdsSTR class which stores text structures.
 */
+
 class gdsTEXT{
   private:
 
   public:
-    gdsTEXT();
+    gdsTEXT(){};
     ~gdsTEXT(){};
 
     void to_str();
@@ -213,45 +212,11 @@ class gdsTEXT{
 /*
 Subclass of a gdsSTR class which stores node structures.
 */
-
-};
-
-class gdsBOUNDARY{
-  private:
-
-  public:
-    gdsBOUNDARY();
-    ~gdsBOUNDARY(){};
-
-    void to_str();
-
-    unsigned int layer = 0;
-    unsigned int dataType = 0;
-    vector<int> xCor;
-    vector<int> yCor;
-};
-
-class gdsPATH{
-  private:
-
-  public:
-    gdsPATH();
-    ~gdsPATH(){};
-
-    void to_str();
-
-    unsigned int layer = 0;
-    unsigned int dataType = 0;
-    unsigned int width = 0;
-    vector<int> xCor;
-    vector<int> yCor;
-};
-
 class gdsNODE{
   private:
 
   public:
-    gdsNODE();
+    gdsNODE(){};
     ~gdsNODE(){};
 
     void to_str();
@@ -273,7 +238,7 @@ class gdsBOX{
   private:
 
   public:
-    gdsBOX();
+    gdsBOX(){};
     ~gdsBOX(){};
 
     void to_str();
@@ -286,22 +251,6 @@ class gdsBOX{
     vector<int> yCor;
     unsigned int propattr = 0;
     string propvalue = "\0";
-};
-  
-class gdsTEXT{
-  private:
-
-  public:
-    gdsTEXT();
-    ~gdsTEXT(){};
-
-    void to_str();
-
-    string textbody = "\0";
-    unsigned int layer = 0;
-    double scale = 1;
-    int xCor;
-    int yCor;
 };
 
 #endif

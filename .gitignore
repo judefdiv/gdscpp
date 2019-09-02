@@ -1,5 +1,7 @@
 old/
 data/
 build/
+Sourcetrail/
+.vscode/
 *.sublime-project
 *.sublime-workspace
