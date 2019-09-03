@@ -15,13 +15,13 @@
 /*                                      <Record>     < Done? >
 *                                       [HEADER]        [X]
 *                                       [BGNLIB]        [X]
-*                                       [LIBNAME]       [ ]
+*                                       [LIBNAME]       [X]
 *                                       [REFLIBS]       [ ](Don't bother here unless needed.)
 *                                       [FONTS]         [ ](Don't bother here unless needed.)
 *                                       [ATTRTABLE]     [ ](Don't bother here unless needed.)
-*                                       [GENERATIONS]   [ ]
+*                                       [GENERATIONS]   [X]
 *                                       [<FormatType>]  [ ](Don't bother here unless needed.)
-*                                       [UNITS]         [ ]
+*                                       [UNITS]         [X]
 *                                       [BGNSTR]        [ ]
 *                                       [STRNAME]       [ ]
 *                                       [ENDLIB]        [ ]
@@ -92,8 +92,8 @@ class gdsPATH;                                 // ''
 class gdsSREF;                                 // ''
 class gdsAREF;                                 // ''
 class gdsTEXT;                                 // ''
-class gdsNODE;                                 // ''  
-class gdsBOX;                                  // ''  
+class gdsNODE;                                 // ''
+class gdsBOX;                                  // ''
 
 // ========================== Includes ========================
 #include <string>
@@ -114,30 +114,26 @@ This is the highest class, holding all the information of a single .gds file.
 */
 class gdscpp{  // (GDS file)
   private:
-    vector<gdsSTR> STR;                       // Holds all the structures of the gds file
-
-  int version_number=7;                       // GDS version number. Default to 7
-    vector<int> last_modified;               // TODO: Default to current datetime if unread
+    int version_number=7;                       // GDS version number. Default to 7
     int last_accessed[6] = {0,0,0,0,0,0};     // TODO: Default to current datetime if unread
-    string library_name = "Untitled_library"; // Default libname
     int generations = 3;                      // Default generations. Don't really use
-    string units[2] = {"\0", "\0"};         // micron default 
+    double units[2] = {0.001, 1e-9};         // micron default
+    vector<gdsSTR> STR;                       // Holds all the structures of the gds file
+    vector<int> last_modified;               // TODO: Default to current datetime if unread
+    string library_name = "Untitled_library"; // Default libname
 
-    int GDSrecord2ASCII(char *recIn);         // Does it belong here???   
-
+    int GDSrecord2ASCII(char *recIn);         // Does it belong here???
   public:
     gdscpp(){};
     ~gdscpp(){};
-
     void setSTR(vector<gdsSTR>& exVec){STR = exVec;};
+    //void setSTR(gdsSTR exVec){STR.push_back(exVec);};
     void getSTR(vector<gdsSTR>& exVec){exVec = STR;};
-
     int import(string fileName);
     int write(string fileName);
-
     int quick2ASCII(string fileName);       // does not store data, legacy code.
-
     void to_str();
+    void reset();
 };
 
 /*
@@ -151,9 +147,10 @@ class gdsSTR{
     ~gdsSTR(){};
 
     void to_str();
+    void reset();
 
     string name = "\0";
-    
+
     vector<gdsBOUNDARY> BOUNDARY;
     vector<gdsPATH> PATH;
     vector<gdsSREF> SREF;
@@ -161,7 +158,7 @@ class gdsSTR{
     vector<gdsTEXT> TEXT;
     vector<gdsNODE> NODE;
     vector<gdsBOX> BOX;
-    
+
 };
 
 /*
@@ -175,6 +172,7 @@ class gdsBOUNDARY{
     ~gdsBOUNDARY(){};
 
     void to_str();
+    void reset();
 
     unsigned int layer = 0;
     unsigned int dataType = 0;
@@ -200,6 +198,7 @@ class gdsPATH{
     ~gdsPATH(){};
 
     void to_str();
+    void reset();
 
     unsigned int layer = 0;
     unsigned int dataType = 0;
@@ -222,13 +221,14 @@ class gdsSREF{
     ~gdsSREF(){};
 
     void to_str();
+    void reset();
 
     string name = "\0";
     bool reflection = false;
     double angle = 0;
     double scale = 1;
-    int xCor;
-    int yCor;
+    int xCor = 0;
+    int yCor = 0;
     unsigned int propattr = 0;
     string propvalue = "\0";
 };
@@ -248,8 +248,8 @@ class gdsAREF{
                               // PLEX
     string name = "\0";       // SNAME
     bool reflection = false;  // STRANS
-    double angle = 0;         //  subSTRANS
-    double scale = 1;         //  subSTRANS
+    double angle = 0;         // subSTRANS
+    double scale = 1;         // subSTRANS
     int xCor;                 // XY
     int yCor;                 // XY
     unsigned int propattr = 0;
