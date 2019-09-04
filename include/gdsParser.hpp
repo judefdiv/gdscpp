@@ -52,6 +52,7 @@ string GDSkey2ASCII(unsigned int inHex);
 #define GDS_BOUNDARY  0x0800
 #define GDS_PATH      0x0900
 #define GDS_SREF      0x0a00
+#define GDS_AREF      0x0b00
 #define GDS_TEXT      0x0c00
 #define GDS_LAYER     0x0d02
 #define GDS_DATATYPE  0x0e02
@@ -59,6 +60,7 @@ string GDSkey2ASCII(unsigned int inHex);
 #define GDS_XY        0x1003
 #define GDS_ENDEL     0x1100
 #define GDS_SNAME     0x1206
+#define GDS_COLROW    0x1302
 #define GDS_NODE      0x1500
 #define GDS_TEXTTYPE  0x1602
 #define GDS_PRESENTATION  0x1701
@@ -66,17 +68,15 @@ string GDSkey2ASCII(unsigned int inHex);
 #define GDS_STRANS    0x1a01
 #define GDS_MAG       0x1b05
 #define GDS_ANGLE     0x1c05
+#define GDS_REFLIBS   0x1f06
+#define GDS_FONTS     0x2006
 #define GDS_PATHTYPE  0x2102
-
-// #define GDS_AREF       0x0b00
-// #define GDS_COLROW   0x1302
-// #define GDS_REFLIBS    0x1f06
-// #define GDS_FONTS      0x2006
- #define GDS_GENERATIONS    0x2202
-// #define GDS_ATTRTABLE  0x2306
-// #define GDS_EFLAGS   0x2601
-// #define GDS_NODETYPE 0x2a02
-// #define GDS_PROPATTR 0x2b02
-// #define GDS_PROPVALUE  0x2c06
+#define GDS_GENERATIONS   0x2202
+#define GDS_ATTRTABLE 0x2306
+#define GDS_EFLAGS    0x2601
+#define GDS_NODETYPE  0x2a02
+#define GDS_PROPATTR  0x2b02
+#define GDS_PROPVALUE 0x2c06
+#define GDS_PLEX      0x2f03
 
 #endif

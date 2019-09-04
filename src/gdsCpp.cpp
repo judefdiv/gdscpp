@@ -54,7 +54,7 @@ int gdscpp::import(string fileName){
     else    // Highest tier of data import: HEADER, BGNLIB, LIBNAME, GENERATIONS, UNITS, BGNSTR, ENDDLIB
     {
       if(GDSrecord2ASCII(current_readBlk)){         //
-        cout << "GDS read error" << endl;           // \   Remove this once debugging finished 
+        cout << "GDS read error" << endl;           // \   Remove this once debugging finished
         break;                                      // /
       }                                             //
       switch (current_GDSKey)
@@ -69,13 +69,13 @@ int gdscpp::import(string fileName){
 
         break;
       case GDS_GENERATIONS:
-      
+
         break;
       case GDS_UNITS:
 
         break;
       case GDS_BGNSTR:
-      
+
         break;
       case GDS_ENDLIB:
         cout << "Reached end of library." << endl;
@@ -100,7 +100,7 @@ int gdscpp::import(string fileName){
 
 int gdscpp::write(string fileName){
   gdsForge foo;
-  return foo.gdsCreate(fileName, this->STR);
+  return foo.gdsCreate(fileName, this->STR, this->units);
 }
 
 

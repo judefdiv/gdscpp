@@ -30,5 +30,10 @@ make
 ```
 
 ## Notes
-The library main goals to aid development of the ColdFlux team IARPA contract SuperTools 
-Author - JF de Villiers (Stellenbosch University)
+The library main goals to aid development of the ColdFlux team IARPA contract SuperTools
+
+Author -
+
+Text and nodes are not fully supported.
+
+AREF and box is currently not supported.

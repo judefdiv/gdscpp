@@ -132,7 +132,7 @@ class gdsPATH{
 
     unsigned int layer = 0;
     unsigned int dataType = 0;
-    unsigned int pathtype = 0;
+    unsigned int pathtype = 0;  // Shape: 0=Flush; 1=Round end; 2=square end, Half-Width
     unsigned int width = 0;
     vector<int> xCor;
     vector<int> yCor;
