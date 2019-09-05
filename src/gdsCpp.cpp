@@ -25,11 +25,13 @@ int gdscpp::import(string fileName)
   uint32_t current_sizeBlk;
   uint32_t current_GDSKey;
   bitset<16> current_bitarr;
-  vector<char> current_integer;
+  vector<int> current_integer;
+  auto current_int_iter = current_integer.begin();
   vector<double> current_B8Real;
   string current_words = "\0";
+  bool odd_state = false;
 
-  //Memory where element objects are held until pushing into greater object
+  //Memory where element objects are held until stored into library.
   gdsSTR plchold_str;
   gdsBOUNDARY plchold_bnd;
   gdsPATH plchold_path;
@@ -44,7 +46,7 @@ int gdscpp::import(string fileName)
 
   if (!gdsFile.is_open())
   {
-    cout << "GDS file \"" << fileName << "\" FAILED to be opened." << endl;
+    cout << "Error: GDS file \"" << fileName << "\" FAILED to be opened." << endl;
     return EXIT_FAILURE;
   }
   cout << "Importing \"" << fileName << "\" into GDSCpp." << endl;
@@ -59,21 +61,21 @@ int gdscpp::import(string fileName)
     gdsFile.read(current_readBlk, current_sizeBlk);
     if (GDSdistill(current_readBlk, current_GDSKey, current_bitarr, current_integer, current_B8Real, current_words))
     {
-      cout << "GDS read error" << endl;
+      cout << "Error: Unable to read GDS file." << endl;
       break;
     }
     else
     {
       if (GDSrecord2ASCII(current_readBlk))
       {                                   //
-        cout << "GDS read error" << endl; // \   Remove this once debugging finished
+        cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
         break;                            // /
       }                                   //
       switch (current_GDSKey)
       // Highest tier of data: HEADER, BGNLIB, LIBNAME, GENERATIONS, UNITS, BGNSTR, ENDDLIB
       {
       case GDS_HEADER:
-        version_number = (int)current_integer[0]; // TODO: Continue from here
+        version_number = (int)current_integer[0];
         break;
       case GDS_BGNLIB:
         std::transform(current_integer.begin(), current_integer.end(), std::back_inserter(last_modified), [](char a) { return (int)a; });
@@ -91,6 +93,8 @@ int gdscpp::import(string fileName)
       case GDS_BGNSTR:
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ FIRST NEST @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         //                           BOUNDARY, PATH SREF AREF TEXT NODE BOX
+        plchold_str.reset();
+        std::transform(current_integer.begin(), current_integer.end(), std::back_inserter(plchold_str.last_modified), [](char a) { return (int)a; });
         do
         {
           current_readBlk = new char[2];
@@ -104,16 +108,16 @@ int gdscpp::import(string fileName)
 
           if (GDSdistill(current_readBlk, current_GDSKey, current_bitarr, current_integer, current_B8Real, current_words))
           {
-            cout << "GDS read error" << endl;
+            cout << "Error: Unable to read GDS file." << endl;
             break;
           }
           else
           {
             if (GDSrecord2ASCII(current_readBlk))
-            {                                   //
-              cout << "GDS read error" << endl; // \   Remove this once debugging finished
-              break;                            // /
-            }                                   //
+            {                                                     //
+              cout << "Error: Unable to read GDS file." << endl;  // \   Remove this once debugging finished
+              break;                                              // /
+            }                                                     //
             switch (current_GDSKey)
             {
             case GDS_STRNAME:
@@ -122,7 +126,7 @@ int gdscpp::import(string fileName)
             case GDS_BOUNDARY:
               //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ secondary nest [BOUNDARY] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               // PLEX LAYER DATATYPE XY
-              // plchold_bnd.
+              plchold_bnd.reset();
               do
               {
                 current_readBlk = new char[2];
@@ -136,23 +140,54 @@ int gdscpp::import(string fileName)
 
                 if (GDSdistill(current_readBlk, current_GDSKey, current_bitarr, current_integer, current_B8Real, current_words))
                 {
-                  cout << "GDS read error" << endl;
+                  cout << "Error: Unable to read GDS file." << endl;
                   break;
                 }
                 else
                 {
                   if (GDSrecord2ASCII(current_readBlk))
-                  {                                   //
-                    cout << "GDS read error" << endl; // \   Remove this once debugging finished
-                    break;                            // /
-                  }                                   //
+                  {                                                     //
+                    cout << "Error: Unable to read GDS file." << endl;  // \   Remove this once debugging finished
+                    break;                                              // /
+                  }                                                     //
                   switch (current_GDSKey)
                   {
                   case GDS_PLEX:
                     //Ignore for now - seems to only be used with nodes
                     break;
                   case GDS_LAYER:
-                    // plch
+                    plchold_bnd.layer = current_integer[0];
+                    break;
+                  case GDS_DATATYPE:
+                    plchold_bnd.dataType = current_integer[0];
+                    break;
+                  case GDS_XY:
+                    //confirm xy as pairs
+                    if (current_integer.size()%2==0)
+                    {
+                        current_int_iter = current_integer.begin();
+                        odd_state = false;
+                        while (current_int_iter!=current_integer.end())
+                        {
+                          if (odd_state == false)
+                          {
+                            // x append
+                            plchold_bnd.xCor.push_back(*current_int_iter);
+                          }
+                          else
+                          {
+                            // y append
+                            plchold_bnd.yCor.push_back(*current_int_iter);
+                          }
+                          odd_state = !odd_state;
+                          current_int_iter++;
+                        }
+                    }
+                    else
+                    {
+                      cout << "Error: XY co_ordinates uneven" << endl;
+                    }
+
                     break;
                   }
                 }
@@ -172,7 +207,7 @@ int gdscpp::import(string fileName)
             case GDS_BOX:
               break;
             default:
-              cout << "Unrecognized record." << endl;
+              cout << "Error: Unrecognized record." << endl;
               break;
             }
           }
@@ -185,7 +220,7 @@ int gdscpp::import(string fileName)
         break;
 
       default:
-        cout << "Unrecognized record." << endl;
+        cout << "Error: Unrecognized record." << endl;
         break;
       }
     }
@@ -221,7 +256,7 @@ int gdscpp::quick2ASCII(string fileName)
 
   if (!gdsFile.is_open())
   {
-    cout << "GDS file \"" << fileName << "\" FAILED to be opened." << endl;
+    cout << "Error: GDS file \"" << fileName << "\" FAILED to be opened." << endl;
     return 1;
   }
 
@@ -520,12 +555,6 @@ void gdsTEXT::to_str()
 void gdscpp::reset()
 {
   version_number = 7;
-  last_accessed[0] = 0;
-  last_accessed[1] = 0;
-  last_accessed[2] = 0;
-  last_accessed[3] = 0;
-  last_accessed[4] = 0;
-  last_accessed[5] = 0;
   generations = 3;
   units[0] = 0.001;
   units[1] = 1e-9;
@@ -579,6 +608,54 @@ void gdsSREF::reset()
   scale = 1;
   xCor = 0;
   yCor = 0;
+  propattr = 0;
+  propvalue = "\0";
+}
+
+void gdsAREF::reset()
+{
+  // PLEX
+  name = "\0";
+  reflection = false;
+  angle = 0;
+  scale = 1;
+  xCor = 0;
+  yCor = 0;
+  propattr = 0;
+  propvalue = "\0";
+}
+
+void gdsTEXT::reset()
+{
+  textbody = "\0";
+  layer = 0;
+  scale = 1;
+  xCor = 0;
+  yCor = 0;
+  propattr = 0;
+  propvalue = "\0";
+}
+
+void gdsNODE::reset()
+{
+  plex = 0; // optional
+  layer = 0;
+  nodetype = 0;
+  // A maximum of 50 coordinates
+  xCor.clear();
+  yCor.clear();
+  propattr = 0;
+  propvalue = "\0";
+}
+
+void gdsBOX::reset()
+{
+  plex = 0; // optional
+  layer = 0;
+  boxtype = 0;
+  // A maximum of 50 coordinates
+  xCor.clear();
+  yCor.clear();
   propattr = 0;
   propvalue = "\0";
 }

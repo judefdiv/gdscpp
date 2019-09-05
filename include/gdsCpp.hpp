@@ -114,12 +114,11 @@ This is the highest class, holding all the information of a single .gds file.
 */
 class gdscpp{  // (GDS file)
   private:
-    int version_number=7;                       // GDS version number. Default to 7
-    int last_accessed[6] = {0,0,0,0,0,0};     // TODO: Default to current datetime if unread
+    int version_number=7;                     // GDS version number. Default to 7
     int generations = 3;                      // Default generations. Don't really use
-    double units[2] = {0.001, 1e-9};         // micron default
+    double units[2] = {0.001, 1e-9};          // micron default
     vector<gdsSTR> STR;                       // Holds all the structures of the gds file
-    vector<int> last_modified;               // TODO: Default to current datetime if unread
+    vector<int> last_modified;                // TODO: Default to current datetime if unread
     string library_name = "Untitled_library"; // Default libname
 
     int GDSrecord2ASCII(char *recIn);         // Does it belong here???
@@ -131,7 +130,7 @@ class gdscpp{  // (GDS file)
     void getSTR(vector<gdsSTR>& exVec){exVec = STR;};
     int import(string fileName);
     int write(string fileName);
-    int quick2ASCII(string fileName);       // does not store data, legacy code.
+    int quick2ASCII(string fileName);         // does not store data, legacy code.
     void to_str();
     void reset();
 };
@@ -151,6 +150,7 @@ class gdsSTR{
 
     string name = "\0";
 
+    vector<int> last_modified;
     vector<gdsBOUNDARY> BOUNDARY;
     vector<gdsPATH> PATH;
     vector<gdsSREF> SREF;
@@ -244,14 +244,15 @@ class gdsAREF{
     ~gdsAREF(){};
 
     void to_str();
+    void reset();
 
                               // PLEX
     string name = "\0";       // SNAME
     bool reflection = false;  // STRANS
     double angle = 0;         // subSTRANS
     double scale = 1;         // subSTRANS
-    int xCor;                 // XY
-    int yCor;                 // XY
+    int xCor = 0;                 // XY
+    int yCor = 0;                 // XY
     unsigned int propattr = 0;
     string propvalue = "\0";
 };
@@ -267,12 +268,13 @@ class gdsTEXT{
     ~gdsTEXT(){};
 
     void to_str();
+    void reset();
 
     string textbody = "\0";
     unsigned int layer = 0;
     double scale = 1;
-    int xCor;
-    int yCor;
+    int xCor = 0;
+    int yCor = 0;
     unsigned int propattr = 0;
     string propvalue = "\0";
 };
@@ -288,6 +290,8 @@ class gdsNODE{
     ~gdsNODE(){};
 
     void to_str();
+    void reset();
+
 
     unsigned int plex = 0;  // optional
     unsigned int layer = 0;
@@ -310,6 +314,7 @@ class gdsBOX{
     ~gdsBOX(){};
 
     void to_str();
+    void reset();
 
     unsigned int plex = 0;  // optional
     unsigned int layer = 0;
