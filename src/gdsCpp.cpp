@@ -67,10 +67,10 @@ int gdscpp::import(string fileName)
     else
     {
       if (GDSrecord2ASCII(current_readBlk))
-      {                                   //
+      {                                                    //
         cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
-        break;                            // /
-      }                                   //
+        break;                                             // /
+      }                                                    //
       switch (current_GDSKey)
       // Highest tier of data: HEADER, BGNLIB, LIBNAME, GENERATIONS, UNITS, BGNSTR, ENDDLIB
       {
@@ -114,10 +114,10 @@ int gdscpp::import(string fileName)
           else
           {
             if (GDSrecord2ASCII(current_readBlk))
-            {                                                     //
-              cout << "Error: Unable to read GDS file." << endl;  // \   Remove this once debugging finished
-              break;                                              // /
-            }                                                     //
+            {                                                    //
+              cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
+              break;                                             // /
+            }                                                    //
             switch (current_GDSKey)
             {
             case GDS_STRNAME:
@@ -125,7 +125,7 @@ int gdscpp::import(string fileName)
               break;
             case GDS_BOUNDARY:
               //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ secondary nest [BOUNDARY] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-              // PLEX LAYER DATATYPE XY
+              // PLEX LAYER DATATYPE XY PROPATTR PROPVALUE
               plchold_bnd.reset();
               do
               {
@@ -146,10 +146,10 @@ int gdscpp::import(string fileName)
                 else
                 {
                   if (GDSrecord2ASCII(current_readBlk))
-                  {                                                     //
-                    cout << "Error: Unable to read GDS file." << endl;  // \   Remove this once debugging finished
-                    break;                                              // /
-                  }                                                     //
+                  {                                                    //
+                    cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
+                    break;                                             // /
+                  }                                                    //
                   switch (current_GDSKey)
                   {
                   case GDS_PLEX:
@@ -163,35 +163,44 @@ int gdscpp::import(string fileName)
                     break;
                   case GDS_XY:
                     //confirm xy as pairs
-                    if (current_integer.size()%2==0)
+                    if (current_integer.size() % 2 == 0)
                     {
-                        current_int_iter = current_integer.begin();
-                        odd_state = false;
-                        while (current_int_iter!=current_integer.end())
+                      current_int_iter = current_integer.begin();
+                      odd_state = false;
+                      while (current_int_iter != current_integer.end())
+                      {
+                        if (odd_state == false)
                         {
-                          if (odd_state == false)
-                          {
-                            // x append
-                            plchold_bnd.xCor.push_back(*current_int_iter);
-                          }
-                          else
-                          {
-                            // y append
-                            plchold_bnd.yCor.push_back(*current_int_iter);
-                          }
-                          odd_state = !odd_state;
-                          current_int_iter++;
+                          // x append
+                          plchold_bnd.xCor.push_back(*current_int_iter);
                         }
+                        else
+                        {
+                          // y append
+                          plchold_bnd.yCor.push_back(*current_int_iter);
+                        }
+                        odd_state = !odd_state;
+                        current_int_iter++;
+                      }
                     }
                     else
                     {
                       cout << "Error: XY co_ordinates uneven" << endl;
                     }
-
+                    break;
+                  case GDS_PROPATTR:
+                    plchold_bnd.propattr = current_integer[0];
+                    break;
+                  case GDS_PROPVALUE:
+                    plchold_bnd.propvalue = current_words;
+                    break;
+                  default:
+                    cout << "Error: Unrecognized record." << endl;
                     break;
                   }
                 }
               } while (current_GDSKey != GDS_ENDEL);
+              plchold_str.BOUNDARY.push_back(plchold_bnd);
               //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end secondary nest ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               break;
             case GDS_PATH:

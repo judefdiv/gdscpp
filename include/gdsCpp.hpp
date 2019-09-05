@@ -178,6 +178,8 @@ class gdsBOUNDARY{
     unsigned int dataType = 0;
     vector<int> xCor;
     vector<int> yCor;
+    // Property attribute seldom used. Valid range specified from 1 to  127
+    // If value is 0, no attribute was set
     unsigned int propattr = 0;
     string propvalue = "\0";
 };
