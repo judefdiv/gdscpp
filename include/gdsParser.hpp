@@ -73,7 +73,7 @@ string GDSkey2ASCII(unsigned int inHex);
 #define GDS_PLEX            0x2F03
 #define GDS_PROPATTR        0x2b02
 #define GDS_PROPVALUE       0x2c06
-// #define GDS_COLROW   0x1302
+#define GDS_COLROW          0x1302
 // #define GDS_REFLIBS    0x1f06
 // #define GDS_FONTS      0x2006
 // #define GDS_ATTRTABLE  0x2306

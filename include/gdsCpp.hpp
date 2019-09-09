@@ -23,30 +23,36 @@
 *                                       [<FormatType>]  [ ](Don't bother here unless needed.)
 *                                       [UNITS]         [X]
 *                                       [BGNSTR]        [ ]
-*                                       [STRNAME]       [ ]
+*                                       [STRNAME]       [X]
 *                                       [ENDLIB]        [ ]
 */
 // =============================== ELEMENT RECORDS ==================================
 // Element records form part of a structure
-// --------------------------------- 1: BOUNDARY        [ ]--------------------------
+// --------------------------------- 1: BOUNDARY        [X]--------------------------
 //              PLEX       //Ignore for now - seems to only be used with nodes
 //              LAYER
 //              DATATYPE
 //              XY
-// ----------------------------------- 2: PATH          [ ]--------------------------
+//              PROPATTR
+//              PROPVALUE
+// ----------------------------------- 2: PATH          [X]--------------------------
 //              PLEX       //Ignore for now - seems to only be used with nodes
 //              LAYER
 //              DATATYPE
 //              PATHTYPE
 //              WIDTH
 //              XY
-// --------------------------- 3: STRUCTURE REFERENCE   [ ]--------------------------
+//              PROPATTR
+//              PROPVALUE
+// --------------------------- 3: STRUCTURE REFERENCE   [X]--------------------------
 //              SNAME
 //              STRANS Transformation )
 //              MAG                   )
 //              ANGLE                 )
 //              XY
-// ----------------------------- 4: ARRAY REFERENCE     [ ]--------------------------
+//              PROPATTR
+//              PROPVALUE
+// ----------------------------- 4: ARRAY REFERENCE     [X]--------------------------
 //              PLEX       //Ignore for now - seems to only be used with nodes
 //              SNAME
 //              STRANS Transformation )
@@ -54,6 +60,8 @@
 //              ANGLE                 )
 //              COLROW
 //              XY
+//              PROPATTR
+//              PROPVALUE
 // ----------------------------------- 5: TEXT          [ ]--------------------------
 //              PLEX       //Ignore for now - seems to only be used with nodes
 //              LAYER
@@ -73,11 +81,15 @@
 //              LAYER
 //              NODETYPE
 //              XY
+//              PROPATTR
+//              PROPVALUE
 // ----------------------------------- 7: BOX           [ ]--------------------------
 //              PLEX       //Ignore for now - seems to only be used with nodes
 //              LAYER
 //              BOXTYPE
 //              XY
+//              PROPATTR
+//              PROPVALUE
 
 #ifndef gdsCpp
 #define gdsCpp
@@ -226,9 +238,10 @@ class gdsSREF{
     void reset();
 
     string name = "\0";
-    bool reflection = false;
-    double angle = 0;
-    double scale = 1;
+    bitset<16> sref_flags;
+    bool reflection = false;  // boolean,    flag at bit 0
+    double scale = 1;         // multiplier, flag at bit 13
+    double angle = 0;         // degrees,    flag at bit 14
     int xCor = 0;
     int yCor = 0;
     unsigned int propattr = 0;
@@ -248,11 +261,13 @@ class gdsAREF{
     void to_str();
     void reset();
 
-                              // PLEX
-    string name = "\0";       // SNAME
-    bool reflection = false;  // STRANS
-    double angle = 0;         // subSTRANS
-    double scale = 1;         // subSTRANS
+                                  // PLEX
+    string name = "\0";           // SNAME
+    bitset<16> aref_flags;
+    bool reflection = false;      // STRANS
+    double angle = 0;             // subSTRANS
+    double scale = 1;             // subSTRANS
+    int colrow = 0;
     int xCor = 0;                 // XY
     int yCor = 0;                 // XY
     unsigned int propattr = 0;
