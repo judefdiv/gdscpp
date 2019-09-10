@@ -9,14 +9,14 @@
  * File:				main.cpp
  */
 
-#include <iostream>				//stream
-#include <string>					//string goodies
+#include <iostream>									//stream
+#include <string>									//string goodies
 #include <set>
 // #include <map>
-#include <iomanip> 				// setprecision()
+#include <iomanip> 									// setprecision()
 
 #include "gdsCpp.hpp"
-#include "gdsForge.hpp"	// used to testing function
+#include "gdsForge.hpp"								// used to testing function
 
 #define versionNo 0.1
 #define outfileName "data/results/gds/"				// Default file output name
@@ -111,8 +111,8 @@ int RunTool(int argCount, char** argValues){
 	else if(!command.compare("-i")){
 		if(gdsFName.compare("\0")){
 			gdscpp gdsfile;
-			// gdsfile.import(gdsFName);				//Todo - comment in import
-			gdsfile.quick2ASCII(gdsFName);
+			gdsfile.import(gdsFName);				//Todo - comment in import
+			// gdsfile.quick2ASCII(gdsFName);
 			return 1;
 		}
 		else{
