@@ -40,29 +40,30 @@ int gdsForge::gdsCreate(string FileName, vector<gdsSTR>& inVec, double units[2])
 	this->gdsBegin();
 
 	// gdsCopyStr("ImportFileStrs.gds2");
+	bool minimal = false;
 
 	for(unsigned int i = 0; i < this->STR.size(); i++){
 		// Start of the structure
 		gdsStrStart(this->STR[i].name);
 			// References
 			for(unsigned int j = 0; j < this->STR[i].SREF.size(); j++){
-				gdsSRef(this->STR[i].SREF[j], true);
+				gdsSRef(this->STR[i].SREF[j], minimal);
 			}
 			// Boundaries
 			for(unsigned int j = 0; j < this->STR[i].BOUNDARY.size(); j++){
-				gdsBoundary(this->STR[i].BOUNDARY[j], true);
+				gdsBoundary(this->STR[i].BOUNDARY[j], minimal);
 			}
 			// Paths
 			for(unsigned int j = 0; j < this->STR[i].PATH.size(); j++){
-				gdsPath(this->STR[i].PATH[j], true);
+				gdsPath(this->STR[i].PATH[j], minimal);
 			}
 			// Nodes
 			for(unsigned int j = 0; j < this->STR[i].NODE.size(); j++){
-				gdsNode(this->STR[i].NODE[j], true);
+				gdsNode(this->STR[i].NODE[j], minimal);
 			}
 			// Texts
 			for(unsigned int j = 0; j < this->STR[i].TEXT.size(); j++){
-				gdsText(this->STR[i].TEXT[j], true);
+				gdsText(this->STR[i].TEXT[j], minimal);
 			}
 		gdsStrEnd();
 
@@ -250,8 +251,8 @@ void gdsForge::gdsPath(gdsPATH& in_PATH, bool minimal){
 	data[0] = in_PATH.dataType;
 	this->GDSwriteInt(GDS_DATATYPE, data, 1);
 
-	data[0] = in_PATH.pathtype;
-	this->GDSwriteInt(GDS_PATHTYPE, data, 1);
+	// data[0] = in_PATH.pathtype;
+	// this->GDSwriteInt(GDS_PATHTYPE, data, 1);
 
 	if(minimal){	// true
 		data[0] = 1;
@@ -477,8 +478,8 @@ void gdsForge::gdsText(gdsTEXT in_TEXT, bool minimal){
 	data[0] = in_TEXT.layer;
 	this->GDSwriteInt(GDS_LAYER, data, 1);
 
-	// data[0] = in_TEXT.;
-	// this->GDSwriteInt(GDS_TEXTTYPE, data, 1);
+	data[0] = in_TEXT.text_type;
+	this->GDSwriteInt(GDS_TEXTTYPE, data, 1);
 
 
 	int corXY[2];
@@ -566,9 +567,9 @@ int gdsForge::GDSwriteStr(int record, string inStr){
 	}
 	unsigned char OHout[4];
 
-	if(inStr.length() % 2 != 0){
+	if(inStr.length() % 2 == 1){
 		// therefore odd
-		inStr.push_back('\0');
+		inStr.push_back(' ');
 	}
 
 	int lenStr = inStr.length();

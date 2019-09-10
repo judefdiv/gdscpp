@@ -112,6 +112,7 @@ int RunTool(int argCount, char** argValues){
 		if(gdsFName.compare("\0")){
 			gdscpp gdsfile;
 			gdsfile.import(gdsFName);				//Todo - comment in import
+			gdsfile.write("Heinsfile.gds");
 			// gdsfile.quick2ASCII(gdsFName);
 			return 1;
 		}
