@@ -158,13 +158,14 @@ void testGDS(string fileName){
 	vector<gdsSTR> arrSTR;
 	arrSTR.resize(1);
 
-	vector<int> arrX;
-	vector<int> arrY;
+	// vector<int> arrX;
+	// vector<int> arrY;
 
 	// gdsBOUNDARY draw2ptBox(int layer, int blX, int blY, int trX, int trY);
 	// gdsBOUNDARY drawBoundary(int layer, vector<int> corX, vector<int> corY);
 	// gdsPATH drawPath(int layer, unsigned int width, vector<int> corX, vector<int> corY);
 
+	arrSTR[0].name = "MyStr";
 	arrSTR[0].BOUNDARY.push_back(draw2ptBox(1, -100, -100, 100, 100));
 
 	fooGDS.setSTR(arrSTR);

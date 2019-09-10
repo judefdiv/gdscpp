@@ -22,11 +22,12 @@ gdsForge::gdsForge(){
 /**
  * [gdsForge::gdsCreate - Generates/creates/exports the GDS file]
  * @param  FileName [The file name of the to be created GDS file]
+ * @param  inVec    [The vector of GDS structure to be created into the GDS file]
+ * @param  double   [The scale the GDS file must use]
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
 
-// int gdsForge::gdsCreate(string FileName){
-int gdsForge::gdsCreate(string FileName, vector<gdsSTR>& inVec){
+int gdsForge::gdsCreate(string FileName, vector<gdsSTR>& inVec, double units[2]){
 	this->STR = inVec;
 
 	// Initializing the writing
@@ -40,29 +41,28 @@ int gdsForge::gdsCreate(string FileName, vector<gdsSTR>& inVec){
 
 	// gdsCopyStr("ImportFileStrs.gds2");
 
-
 	for(unsigned int i = 0; i < this->STR.size(); i++){
 		// Start of the structure
 		gdsStrStart(this->STR[i].name);
 			// References
 			for(unsigned int j = 0; j < this->STR[i].SREF.size(); j++){
-				gdsSREF(this->STR[i].SREF[j].name, this->STR[i].SREF[j].reflection, this->STR[i].SREF[j].scale, this->STR[i].SREF[j].angle, this->STR[i].SREF[j].xCor, this->STR[i].SREF[j].yCor);
+				gdsSRef(this->STR[i].SREF[j], true);
 			}
 			// Boundaries
 			for(unsigned int j = 0; j < this->STR[i].BOUNDARY.size(); j++){
-				gdsBoundary(this->STR[i].BOUNDARY[j].layer, this->STR[i].BOUNDARY[j].xCor, this->STR[i].BOUNDARY[j].yCor);
+				gdsBoundary(this->STR[i].BOUNDARY[j], true);
 			}
 			// Paths
 			for(unsigned int j = 0; j < this->STR[i].PATH.size(); j++){
-				gdsPath(this->STR[i].PATH[j].layer, this->STR[i].PATH[j].width, this->STR[i].PATH[j].xCor, this->STR[i].PATH[j].yCor);
+				gdsPath(this->STR[i].PATH[j], true);
 			}
 			// Nodes
 			for(unsigned int j = 0; j < this->STR[i].NODE.size(); j++){
-				gdsNode(this->STR[i].NODE[j].layer, this->STR[i].NODE[j].xCor, this->STR[i].NODE[j].yCor);
+				gdsNode(this->STR[i].NODE[j], true);
 			}
 			// Texts
 			for(unsigned int j = 0; j < this->STR[i].TEXT.size(); j++){
-
+				gdsText(this->STR[i].TEXT[j], true);
 			}
 		gdsStrEnd();
 
@@ -150,6 +150,24 @@ gdsBOUNDARY draw2ptBox(int layer, int blX, int blY, int trX, int trY){
 	return drawBoundary(layer, ptsX, ptsY);
 }
 
+/**
+ * [drawSREF - Draws a structure using a reference]
+ * @param  STRname [The name of the structure that must be referenced]
+ * @param  Xcor    [X coordinate]
+ * @param  Ycor    [Y coordinate]
+ * @return         [Class of GDS s-reference which can be used in a GDS structure]
+ */
+
+gdsSREF drawSREF(string STRname, int Xcor, int Ycor){
+	gdsSREF foo;
+
+	foo.name = STRname;
+	foo.xCor = Xcor;
+	foo.yCor = Ycor;
+
+	return foo;
+}
+
 /***********************************************************************************
  **************************** UpperGround Level ************************************
  ***********************************************************************************/
@@ -211,175 +229,148 @@ void gdsForge::gdsStrEnd(){
 }
 
 /**
- * [gdsForge::gdsPath - Draws a track/path/route in the correct GDS format]
- * @param Layer [number of the layer that the track must be on]
- * @param width [The thickness of the tracks]
- * @param corXY [A vector of X coordinates of the tracks]
- * @param corXY [A vector of Y coordinates of the tracks]
+ * [gdsForge::gdsPath - Create the PATH structure]
+ * @param in_PATH [The class containing the PATH structure]
+ * @param minimal [If true only the minimal is PATH structure is created]
  */
 
-void gdsForge::gdsPath(int Layer, int width, vector<int>& corX, vector<int>& corY){
+void gdsForge::gdsPath(gdsPATH& in_PATH, bool minimal){
 	int data[1];
-	int corXY[corX.size()*2];
+	int corXY[in_PATH.xCor.size()*2];
 
 	this->GDSwriteRec(GDS_PATH);
 
 	// ELFLAGS and PLEX are optional
 
 	// Layer number, 0 to 63
-	data[0] = Layer;
+	data[0] = in_PATH.layer;
 	this->GDSwriteInt(GDS_LAYER, data, 1);
 
 	// unimportant, set to zero.
-	data[0] = 0;
+	data[0] = in_PATH.dataType;
 	this->GDSwriteInt(GDS_DATATYPE, data, 1);
 
-	// Shape of the end cap.
-	// 0=Flush
-	// 1=Half Round Extension
-	// 2=Half Width Extension
-	data[0] = 2;
+	data[0] = in_PATH.pathtype;
 	this->GDSwriteInt(GDS_PATHTYPE, data, 1);
 
+	if(minimal){	// true
+		data[0] = 1;
+		this->GDSwriteInt(GDS_PATHTYPE, data, 1);
+	}
+	else{					// false
+		data[0] = in_PATH.pathtype;
+		this->GDSwriteInt(GDS_PATHTYPE, data, 1);
+	}
+
 	// Width of tracks
-	data[0] = width;
+	data[0] = in_PATH.width;
 	this->GDSwriteInt(GDS_WIDTH, data, 1);
 
 	// XY coordinates
 	// boundary must be closed, first and last coordinate must be the same
 	// minimum of 4 points(triangle)
-	for(int i = 0; i < corX.size()*2; i++){
+	for(int i = 0; i < in_PATH.xCor.size()*2; i++){
 		if(i % 2){
-			corXY[i] = corY[i/2];
+			corXY[i] = in_PATH.yCor[i/2];
 		}
 		else{
-			corXY[i] = corX[i/2];
+			corXY[i] = in_PATH.xCor[i/2];
 		}
 	}
 
-	this->GDSwriteInt(GDS_XY, corXY, corX.size()*2);
+	this->GDSwriteInt(GDS_XY, corXY, in_PATH.xCor.size()*2);
+
+	// Optional goodies
+	if(!minimal){ 				//false
+		data[0] = in_PATH.propattr;
+		this->GDSwriteInt(GDS_PROPATTR, data, 1);
+
+		this->GDSwriteStr(GDS_PROPVALUE, in_PATH.propvalue);
+	}
 
 	this->GDSwriteRec(GDS_ENDEL);
+
 }
 
 /**
- * [gdsForge::gdsBoundary - Draws a shape in the correct GDS format]
- * @param Layer [number of the layer that the shape must be on]
- * @param corX [A vector of X coordinates of the corners of shape]
- * @param corY [A vector of Y coordinates of the corners of shape]
+ * [gdsForge::gdsBoundary - Create the BOUNDARY structure]
+ * @param in_BOUNDARY [The class containing the BOUNDARY structure]
+ * @param minimal [If true only the minimal is BOUNDARY structure is created]
  */
 
-void gdsForge::gdsBoundary(int Layer, vector<int>& corX, vector<int>& corY){
+void gdsForge::gdsBoundary(gdsBOUNDARY& in_BOUNDARY, bool minimal){
 	int data[1];
-	int corXY[corX.size()*2];
+	int corXY[in_BOUNDARY.xCor.size()*2];
 
 	this->GDSwriteRec(GDS_BOUNDARY);
 
 	// ELFLAGS and PLEX are optional
 
 	// Layer number, 0 to 63
-	data[0] = Layer;
+	data[0] = in_BOUNDARY.layer;
 	this->GDSwriteInt(GDS_LAYER, data, 1);
 
 	// unimportant, set to zero.
-	data[0] = 0;
+	data[0] = in_BOUNDARY.dataType;
 	this->GDSwriteInt(GDS_DATATYPE, data, 1);
 
 	// XY coordinates
 	// boundary must be closed, first and last coordinate must be the same
 	// minimum of 4 points(triangle)
 
-	for(int i = 0; i < corX.size()*2; i++){
+	for(int i = 0; i < in_BOUNDARY.xCor.size()*2; i++){
 		if(i % 2){
 			// cout << "corY[" << i/2  << "]: " << corY[i/2] << endl;
-			corXY[i] = corY[i/2];
+			corXY[i] = in_BOUNDARY.yCor[i/2];
 		}
 		else{
 			// cout << "corX[" << i/2  << "]: " << corX[i/2] << endl;
-			corXY[i] = corX[i/2];
+			corXY[i] = in_BOUNDARY.xCor[i/2];
 		}
 	}
 
-	this->GDSwriteInt(GDS_XY, corXY, corX.size() * 2);
+	this->GDSwriteInt(GDS_XY, corXY, in_BOUNDARY.xCor.size() * 2);
+
+	// Optional goodies
+	if(!minimal){ 				//false
+		data[0] = in_BOUNDARY.propattr;
+		this->GDSwriteInt(GDS_PROPATTR, data, 1);
+
+		this->GDSwriteStr(GDS_PROPVALUE, in_BOUNDARY.propvalue);
+	}
 
 	this->GDSwriteRec(GDS_ENDEL);
 }
 
 /**
- * [gdsForge::gdsNode - Draws a shape for a electrical pad in the correct GDS format]
- * @param Layer [number of the layer that the shape must be on]
- * @param corX [A vector of X coordinates of the corners of shape]
- * @param corY [A vector of Y coordinates of the corners of shape]
+ * [gdsForge::gdsSRef - Create the SREF structure]
+ * @param in_SREF [The class containing the SREF structure]
+ * @param minimal [If true only the minimal is SREF structure is created]
  */
 
-void gdsForge::gdsNode(int Layer, vector<int>& corX, vector<int>& corY){
+void gdsForge::gdsSRef(gdsSREF& in_SREF, bool minimal){
 	int data[1];
-	int corXY[corX.size()*2];
-
-	this->GDSwriteRec(GDS_NODE);
-
-	// ELFLAGS and PLEX are optional
-
-	// Layer number, 0 to 63
-	data[0] = Layer;
-	this->GDSwriteInt(GDS_LAYER, data, 1);
-
-	// unimportant, set to zero.
-	data[0] = 0;
-	this->GDSwriteInt(GDS_DATATYPE, data, 1);
-
-	// XY coordinates
-	// boundary must be closed, first and last coordinate must be the same
-	// minimum of 4 points(triangle)
-
-	for(int i = 0; i < corX.size()*2; i++){
-		if(i % 2){
-			// cout << "corY[" << i/2  << "]: " << corY[i/2] << endl;
-			corXY[i] = corY[i/2];
-		}
-		else{
-			// cout << "corX[" << i/2  << "]: " << corX[i/2] << endl;
-			corXY[i] = corX[i/2];
-		}
-	}
-
-	this->GDSwriteInt(GDS_XY, corXY, corX.size() * 2);
-
-	this->GDSwriteRec(GDS_ENDEL);
-}
-
-/**
- * [gdsForge::gdsSREF - Creates a reference to another cell in the correct GDS format]
- * @param refName [Name of the structure reference]
- * @param ReflX   [Reflection across x-axis]
- * @param mag     [Magnification of the cell, default 1]
- * @param ang     [Angle of rotation, measured anticlockwise]
- * @param corX    [X-coordinate]
- * @param corY    [Y-coordinate]
- */
-
-void gdsForge::gdsSREF(string refName, bool ReflX, double mag, double ang, int corX, int corY){
 	this->GDSwriteRec(GDS_SREF);
 
 	// ELFLAGS and PLEX are optional
 
 	// name of the structure that is referenced
-	this->GDSwriteStr(GDS_SNAME, refName);
+	this->GDSwriteStr(GDS_SNAME, in_SREF.name);
 
 	// two byte, bit array controlling reflection, magnification and rotation.
 	bitset<16> bits;
 
 	// reflect across x-axis
-	bits.set(15, ReflX);
+	bits.set(15, in_SREF.reflection);
 
 	// magnification, default 1
-	if(mag == 1)
+	if(in_SREF.scale == 1)
 		bits.set(2, 0);
 	else
 		bits.set(2, 1);
 
 	// angle of rotation
-	if(ang == 0)
+	if(in_SREF.angle == 0)
 		bits.set(1, 0);
 	else
 		bits.set(1, 1);
@@ -388,34 +379,93 @@ void gdsForge::gdsSREF(string refName, bool ReflX, double mag, double ang, int c
 
 	double arrDou[1];
 	// Magnification, default 1
-	if(mag != 1){
-		arrDou[0] = mag;
+	if(in_SREF.scale != 1){
+		arrDou[0] = in_SREF.scale;
 		this->GDSwriteRea(GDS_MAG, arrDou, 1);
 	}
 
 	// Angle measured counterclockwise
-	if(ang != 0){
-		arrDou[0] = ang;
+	if(in_SREF.angle != 0){
+		arrDou[0] = in_SREF.angle;
 		this->GDSwriteRea(GDS_ANGLE, arrDou, 1);
 	}
 
 	int corXY[2];
-	corXY[0] = corX;
-	corXY[1] = corY;
+	corXY[0] = in_SREF.xCor;
+	corXY[1] = in_SREF.yCor;
 	this->GDSwriteInt(GDS_XY, corXY, 2);
+
+	// Optional goodies
+	if(!minimal){ 				//false
+		data[0] = in_SREF.propattr;
+		this->GDSwriteInt(GDS_PROPATTR, data, 1);
+
+		this->GDSwriteStr(GDS_PROPVALUE, in_SREF.propvalue);
+	}
 
 	this->GDSwriteRec(GDS_ENDEL);
 }
 
 /**
- * [gdsForge::gdsText - Insert texts into the GDS file]
- * @param Layer [Number of the layer that the text/string must be on]
- * @param words [The string/text to be inserted into the GDS file]
- * @param corX  [X-coordinate]
- * @param corY  [Y-coordinate]
+ * [gdsForge::gdsSRef - Create the NODE structure]
+ * @param gdsNODE [The class containing the NODE structure]
+ * @param minimal [If true only the minimal is NODE structure is created]
  */
 
-void gdsForge::gdsText(int Layer, string words, int corX, int corY){
+void gdsForge::gdsNode(gdsNODE& in_NODE, bool minimal){
+	int data[1];
+	int corXY[in_NODE.xCor.size()*2];
+
+	this->GDSwriteRec(GDS_NODE);
+
+	// ELFLAGS and PLEX are optional
+	if(!minimal){ 				//false
+		data[0] = in_NODE.plex;
+		this->GDSwriteInt(GDS_PLEX, data, 1);
+	}
+
+	// Layer number, 0 to 63
+	data[0] = in_NODE.layer;
+	this->GDSwriteInt(GDS_LAYER, data, 1);
+
+	data[0] = in_NODE.nodetype;
+	this->GDSwriteInt(GDS_NODETYPE, data, 1);
+
+	// XY coordinates
+	// boundary must be closed, first and last coordinate must be the same
+	// minimum of 4 points(triangle)
+
+	for(int i = 0; i < in_NODE.xCor.size()*2; i++){
+		if(i % 2){
+			// cout << "corY[" << i/2  << "]: " << corY[i/2] << endl;
+			corXY[i] = in_NODE.yCor[i/2];
+		}
+		else{
+			// cout << "corX[" << i/2  << "]: " << corX[i/2] << endl;
+			corXY[i] = in_NODE.xCor[i/2];
+		}
+	}
+
+	this->GDSwriteInt(GDS_XY, corXY, in_NODE.xCor.size() * 2);
+
+	// Optional goodies
+	if(!minimal){ 				//false
+		data[0] = in_NODE.propattr;
+		this->GDSwriteInt(GDS_PROPATTR, data, 1);
+
+		this->GDSwriteStr(GDS_PROPVALUE, in_NODE.propvalue);
+	}
+
+	this->GDSwriteRec(GDS_ENDEL);
+}
+
+/**
+ * [gdsForge::gdsText - Create the TEXT structure]
+ * @param gdsTEXT [The class containing the TEXT structure]
+ * @param minimal [If true only the minimal is TEXT structure is created]
+ */
+
+void gdsForge::gdsText(gdsTEXT in_TEXT, bool minimal){
 	int data[1];
 	this->GDSwriteRec(GDS_TEXT);
 
@@ -424,26 +474,31 @@ void gdsForge::gdsText(int Layer, string words, int corX, int corY){
 	// PRESENTATION; PATHTYPE, WIDTH, STRANS, MAG, and ANGLE are optional
 
 	// Layer number, 0 to 63
-	data[0] = Layer;
+	data[0] = in_TEXT.layer;
 	this->GDSwriteInt(GDS_LAYER, data, 1);
 
-	// unimportant, set to zero.
-	data[0] = 0;
-	this->GDSwriteInt(GDS_TEXTTYPE, data, 1);
+	// data[0] = in_TEXT.;
+	// this->GDSwriteInt(GDS_TEXTTYPE, data, 1);
 
 
 	int corXY[2];
-	corXY[0] = corX;
-	corXY[1] = corY;
+	corXY[0] = in_TEXT.xCor;
+	corXY[1] = in_TEXT.yCor;
 	this->GDSwriteInt(GDS_XY, corXY, 2);
 
 	// text/string to be used of the structure that is referenced
-	this->GDSwriteStr(GDS_STRING, words);
+	this->GDSwriteStr(GDS_STRING, in_TEXT.textbody);
+
+	// Optional goodies
+	if(!minimal){ 				//false
+		data[0] = in_TEXT.propattr;
+		this->GDSwriteInt(GDS_PROPATTR, data, 1);
+
+		this->GDSwriteStr(GDS_PROPVALUE, in_TEXT.propvalue);
+	}
 
 	this->GDSwriteRec(GDS_ENDEL);
 }
-
-
 
 /***********************************************************************************
  **************************** UnderGround Level ************************************
