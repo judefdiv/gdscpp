@@ -748,7 +748,7 @@ int gdscpp::import(string fileName)
 int gdscpp::write(string fileName)
 {
   gdsForge foo;
-  return foo.gdsCreate(fileName, this->STR);
+  return foo.gdsCreate(fileName, this->STR, this->units);
 }
 
 /**
