@@ -62,7 +62,7 @@
 //              XY
 //              PROPATTR
 //              PROPVALUE
-// ----------------------------------- 5: TEXT          [ ]--------------------------
+// ----------------------------------- 5: TEXT          [X]--------------------------
 //              PLEX       //Ignore for now - seems to only be used with nodes
 //              LAYER
 //              TEXTTYPE
@@ -76,14 +76,14 @@
 //              STRING
 //              PROPATTR
 //              PROPVALUE
-// ----------------------------------- 6: NODE          [ ]--------------------------
+// ----------------------------------- 6: NODE          [X]--------------------------
 //              PLEX
 //              LAYER
 //              NODETYPE
 //              XY
 //              PROPATTR
 //              PROPVALUE
-// ----------------------------------- 7: BOX           [ ]--------------------------
+// ----------------------------------- 7: BOX           [X]--------------------------
 //              PLEX       //Ignore for now - seems to only be used with nodes
 //              LAYER
 //              BOXTYPE
@@ -137,7 +137,8 @@ class gdscpp{  // (GDS file)
   public:
     gdscpp(){};
     ~gdscpp(){};
-    void setSTR(vector<gdsSTR>& exVec){STR = exVec;};
+    void setSTR(gdsSTR target_structure);
+    void setSTR(vector<gdsSTR> target_structure);
     //void setSTR(gdsSTR exVec){STR.push_back(exVec);};
     void getSTR(vector<gdsSTR>& exVec){exVec = STR;};
     int import(string fileName);
@@ -263,7 +264,7 @@ class gdsAREF{
 
                                   // PLEX
     string name = "\0";           // SNAME
-    bitset<16> aref_flags;
+    bitset<16> aref_transformation_flags;
     bool reflection = false;      // STRANS
     double angle = 0;             // subSTRANS
     double scale = 1;             // subSTRANS
@@ -287,9 +288,21 @@ class gdsTEXT{
     void to_str();
     void reset();
 
+    /* Bits 10 and 11, taken together as a binary number,
+     * specify the font (00 means font 0, 01 rneans font 1,
+     * 10 means font 2, and 11 means font 3). Bits 12 and 13 specify the vertical justification
+     * (00 means top, 01 means middle, and 10 means bottom). Bits 14 and 15 specify the horizontal justification
+     * (00 means left, 01 means center, and 10 means right). Bits 0 through 9 are reserved for future use and must be cleared.
+     * If this record is omitted, then top-left justification and font 0 are assumed.*/
+    bitset<16> presentation_flags;
     string textbody = "\0";
     unsigned int layer = 0;
+    int text_type = 0;
+    int path_type = 0;
+    int width = 0;
+    bitset<16> text_transformation_flags;
     double scale = 1;
+    double angle = 0;
     int xCor = 0;
     int yCor = 0;
     unsigned int propattr = 0;

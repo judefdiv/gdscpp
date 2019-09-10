@@ -74,11 +74,13 @@ string GDSkey2ASCII(unsigned int inHex);
 #define GDS_PROPATTR        0x2b02
 #define GDS_PROPVALUE       0x2c06
 #define GDS_COLROW          0x1302
+#define GDS_NODETYPE        0x2a02
+#define GDS_BOXTYPE         0x2E02
 // #define GDS_REFLIBS    0x1f06
 // #define GDS_FONTS      0x2006
 // #define GDS_ATTRTABLE  0x2306
 // #define GDS_EFLAGS   0x2601
-// #define GDS_NODETYPE 0x2a02
+
 
 
 #endif

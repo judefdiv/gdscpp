@@ -194,6 +194,9 @@ int gdscpp::import(string fileName)
                   case GDS_PROPVALUE:
                     plchold_bnd.propvalue = current_words;
                     break;
+                  case GDS_ENDEL:
+
+                    break;
                   default:
                     cout << "Error: Unrecognized record." << endl;
                     break;
@@ -280,6 +283,9 @@ int gdscpp::import(string fileName)
                   case GDS_PROPVALUE:
                     plchold_path.propvalue = current_words;
                     break;
+                  case GDS_ENDEL:
+
+                    break;
                   default:
                     cout << "Error: Unrecognized record." << endl;
                     break;
@@ -354,6 +360,9 @@ int gdscpp::import(string fileName)
                   case GDS_PROPVALUE:
                     plchold_sref.propvalue = current_words;
                     break;
+                  case GDS_ENDEL:
+
+                    break;
                   default:
                     cout << "Error: Unrecognized record." << endl;
                     break;
@@ -399,13 +408,14 @@ int gdscpp::import(string fileName)
                     plchold_aref.name = current_words;
                     break;
                   case GDS_STRANS:
-                    plchold_aref.aref_flags = current_bitarr;
+                    plchold_aref.aref_transformation_flags = current_bitarr;
                     break;
                   case GDS_MAG:
-                    plchold_aref.aref_flags.set(13, 1);     // Precaution incase other software forgot to set bit
-                    plchold_aref.scale = current_B8Real[0]; // TODO: Check that distill actually kicks outb8real here.
+                    plchold_aref.aref_transformation_flags.set(13, 1); // Precaution incase other software forgot to set bit
+                    plchold_aref.scale = current_B8Real[0];
                     break;
                   case GDS_ANGLE:
+                    plchold_aref.aref_transformation_flags.set(14, 1); // Precaution incase other software forgot to set bit
                     plchold_aref.angle = current_B8Real[0];
                     break;
                   case GDS_COLROW:
@@ -416,9 +426,9 @@ int gdscpp::import(string fileName)
                     if (current_integer.size() % 2 == 0)
                     {
                       // x append
-                      plchold_sref.xCor = current_integer[0];
+                      plchold_aref.xCor = current_integer[0];
                       // y append
-                      plchold_sref.yCor = current_integer[1];
+                      plchold_aref.yCor = current_integer[1];
                     }
                     else
                     {
@@ -426,10 +436,13 @@ int gdscpp::import(string fileName)
                     }
                     break;
                   case GDS_PROPATTR:
-                    plchold_sref.propattr = current_integer[0];
+                    plchold_aref.propattr = current_integer[0];
                     break;
                   case GDS_PROPVALUE:
-                    plchold_sref.propvalue = current_words;
+                    plchold_aref.propvalue = current_words;
+                    break;
+                  case GDS_ENDEL:
+
                     break;
                   default:
                     cout << "Error: Unrecognized record." << endl;
@@ -437,14 +450,270 @@ int gdscpp::import(string fileName)
                   }
                 }
               } while (current_GDSKey != GDS_ENDEL);
-              plchold_str.PATH.push_back(plchold_path);
+              plchold_str.AREF.push_back(plchold_aref);
               //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end secondary nest ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               break;
             case GDS_TEXT:
+              //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ secondary nest [TEXT] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              // PLEX LAYER TEXTTYPE PRESENTATION PATHTYPE WIDTH STRANS MAG ANGLE XY STRING PROPATTR PROPVALUE
+              plchold_text.reset();
+              do
+              {
+                current_readBlk = new char[2];
+                gdsFile.read(current_readBlk, 2);
+
+                current_sizeBlk = (((unsigned char)current_readBlk[0] << 8) | (unsigned char)current_readBlk[1]);
+
+                gdsFile.seekg(-2, ios::cur);
+                current_readBlk = new char[current_sizeBlk];
+                gdsFile.read(current_readBlk, current_sizeBlk);
+
+                if (GDSdistill(current_readBlk, current_GDSKey, current_bitarr, current_integer, current_B8Real, current_words))
+                {
+                  cout << "Error: Unable to read GDS file." << endl;
+                  break;
+                }
+                else
+                {
+                  if (GDSrecord2ASCII(current_readBlk))
+                  {                                                    //
+                    cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
+                    break;                                             // /
+                  }                                                    //
+                  switch (current_GDSKey)
+                  {
+                  case GDS_PLEX:
+                    //Ignore for now - seems to only be used with nodes
+                    break;
+                  case GDS_LAYER:
+                    plchold_text.layer = current_integer[0];
+                    break;
+                  case GDS_TEXTTYPE:
+                    plchold_text.text_type = current_integer[0];
+                    break;
+                  case GDS_PRESENTATION:
+                    plchold_text.presentation_flags = current_bitarr;
+                    break;
+                  case GDS_PATHTYPE:
+                    plchold_text.path_type = current_integer[0];
+                    break;
+                  case GDS_WIDTH:
+                    plchold_text.width = current_integer[0];
+                    break;
+                  case GDS_STRANS:
+                    plchold_text.text_transformation_flags = current_bitarr;
+                    break;
+                  case GDS_MAG:
+                    plchold_text.text_transformation_flags.set(13, 1); // Precaution incase other software forgot to set bit
+                    plchold_text.scale = current_B8Real[0];            // TODO: Check that distill actually kicks outb8real here.
+                    break;
+                  case GDS_ANGLE:
+                    plchold_text.text_transformation_flags.set(14, 1); // Precaution incase other software forgot to set bit
+                    plchold_text.angle = current_B8Real[0];
+                    break;
+                  case GDS_XY:
+                    //confirm xy as pairs
+                    if (current_integer.size() % 2 == 0)
+                    {
+                      // x append
+                      plchold_text.xCor = current_integer[0];
+                      // y append
+                      plchold_text.yCor = current_integer[1];
+                    }
+                    else
+                    {
+                      cout << "Error: Missing X or Y co-ordinate" << endl;
+                    }
+                    break;
+                  case GDS_STRING:
+                    plchold_text.textbody = current_words;
+                    break;
+                  case GDS_PROPATTR:
+                    plchold_text.propattr = current_integer[0];
+                    break;
+                  case GDS_PROPVALUE:
+                    plchold_text.propvalue = current_words;
+                    break;
+                  case GDS_ENDEL:
+
+                    break;
+                  default:
+                    cout << "Error: Unrecognized record." << endl;
+                    break;
+                  }
+                }
+              } while (current_GDSKey != GDS_ENDEL);
+              plchold_str.TEXT.push_back(plchold_text);
+              //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end secondary nest ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               break;
             case GDS_NODE:
+              //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ secondary nest [NODE] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              // PLEX LAYER NODETYPE XY PROPATTR PROPVALUE
+              plchold_node.reset();
+              do
+              {
+                current_readBlk = new char[2];
+                gdsFile.read(current_readBlk, 2);
+
+                current_sizeBlk = (((unsigned char)current_readBlk[0] << 8) | (unsigned char)current_readBlk[1]);
+
+                gdsFile.seekg(-2, ios::cur);
+                current_readBlk = new char[current_sizeBlk];
+                gdsFile.read(current_readBlk, current_sizeBlk);
+
+                if (GDSdistill(current_readBlk, current_GDSKey, current_bitarr, current_integer, current_B8Real, current_words))
+                {
+                  cout << "Error: Unable to read GDS file." << endl;
+                  break;
+                }
+                else
+                {
+                  if (GDSrecord2ASCII(current_readBlk))
+                  {                                                    //
+                    cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
+                    break;                                             // /
+                  }                                                    //
+                  switch (current_GDSKey)
+                  {
+                  case GDS_PLEX:
+                    plchold_node.plex = current_integer[0];
+                    break;
+                  case GDS_LAYER:
+                    plchold_node.layer = current_integer[0];
+                    break;
+                  case GDS_NODETYPE:
+                    plchold_node.nodetype = current_integer[0];
+                    break;
+                  case GDS_XY:
+                    //confirm xy as pairs
+                    if (current_integer.size() % 2 == 0)
+                    {
+                      current_int_iter = current_integer.begin();
+                      odd_state = false;
+                      while (current_int_iter != current_integer.end())
+                      {
+                        if (odd_state == false)
+                        {
+                          // x append
+                          plchold_node.xCor.push_back(*current_int_iter);
+                        }
+                        else
+                        {
+                          // y append
+                          plchold_node.yCor.push_back(*current_int_iter);
+                        }
+                        odd_state = !odd_state;
+                        current_int_iter++;
+                      }
+                    }
+                    else
+                    {
+                      cout << "Error: XY co_ordinates uneven" << endl;
+                    }
+                    break;
+                  case GDS_PROPATTR:
+                    plchold_node.propattr = current_integer[0];
+                    break;
+                  case GDS_PROPVALUE:
+                    plchold_node.propvalue = current_words;
+                    break;
+                  case GDS_ENDEL:
+
+                    break;
+                  default:
+                    cout << "Error: Unrecognized record." << endl;
+                    break;
+                  }
+                }
+              } while (current_GDSKey != GDS_ENDEL);
+              plchold_str.NODE.push_back(plchold_node);
+              //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end secondary nest ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               break;
             case GDS_BOX:
+              //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ secondary nest [BOX] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              // PLEX LAYER BOXTYPE XY PROPATTR PROPVALUE
+              plchold_box.reset();
+              do
+              {
+                current_readBlk = new char[2];
+                gdsFile.read(current_readBlk, 2);
+
+                current_sizeBlk = (((unsigned char)current_readBlk[0] << 8) | (unsigned char)current_readBlk[1]);
+
+                gdsFile.seekg(-2, ios::cur);
+                current_readBlk = new char[current_sizeBlk];
+                gdsFile.read(current_readBlk, current_sizeBlk);
+
+                if (GDSdistill(current_readBlk, current_GDSKey, current_bitarr, current_integer, current_B8Real, current_words))
+                {
+                  cout << "Error: Unable to read GDS file." << endl;
+                  break;
+                }
+                else
+                {
+                  if (GDSrecord2ASCII(current_readBlk))
+                  {                                                    //
+                    cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
+                    break;                                             // /
+                  }                                                    //
+                  switch (current_GDSKey)
+                  {
+                  case GDS_PLEX:
+                    plchold_box.plex = current_integer[0];
+                    break;
+                  case GDS_LAYER:
+                    plchold_box.layer = current_integer[0];
+                    break;
+                  case GDS_BOXTYPE:
+                    plchold_box.boxtype = current_integer[0];
+                    break;
+                  case GDS_XY:
+                    //confirm xy as pairs
+                    if (current_integer.size() % 2 == 0)
+                    {
+                      current_int_iter = current_integer.begin();
+                      odd_state = false;
+                      while (current_int_iter != current_integer.end())
+                      {
+                        if (odd_state == false)
+                        {
+                          // x append
+                          plchold_box.xCor.push_back(*current_int_iter);
+                        }
+                        else
+                        {
+                          // y append
+                          plchold_box.yCor.push_back(*current_int_iter);
+                        }
+                        odd_state = !odd_state;
+                        current_int_iter++;
+                      }
+                    }
+                    else
+                    {
+                      cout << "Error: XY co_ordinates uneven" << endl;
+                    }
+                    break;
+                  case GDS_PROPATTR:
+                    plchold_box.propattr = current_integer[0];
+                    break;
+                  case GDS_PROPVALUE:
+                    plchold_box.propvalue = current_words;
+                    break;
+                  case GDS_ENDEL:
+
+                    break;
+                  default:
+                    cout << "Error: Unrecognized record." << endl;
+                    break;
+                  }
+                }
+              } while (current_GDSKey != GDS_ENDEL);
+              plchold_str.BOX.push_back(plchold_box);
+              //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end secondary nest ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              break;
+            case GDS_ENDSTR:
+
               break;
             default:
               cout << "Error: Unrecognized record." << endl;
@@ -452,7 +721,7 @@ int gdscpp::import(string fileName)
             }
           }
         } while (current_GDSKey != GDS_ENDSTR);
-        // setSTR(placeholder_structure);
+        setSTR(plchold_str);
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ END FIRST NEST @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         break;
       case GDS_ENDLIB:
@@ -857,7 +1126,7 @@ void gdsAREF::reset()
 {
   // PLEX
   name = "\0";
-  aref_flags.reset();
+  aref_transformation_flags.reset();
   reflection = false;
   angle = 0;
   scale = 1;
@@ -870,9 +1139,15 @@ void gdsAREF::reset()
 
 void gdsTEXT::reset()
 {
+  presentation_flags.reset();
+  text_type = 0;
+  path_type = 0;
+  width = 0;
+  text_transformation_flags.reset();
   textbody = "\0";
   layer = 0;
   scale = 1;
+  angle = 0;
   xCor = 0;
   yCor = 0;
   propattr = 0;
@@ -901,4 +1176,16 @@ void gdsBOX::reset()
   yCor.clear();
   propattr = 0;
   propvalue = "\0";
+}
+
+// Standard function for adding one structure onto the stack.
+void gdscpp::setSTR(gdsSTR target_structure)
+{
+  STR.push_back(target_structure);
+}
+
+// Overloaded function for appending multiple structures
+void gdscpp::setSTR(vector<gdsSTR> target_structure)
+{
+  STR.insert(STR.end(), target_structure.begin(), target_structure.end());
 }
