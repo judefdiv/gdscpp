@@ -79,6 +79,6 @@ string GDSkey2ASCII(unsigned int inHex);
 #define GDS_PROPVALUE    0x2c06
 #define GDS_BOX          0x2d00
 #define GDS_BOXTYPE      0x2e02
-#define GDS_PLEX         0x2f03
+#define GDS_PLEX         0x2F03
 
 #endif

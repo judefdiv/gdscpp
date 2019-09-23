@@ -113,7 +113,7 @@ int RunTool(int argCount, char** argValues){
 			gdscpp gdsfile;
 			gdsfile.import(gdsFName);				//Todo - comment in import
 			// gdsfile.write("Heinsfile.gds");
-			// gdsfile.quick2ASCII(gdsFName);
+			gdsfile.quick2ASCII(gdsFName);
 			return 1;
 		}
 		else{
