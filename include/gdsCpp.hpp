@@ -144,6 +144,7 @@ class gdscpp{  // (GDS file)
     int import(string fileName);
     int write(string fileName);
     int quick2ASCII(string fileName);         // does not store data, legacy code.
+    double get_database_units();
     void to_str();
     void reset();
 };

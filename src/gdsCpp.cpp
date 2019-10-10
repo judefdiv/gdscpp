@@ -1189,3 +1189,9 @@ void gdscpp::setSTR(vector<gdsSTR> target_structure)
 {
   STR.insert(STR.end(), target_structure.begin(), target_structure.end());
 }
+
+//Returns the database unit of gds file
+double gdscpp::get_database_units()
+{
+  return units[1];
+}
