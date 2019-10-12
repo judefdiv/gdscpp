@@ -1327,3 +1327,127 @@ void gdscpp::setSTR(vector<gdsSTR> target_structure)
 {
   STR.insert(STR.end(), target_structure.begin(), target_structure.end());
 }
+
+
+/**
+ * [gdscpp::findRootSTR finds the root structures]
+ * @return [0 - Exit Success; 1 - Exit Failure]
+ */
+
+int gdscpp::findRootSTR(){
+  cout << "Finding the root structures." << endl;
+  vector<string> mainSTR;
+  vector<string> refSTR;
+  vector<string> rootSTR;
+
+  bool vecFound;
+
+  // gets (got) the names of the all structures
+  // create a list of all the structures that are referenced
+  // compare and remove duplicates
+
+  // listings all the structure names
+
+
+  for(unsigned int i = 0; i < this->STR.size(); i++){
+    vecFound = false;
+    for(unsigned int j = 0; j < this->STR.size(); j++){
+      for(unsigned int k = 0; k < this->STR[j].SREF.size(); k++){
+        if(!this->STR[i].name.compare(this->STR[j].SREF[k].name)){
+          vecFound = true;
+          break;
+        }
+      }
+    }
+    if(vecFound == false){
+      rootSTR.push_back(this->STR[i].name);
+    }
+  }
+
+  // soting all the vectors
+  // sort(mainSTR.begin(), mainSTR.end());
+  // sort(refSTR.begin(), refSTR.end());
+
+
+  // search for the mainSTR that is not in refSTR
+  // bool vecFound;
+
+  // for(unsigned int i = 0; i < mainSTR.size(); i++){
+  //   vecFound = false;
+  //   for(unsigned int j = 0; j < rootSTR.size(); j++){
+  //     if(!mainSTR[i].compare(refSTR[j])){
+  //       vecFound = true;
+  //       break;
+  //     }
+  //   }
+  //   if(vecFound == false){
+  //     rootSTR.push_back(mainSTR[i]);
+  //   }
+  // }
+
+
+  // display the root GDS STR
+  cout << "Root GDS structures: ";
+
+  vector<string>::iterator fooVec;
+  for(fooVec = rootSTR.begin(); fooVec != rootSTR.end(); fooVec++){
+    cout << "  " << *fooVec;
+  }
+  cout << endl;
+
+  return 0;
+}
+
+/**
+ * [gdscpp::genDot - Creates a tree structure of all the GDS structure dependencies]
+ * @param  fileName [The file name of the to be created dot file]
+ * @return          [0 - Exit Success; 1 - Exit Failure]
+ */
+
+int gdscpp::genDot(string fileName){
+  cout << "Generating Dot file:\"" << fileName << "\" file" << endl;
+
+  vector<string> fromSTR;
+  vector<string> toSTR;
+
+  for(unsigned int i = 0; i < this->STR.size(); i++){
+    for(unsigned int j = 0; j < this->STR[i].SREF.size(); j++){
+      fromSTR.push_back(this->STR[i].name);
+      toSTR.push_back(this->STR[i].SREF[j].name);
+    }
+  }
+
+
+  // ------------------------ creating dot file ------------------------
+
+  FILE *dotFile;
+  dotFile = fopen("foo.dot", "w");
+
+  string lineStr;
+
+  lineStr = "digraph GDStree {\n";
+  fputs(lineStr.c_str(), dotFile);
+
+  for(unsigned int i = 0; i < fromSTR.size(); i++){
+    lineStr = "\t" + fromSTR[i] + " -> " + toSTR[i] + ";\n";
+    fputs(lineStr.c_str(), dotFile);
+    }
+
+  lineStr = "}";
+  fputs(lineStr.c_str(), dotFile);
+
+  fclose(dotFile);
+  cout << "Dot file done." << endl;
+
+  // ------------------------ executing dot script ------------------------
+  string bashCmd;
+  bashCmd = "dot -Tjpg foo.dot -o " + fileName;
+
+
+  if(system(bashCmd.c_str()) == -1){
+    cout << "Bash command :\"" << bashCmd << "\" error." << endl;
+    return 1;
+  }
+
+  return 0;
+}

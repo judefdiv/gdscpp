@@ -150,6 +150,9 @@ class gdscpp{  // (GDS file)
     int quick2ASCII(string fileName);         // does not store data, legacy code.
     void to_str();
     void reset();
+
+    int findRootSTR();
+    int genDot(string fileName);
 };
 
 /*

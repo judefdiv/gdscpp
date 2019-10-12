@@ -118,7 +118,7 @@ int RunTool(int argCount, char** argValues){
 			return 0;
 		}
 	}
-	else if(!command.compare("rw")){
+	else if(!command.compare("-rw")){
 		if(gdsFName.compare("\0")){
 			gdscpp gdsfile;
 			gdsfile.import(gdsFName);
@@ -130,10 +130,12 @@ int RunTool(int argCount, char** argValues){
 			return 0;
 		}
 		}
-	else if(!command.compare("r")){
+	else if(!command.compare("-r")){
 		if(gdsFName.compare("\0")){
 			gdscpp gdsfile;
 			gdsfile.import(gdsFName);
+			gdsfile.findRootSTR();
+			gdsfile.genDot("tree.jpg");
 			return 1;
 		}
 		else{
