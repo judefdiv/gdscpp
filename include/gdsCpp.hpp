@@ -124,6 +124,10 @@ class gdsBOX;                                  // ''
 /*
 This is the highest class, holding all the information of a single .gds file.
 */
+
+int gdsToText(string fileName);
+int gdsRecordToText(char *recIn);
+
 class gdscpp{  // (GDS file)
   private:
     int version_number=7;                     // GDS version number. Default to 7

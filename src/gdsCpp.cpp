@@ -12,6 +12,141 @@
 #include "gdsCpp.hpp"
 
 /**
+ * [gdsToText - Quick converts the GDS file to ASCII without storing the data]
+ * @param  fileName [File name of the to be converted gds file]
+ * @return          [0 - Exit Success; 1 - Exit Failure]
+ */
+
+int gdsToText(string fileName){
+  ifstream gdsFile;
+
+  gdsFile.open(fileName, ios::in | ios::binary);
+
+  if(!gdsFile.is_open()){
+    cout << "Error: GDS file \"" << fileName << "\" FAILED to be opened." << endl;
+    return 1;
+  }
+
+  cout << "Converting \"" << fileName << "\" to ASCII." << endl;
+
+  char *readBlk;
+  uint32_t sizeBlk;
+  uint32_t hexKey;
+
+  gdsFile.seekg(0, ios::beg);
+
+  do{
+    readBlk = new char[2];
+    gdsFile.read(readBlk, 2);
+
+    sizeBlk = (((unsigned char)readBlk[0] << 8) | (unsigned char)readBlk[1]);
+
+    gdsFile.seekg(-2, ios::cur);
+    readBlk = new char[sizeBlk];
+    gdsFile.read(readBlk, sizeBlk);
+
+    hexKey = ((readBlk[2] << 8) | readBlk[3]);
+
+    if(gdsRecordToText(readBlk)){
+      cout << "GDS read error" << endl;
+      break;
+    }
+  } while (hexKey != GDS_ENDLIB);
+
+  delete[] readBlk;
+
+  gdsFile.close();
+  cout << "Converting \"" << fileName << "\" to ASCII done." << endl;
+  return 0;
+}
+
+
+/**
+ * [gdsRecordToText - Converts a GDS record to ASCII]
+ * @param  recIn [The pointer in memory to the GDS record to be converted]
+ * @return       [0 - Exit Success; 1 - Exit Failure]
+ */
+
+int gdsRecordToText(char *recIn){
+  uint32_t GDSKey;
+  bitset<16> bitarr;
+  vector<int> integer;
+  vector<double> B8Real;
+  string words;
+  string keyName;
+  string lineOut;
+
+  uint8_t dataType;
+
+  if(GDSdistill(recIn, GDSKey, bitarr, integer, B8Real, words) == 1){
+    return 1;
+  }
+  dataType = GDSKey;
+
+  keyName = GDSkey2ASCII(GDSKey);
+
+  if (!keyName.compare("\0")){
+    cout << "Key not found: 0x" << hex << GDSKey << dec << endl;
+    return 1;
+  }
+
+  cout << "[" << keyName << "]";
+
+  if (dataType == 0){
+    // no data
+    cout << endl;
+  }
+  else if (dataType == 1){
+    //bit array
+    int i = 4;
+    bitset<8> bitsIn0(recIn[i++]);
+    bitset<8> bitsIn1(recIn[i]);
+
+    cout << ":{" << "0b" << bitsIn0.to_string() << " 0b" + bitsIn1.to_string() << "}" << endl;
+  }
+  else if (dataType == 2 || dataType == 3){
+    //signed integers
+
+    for(unsigned int j = 1; j < integer.size(); j++){
+      lineOut = lineOut + to_string(integer[j]) + ", ";
+    }
+    lineOut.pop_back();
+    lineOut.pop_back();
+
+    cout << ":{" << lineOut << "}" << endl;
+  }
+  else if (dataType == 4){
+    //4 byte real (NOT USED)
+    cout << "Unsupported 4 byte real variable." << endl;
+  }
+  else if (dataType == 5){
+    //8 byte real
+
+    for(unsigned int j = 1; j < B8Real.size(); j++){
+      lineOut = lineOut + to_string(B8Real[j]) + ", ";
+    }
+    lineOut.pop_back();
+    lineOut.pop_back();
+
+    cout << ":{" << lineOut << "}" << endl;
+  }
+  else if (dataType == 6)
+  {
+    // ASCII string
+    // cout << ": " << lineOut << endl;
+    cout << ": ->" << lineOut << "<-" << endl;
+    // cout << ": \"" << lineOut << "\"" << endl;
+  }
+  else
+  {
+    cout << "Smoke detected." << endl;
+    return 1;
+  }
+
+  return 0;
+}
+
+/**
  * [gdscpp::read description]
  * @param  fileName [Teh file name of the GDS file that is going to be read in]
  * @return          [0 - Exit Success; 1 - Exit Failure]

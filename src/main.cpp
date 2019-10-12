@@ -56,7 +56,7 @@ int RunTool(int argCount, char** argValues){
 		return 0;
 	}
 
-	set<string> validCommands = {"-g", "-i", "-v", "-h"};
+	set<string> validCommands = {"-g", "-i", "-r", "-rw","-v", "-h"};
 
 	string outFName = "\0";			// The output file, which is follow by the -o parameter
 	string gdsFName = "\0";			// The GDS/GDS2 file
@@ -110,10 +110,7 @@ int RunTool(int argCount, char** argValues){
 	}
 	else if(!command.compare("-i")){
 		if(gdsFName.compare("\0")){
-			gdscpp gdsfile;
-			gdsfile.import(gdsFName);				//Todo - comment in import
-			// gdsfile.write("Heinsfile.gds");
-			gdsfile.quick2ASCII(gdsFName);
+			gdsToText(gdsFName);
 			return 1;
 		}
 		else{
@@ -121,9 +118,22 @@ int RunTool(int argCount, char** argValues){
 			return 0;
 		}
 	}
-	else if(!command.compare("-t")){
+	else if(!command.compare("rw")){
 		if(gdsFName.compare("\0")){
-
+			gdscpp gdsfile;
+			gdsfile.import(gdsFName);
+			gdsfile.write("outGDS.gds");
+			return 1;
+		}
+		else{
+			cout << "Input argument error." << endl;
+			return 0;
+		}
+		}
+	else if(!command.compare("r")){
+		if(gdsFName.compare("\0")){
+			gdscpp gdsfile;
+			gdsfile.import(gdsFName);
 			return 1;
 		}
 		else{
@@ -177,10 +187,14 @@ void testGDS(string fileName){
 void helpScreen(){
 	cout << "===============================================================================" << endl;
 	cout << "Usage: GDScpp [ OPTION ] [ filenames ]" << endl;
-	cout << "-g(DS)        Does stuffs." << endl;
-	cout << "                -o [.gds2 file]" << endl;
-	cout << "-i(nterpret)  Reads in specified file and displays content." << endl;
-	cout << "                [.gds/.gds2/ file]" << endl;
+	cout << "-g(DS)          Does stuffs." << endl;
+	cout << "                  [.gds/.gds2/ file] -o [.gds2 file]" << endl;
+	cout << "-i(nterpret)    Translates a GDS file directly to ASCII." << endl;
+	cout << "                  [.gds/.gds2/ file]" << endl;
+	cout << "-r(ead)  		   Reads in specified file." << endl;
+	cout << "                  [.gds/.gds2/ file]" << endl;
+	cout << "-rw(read/write) Reads in a GDS file and writes out what is stored." << endl;
+	cout << "                  [.gds/.gds2/ file]" << endl;
 	cout << "-v(ersion)    Displays the version number." << endl;
 	cout << "-h(elp)       Help screen." << endl;
 	cout << "===============================================================================" << endl;
@@ -191,7 +205,21 @@ void helpScreen(){
  */
 
 void welcomeScreen(){
-	cout << "=====================================" << endl;
-	cout << "               GDScpp" << endl;
-	cout << "=====================================" << endl;
+	cout << "              ___     ___" << endl;
+	cout << "             |   |   |   |" << endl;
+	cout << "             |___|   |___|" << endl;
+	cout << " __            |       |            __" << endl;
+	cout << "|  |___        |       |        ___|  |" << endl;
+	cout << "|__|   |     __|_______|__     |   |__|" << endl;
+	cout << "       |____|             |____|" << endl;
+	cout << " __         |             |         __" << endl;
+	cout << "|  |________|   GSD-cpp   |________|  |" << endl;
+	cout << "|__|        |             |        |__|" << endl;
+	cout << "        ____|             |____" << endl;
+	cout << " __    |    |_____________|    |    __" << endl;
+	cout << "|  |___|       |       |       |___|  |" << endl;
+	cout << "|__|           |       |           |__|" << endl;
+	cout << "              _|_     _|_" << endl;
+	cout << "             |   |   |   |" << endl;
+	cout << "             |___|   |___|" << endl;
 }
