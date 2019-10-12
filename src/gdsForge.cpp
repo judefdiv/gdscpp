@@ -251,9 +251,6 @@ void gdsForge::gdsPath(gdsPATH& in_PATH, bool minimal){
 	data[0] = in_PATH.dataType;
 	this->GDSwriteInt(GDS_DATATYPE, data, 1);
 
-	// data[0] = in_PATH.pathtype;
-	// this->GDSwriteInt(GDS_PATHTYPE, data, 1);
-
 	if(minimal){	// true
 		data[0] = 1;
 		this->GDSwriteInt(GDS_PATHTYPE, data, 1);
