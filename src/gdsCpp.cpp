@@ -66,11 +66,6 @@ int gdscpp::import(string fileName)
     }
     else
     {
-      // if (GDSrecord2ASCII(current_readBlk))
-      // {                                                    //
-      //   cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
-      //   break;                                             // /
-      // }                                                    //
       switch (current_GDSKey)
       // Highest tier of data: HEADER, BGNLIB, LIBNAME, GENERATIONS, UNITS, BGNSTR, ENDDLIB
       {
@@ -113,11 +108,6 @@ int gdscpp::import(string fileName)
           }
           else
           {
-            // if (GDSrecord2ASCII(current_readBlk))
-            // {                                                    //
-            //   cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
-            //   break;                                             // /
-            // }                                                    //
             switch (current_GDSKey)
             {
             case GDS_STRNAME:
@@ -145,11 +135,6 @@ int gdscpp::import(string fileName)
                 }
                 else
                 {
-                  // if (GDSrecord2ASCII(current_readBlk))
-                  // {                                                    //
-                  //   cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
-                  //   break;                                             // /
-                  // }                                                    //
                   switch (current_GDSKey)
                   {
                   case GDS_PLEX:
@@ -228,11 +213,6 @@ int gdscpp::import(string fileName)
                 }
                 else
                 {
-                  // if (GDSrecord2ASCII(current_readBlk))
-                  // {                                                    //
-                  //   cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
-                  //   break;                                             // /
-                  // }                                                    //
                   switch (current_GDSKey)
                   {
                   case GDS_PLEX:
@@ -317,11 +297,6 @@ int gdscpp::import(string fileName)
                 }
                 else
                 {
-                  // if (GDSrecord2ASCII(current_readBlk))
-                  // {                                                    //
-                  //   cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
-                  //   break;                                             // /
-                  // }                                                    //
                   switch (current_GDSKey)
                   {
                   case GDS_PLEX:
@@ -394,11 +369,6 @@ int gdscpp::import(string fileName)
                 }
                 else
                 {
-                  // if (GDSrecord2ASCII(current_readBlk))
-                  // {                                                    //
-                  //   cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
-                  //   break;                                             // /
-                  // }                                                    //
                   switch (current_GDSKey)
                   {
                   case GDS_PLEX:
@@ -475,11 +445,6 @@ int gdscpp::import(string fileName)
                 }
                 else
                 {
-                  // if (GDSrecord2ASCII(current_readBlk))
-                  // {                                                    //
-                  //   cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
-                  //   break;                                             // /
-                  // }                                                    //
                   switch (current_GDSKey)
                   {
                   case GDS_PLEX:
@@ -568,11 +533,6 @@ int gdscpp::import(string fileName)
                 }
                 else
                 {
-                  if (GDSrecord2ASCII(current_readBlk))
-                  {                                                    //
-                    cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
-                    break;                                             // /
-                  }                                                    //
                   switch (current_GDSKey)
                   {
                   case GDS_PLEX:
@@ -651,11 +611,6 @@ int gdscpp::import(string fileName)
                 }
                 else
                 {
-                  // if (GDSrecord2ASCII(current_readBlk))
-                  // {                                                    //
-                  //   cout << "Error: Unable to read GDS file." << endl; // \   Remove this once debugging finished
-                  //   break;                                             // /
-                  // }                                                    //
                   switch (current_GDSKey)
                   {
                   case GDS_PLEX:

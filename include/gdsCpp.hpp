@@ -22,9 +22,9 @@
 *                                       [GENERATIONS]   [X]
 *                                       [<FormatType>]  [ ](Don't bother here unless needed.)
 *                                       [UNITS]         [X]
-*                                       [BGNSTR]        [ ]
+*                                       [BGNSTR]        [X]
 *                                       [STRNAME]       [X]
-*                                       [ENDLIB]        [ ]
+*                                       [ENDLIB]        [X]
 */
 // =============================== ELEMENT RECORDS ==================================
 // Element records form part of a structure
