@@ -107,35 +107,38 @@ int gdsRecordToText(char *recIn){
   else if (dataType == 2 || dataType == 3){
     //signed integers
 
-    for(unsigned int j = 1; j < integer.size(); j++){
-      lineOut = lineOut + to_string(integer[j]) + ", ";
+    cout << ":{";
+    for(unsigned int j = 0; j < integer.size(); j++){
+      cout << integer[j];
+      if(j < integer.size() -1){
+        cout << ", ";
+      }
     }
-    lineOut.pop_back();
-    lineOut.pop_back();
-
-    cout << ":{" << lineOut << "}" << endl;
+    cout << "}" << endl;
   }
   else if (dataType == 4){
     //4 byte real (NOT USED)
     cout << "Unsupported 4 byte real variable." << endl;
+    return 1;
   }
   else if (dataType == 5){
     //8 byte real
 
-    for(unsigned int j = 1; j < B8Real.size(); j++){
-      lineOut = lineOut + to_string(B8Real[j]) + ", ";
+    cout << ":{";
+    cout.precision(12);
+    for(unsigned int j = 0; j < B8Real.size(); j++){
+      cout << B8Real[j];
+      if(j < B8Real.size() -1){
+        cout << ", ";
+      }
     }
-    lineOut.pop_back();
-    lineOut.pop_back();
-
-    cout << ":{" << lineOut << "}" << endl;
+    cout << "}" << endl;
   }
   else if (dataType == 6)
   {
     // ASCII string
-    // cout << ": " << lineOut << endl;
-    cout << ": ->" << lineOut << "<-" << endl;
-    // cout << ": \"" << lineOut << "\"" << endl;
+
+    cout << ":{" << words << "}" << endl;
   }
   else
   {
