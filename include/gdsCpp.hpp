@@ -137,6 +137,8 @@ class gdscpp{  // (GDS file)
     vector<int> last_modified;                // TODO: Default to current datetime if unread
     string library_name = "Untitled_library"; // Default libname
 
+    vector<string> rootSTR;
+
     int GDSrecord2ASCII(char *recIn);         // Does it belong here???
   public:
     gdscpp(){};

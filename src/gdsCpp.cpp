@@ -1338,16 +1338,8 @@ int gdscpp::findRootSTR(){
   cout << "Finding the root structures." << endl;
   vector<string> mainSTR;
   vector<string> refSTR;
-  vector<string> rootSTR;
 
   bool vecFound;
-
-  // gets (got) the names of the all structures
-  // create a list of all the structures that are referenced
-  // compare and remove duplicates
-
-  // listings all the structure names
-
 
   for(unsigned int i = 0; i < this->STR.size(); i++){
     vecFound = false;
@@ -1358,39 +1350,20 @@ int gdscpp::findRootSTR(){
           break;
         }
       }
+      if(vecFound){
+        break;
+      }
     }
     if(vecFound == false){
-      rootSTR.push_back(this->STR[i].name);
+      this->rootSTR.push_back(this->STR[i].name);
     }
   }
-
-  // soting all the vectors
-  // sort(mainSTR.begin(), mainSTR.end());
-  // sort(refSTR.begin(), refSTR.end());
-
-
-  // search for the mainSTR that is not in refSTR
-  // bool vecFound;
-
-  // for(unsigned int i = 0; i < mainSTR.size(); i++){
-  //   vecFound = false;
-  //   for(unsigned int j = 0; j < rootSTR.size(); j++){
-  //     if(!mainSTR[i].compare(refSTR[j])){
-  //       vecFound = true;
-  //       break;
-  //     }
-  //   }
-  //   if(vecFound == false){
-  //     rootSTR.push_back(mainSTR[i]);
-  //   }
-  // }
-
 
   // display the root GDS STR
   cout << "Root GDS structures: ";
 
   vector<string>::iterator fooVec;
-  for(fooVec = rootSTR.begin(); fooVec != rootSTR.end(); fooVec++){
+  for(fooVec = this->rootSTR.begin(); fooVec != this->rootSTR.end(); fooVec++){
     cout << "  " << *fooVec;
   }
   cout << endl;
@@ -1410,13 +1383,22 @@ int gdscpp::genDot(string fileName){
   vector<string> fromSTR;
   vector<string> toSTR;
 
+  bool foundSTR;
   for(unsigned int i = 0; i < this->STR.size(); i++){
     for(unsigned int j = 0; j < this->STR[i].SREF.size(); j++){
-      fromSTR.push_back(this->STR[i].name);
-      toSTR.push_back(this->STR[i].SREF[j].name);
+      foundSTR = true;
+      for(unsigned int k = 0; k < fromSTR.size(); k++){
+        if(!fromSTR[k].compare(this->STR[i].name) && !toSTR[k].compare(this->STR[i].SREF[j].name)){
+          foundSTR = false;
+          break;
+        }
+      }
+      if(foundSTR){
+        fromSTR.push_back(this->STR[i].name);
+        toSTR.push_back(this->STR[i].SREF[j].name);
+      }
     }
   }
-
 
   // ------------------------ creating dot file ------------------------
 
