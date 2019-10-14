@@ -534,15 +534,19 @@ void gdsSREF::reset()
 
 void gdsAREF::reset()
 {
-  // PLEX
   name = "\0";
   aref_transformation_flags.reset();
   reflection = false;
   angle = 0;
   scale = 1;
-  colrow = 0;
+  colCnt = 0;
+  rowCnt = 0;
   xCor = 0;
   yCor = 0;
+  xCorRow = 0;                 // X_2
+  yCorRow = 0;                 // Y_2
+  xCorCol = 0;                 // X_3
+  yCorCol = 0;                 // Y_3
   propattr = 0;
   propvalue = "\0";
 }
