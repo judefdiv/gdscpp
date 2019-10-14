@@ -10,6 +10,7 @@ set(SOURCES
   src/gdsCpp.cpp
   src/gdsParser.cpp
   src/gdsForge.cpp
+  src/gdsImport.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
