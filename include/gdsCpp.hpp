@@ -64,9 +64,12 @@ class gdscpp{  // (GDS file)
     int generations = 3;                      // Default generations. Don't really use
     double units[2] = {0.001, 1e-9};          // micron default
     vector<gdsSTR> STR;                       // Holds all the structures of the gds file
+    map<string, int> STR_Lookup;              // Allows for searching by name
+    // Key   = Level of heirarchy
+    // Value = Vector of structures belonging to level
+    map<int, vector<string>> Heirarchy;
     vector<int> last_modified;                // TODO: Default to current datetime if unread
     string library_name = "Untitled_library"; // Default libname
-
     vector<unsigned int> findRootSTR();
 
     int GDSrecord2ASCII(char *recIn);         // Does it belong here???
@@ -80,8 +83,11 @@ class gdscpp{  // (GDS file)
     //void setSTR(gdsSTR exVec){STR.push_back(exVec);};
     void getSTR(vector<gdsSTR>& exVec){exVec = STR;};
     int import(string fileName);
+    bool compare_name(string ref, int level);
+    int identify_heirarchy();
     int write(string fileName);
     int quick2ASCII(string fileName);         // does not store data, legacy code.
+    double get_database_units();
     void to_str();
     void reset();
     void importGDSfile(string fileName){
