@@ -706,53 +706,119 @@ int gdscpp::import(string fileName)
  */
 int gdscpp::identify_heirarchy()
 {
-  vector<string> emptyvec;
-  Heirarchy.insert({1,emptyvec});
+  // map<int, set<string>> Heirarchy;
+  Heirarchy.clear();
+  set<string> empty_set;
+  set<string> allowed_list;    // Allowes structure names
+  int current_level=1;
+  Heirarchy.insert({current_level,empty_set});
   auto struct_it = STR.begin();
   while (struct_it != STR.end())
   {
     if ( ( struct_it->SREF.empty() && ( struct_it->AREF.empty() ) ) )
     {
-      Heirarchy[1].push_back(struct_it->name);
+      Heirarchy[current_level].insert(struct_it->name);
     }
     else
     {
-      if (Heirarchy.count(2))
+      if (Heirarchy.count(current_level+1))
       {
-        Heirarchy[2].push_back(struct_it->name);
+        Heirarchy[current_level+1].insert(struct_it->name);
       }
       else
       {
-        Heirarchy.insert({2,emptyvec});
-        Heirarchy[2].push_back(struct_it->name);
+        Heirarchy.insert({current_level+1,empty_set});
+        Heirarchy[current_level+1].insert(struct_it->name);
       }
     }
     struct_it++;
   }
   // At this stage all structures that use references are on level 2.
   // We need to separate those that reference secondary structures and so on
-  // If there are no references there will only be one level of heirarchy.
-  if (Heirarchy.count(2))
+  // If there are no references there will only be one level (no heirarchy).
+  current_level++;
+  bool nothing_added = false;
+  while (nothing_added == false)
   {
-
+    if (Heirarchy.count(current_level)) // Heirarchy exists
+    {
+      auto recursive_iter = Heirarchy[current_level-1].begin();
+      // Add the previous level to allowable names
+      while (recursive_iter != Heirarchy[current_level-1].end())
+      {
+        allowed_list.insert(*recursive_iter);
+        recursive_iter++;
+      }
+      // Compare every name on current level's references to list of allowable names
+      recursive_iter = Heirarchy[current_level].begin();
+      int names_shifted = 0;
+      while (recursive_iter != Heirarchy[current_level].end())
+      {
+        // TODO get what *recursive iter structure references
+        int fetch_index = STR_Lookup[*recursive_iter];
+        vector<gdsSREF> srefs = STR[fetch_index].SREF;
+        vector<gdsAREF> arefs = STR[fetch_index].AREF;
+        auto SREF_it = srefs.begin();
+        bool failed = false;
+        while (SREF_it != srefs.end())
+        {
+          if (!check_name(SREF_it->name, allowed_list))
+            failed = true;
+          SREF_it++;
+        }
+        auto AREF_it = arefs.begin();
+        while (AREF_it != arefs.end())
+        {
+          if (!check_name(AREF_it->name, allowed_list))
+            failed = true;
+          AREF_it++;
+        }
+        // if any of the SREF or aref of target structure fail test, the structure must be moved down
+        if (failed == true)
+        {
+          string struct_to_move = *recursive_iter;
+          recursive_iter = Heirarchy[current_level].erase(recursive_iter);
+          if (Heirarchy.count(current_level+1))
+          {
+            Heirarchy[current_level+1].insert(struct_to_move);
+          }
+          else
+          {
+            Heirarchy.insert({current_level+1,empty_set});
+            Heirarchy[current_level+1].insert(struct_to_move);
+          }
+          names_shifted++;//Put in right place
+        }
+        recursive_iter++;
+      }
+      if (names_shifted == 0)
+      {
+        nothing_added =true;
+      }
+    }
+    else
+    {
+      nothing_added = true;
+    }
+    current_level++;
   }
   return EXIT_SUCCESS;
 }
 
-bool gdscpp::compare_name(string ref, int level)
+/**
+ * [gdscpp::check name]
+ * @param  name    [Set which name will be compared against]
+ * @param  ref_set [Set which name will be compared against]
+ * @return         [true - Name allowed; false - name not allowed]
+ */
+bool gdscpp::check_name(string name, set<string> ref_set)
 {
-  if (Heirarchy.count(level)) //Safeguard
+  if (ref_set.count(name)==0)
   {
-    auto level_searcher = Heirarchy[level].begin();
-    while (level_searcher != Heirarchy[level].end())
-    {
-      if (*level_searcher == ref)
-      {
-        /* code */
-      }
-
-      level_searcher++;
-    }
+    return false;
   }
-  return false;
+  else
+  {
+    return true;
+  }
 }

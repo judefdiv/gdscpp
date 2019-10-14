@@ -595,8 +595,11 @@ void gdsBOX::reset()
 // Standard function for adding one structure onto the stack.
 void gdscpp::setSTR(gdsSTR target_structure)
 {
-  STR.push_back(target_structure);
-  STR_Lookup.insert({target_structure.name, (STR.size()-1)});
+  if (!STR_Lookup.count(target_structure.name))//if doesn't already exist
+  {
+    STR.push_back(target_structure);
+    STR_Lookup.insert({target_structure.name, (STR.size()-1)});
+  }
 }
 
 // Overloaded function for appending multiple structures

@@ -67,7 +67,7 @@ class gdscpp{  // (GDS file)
     map<string, int> STR_Lookup;              // Allows for searching by name
     // Key   = Level of heirarchy
     // Value = Vector of structures belonging to level
-    map<int, vector<string>> Heirarchy;
+    map<int, set<string>> Heirarchy;
     vector<int> last_modified;                // TODO: Default to current datetime if unread
     string library_name = "Untitled_library"; // Default libname
     vector<unsigned int> findRootSTR();
@@ -83,7 +83,7 @@ class gdscpp{  // (GDS file)
     //void setSTR(gdsSTR exVec){STR.push_back(exVec);};
     void getSTR(vector<gdsSTR>& exVec){exVec = STR;};
     int import(string fileName);
-    bool compare_name(string ref, int level);
+    bool check_name(string name, set<string> ref_set);
     int identify_heirarchy();
     int write(string fileName);
     int quick2ASCII(string fileName);         // does not store data, legacy code.
