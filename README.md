@@ -33,6 +33,11 @@ cmake ..
 make
 ```
 
+## To Do
+* Improve text handling
+* When reading in GDS files into memory, check for redundancies
+* aref has not been tested.
+
 ## Notes
 The library main goals to aid development of the ColdFlux team IARPA contract SuperTools
 
@@ -40,4 +45,4 @@ Author -
 
 Text and nodes are not fully supported.
 
-AREF and box is currently not supported.
+Box is currently not supported.

@@ -70,6 +70,8 @@ class gdscpp{  // (GDS file)
     vector<unsigned int> findRootSTR();
 
     int GDSrecord2ASCII(char *recIn);         // Does it belong here???
+    vector<string> GDSfileName;
+
   public:
     gdscpp(){};
     ~gdscpp(){};
@@ -82,6 +84,9 @@ class gdscpp{  // (GDS file)
     int quick2ASCII(string fileName);         // does not store data, legacy code.
     void to_str();
     void reset();
+    void importGDSfile(string fileName){
+      this->GDSfileName.push_back(fileName);
+    }
 
     int createHierarchy();
     int genDot(string fileName);
@@ -126,6 +131,7 @@ class gdsBOUNDARY{
     void to_str();
     void reset();
 
+    int plex = 0;
     unsigned int layer = 0;
     unsigned int dataType = 0;
     vector<int> xCor;
@@ -154,6 +160,7 @@ class gdsPATH{
     void to_str();
     void reset();
 
+    int plex = 0;
     unsigned int layer = 0;
     unsigned int dataType = 0;
     unsigned int pathtype = 0;
@@ -177,6 +184,7 @@ class gdsSREF{
     void to_str();
     void reset();
 
+    int plex = 0;
     string name = "\0";
     bitset<16> sref_flags;
     bool reflection = false;  // boolean,    flag at bit 0
@@ -201,15 +209,20 @@ class gdsAREF{
     void to_str();
     void reset();
 
-                                  // PLEX
+    int plex = 0;
     string name = "\0";           // SNAME
     bitset<16> aref_transformation_flags;
     bool reflection = false;      // STRANS
     double angle = 0;             // subSTRANS
     double scale = 1;             // subSTRANS
-    int colrow = 0;
-    int xCor = 0;                 // XY
-    int yCor = 0;                 // XY
+    int colCnt = 0;
+    int rowCnt = 0;
+    int xCor = 0;                    // X_1
+    int yCor = 0;                    // Y_1
+    int xCorRow = 0;                 // X_2
+    int yCorRow = 0;                 // Y_2
+    int xCorCol = 0;                 // X_3
+    int yCorCol = 0;                 // Y_3
     unsigned int propattr = 0;
     string propvalue = "\0";
 };
@@ -233,6 +246,7 @@ class gdsTEXT{
      * (00 means top, 01 means middle, and 10 means bottom). Bits 14 and 15 specify the horizontal justification
      * (00 means left, 01 means center, and 10 means right). Bits 0 through 9 are reserved for future use and must be cleared.
      * If this record is omitted, then top-left justification and font 0 are assumed.*/
+    int plex = 0;
     bitset<16> presentation_flags;
     string textbody = "\0";
     unsigned int layer = 0;

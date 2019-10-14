@@ -56,6 +56,7 @@ class gdsForge{
 		void gdsPath(gdsPATH& in_PATH, bool minimal);
 		void gdsBoundary(gdsBOUNDARY& in_BOUNDARY, bool minimal);
 		void gdsSRef(gdsSREF& in_SREF, bool minimal);
+		void gdsARef(gdsAREF& in_AREF, bool minimal);
 		void gdsNode(gdsNODE& in_NODE, bool minimal);
 		void gdsText(gdsTEXT in_TEXT, bool minimal);
 		// void gdsARefV2(gdsAREF in_AREF, bool minimal);
@@ -75,8 +76,8 @@ class gdsForge{
 
 		int gdsCreate(string FileName, vector<gdsSTR>& inVec, double units[2]);
 
-		void importGDSfile(string fileName){
-			this->GDSfileNameToBeImport.push_back(fileName);
+		void importGDSfile(vector<string> &fileNames){
+			this->GDSfileNameToBeImport = fileNames;
 		};
 
 		void to_str();

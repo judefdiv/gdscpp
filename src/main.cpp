@@ -169,17 +169,14 @@ void testGDS(string fileName){
 	gdscpp fooGDS;
 
 	vector<gdsSTR> arrSTR;
-	arrSTR.resize(1);
+	arrSTR.resize(arrSTR.size()+1);
 
-	// vector<int> arrX;
-	// vector<int> arrY;
+	arrSTR.back().name = "MyStr";
+	arrSTR.back().BOUNDARY.push_back(draw2ptBox(1, -10000, -10000, 10000, 10000));
+	arrSTR.back().SREF.push_back(drawSREF("LSmitll_AND2T", 100000, 100000));
+	arrSTR.back().SREF.push_back(drawSREF("LSmitll_AND2T", -100000, -100000));
 
-	// gdsBOUNDARY draw2ptBox(int layer, int blX, int blY, int trX, int trY);
-	// gdsBOUNDARY drawBoundary(int layer, vector<int> corX, vector<int> corY);
-	// gdsPATH drawPath(int layer, unsigned int width, vector<int> corX, vector<int> corY);
-
-	arrSTR[0].name = "MyStr";
-	arrSTR[0].BOUNDARY.push_back(draw2ptBox(1, -100, -100, 100, 100));
+	fooGDS.importGDSfile("data/LSmitll_AND2T.gds");
 
 	fooGDS.setSTR(arrSTR);
 

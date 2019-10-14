@@ -43,8 +43,7 @@ int gdsForge::gdsCreate(string FileName, vector<gdsSTR>& inVec, double units[2])
 		this->gdsCopyFile(this->GDSfileNameToBeImport[i]);
 	}
 
-
-	bool minimal = false;
+	bool minimal = true;
 
 	for(unsigned int i = 0; i < this->STR.size(); i++){
 		// Start of the structure
@@ -388,11 +387,87 @@ void gdsForge::gdsSRef(gdsSREF& in_SREF, bool minimal){
 	this->GDSwriteInt(GDS_XY, corXY, 2);
 
 	// Optional goodies
-	if(!minimal){ 				//false
+	if(!minimal){
 		data[0] = in_SREF.propattr;
 		this->GDSwriteInt(GDS_PROPATTR, data, 1);
 
 		this->GDSwriteStr(GDS_PROPVALUE, in_SREF.propvalue);
+	}
+
+	this->GDSwriteRec(GDS_ENDEL);
+}
+
+/**
+ * [gdsForge::gdsARef - Create the AREF structure]
+ * @param in_SREF [The class containing the AREF structure]
+ * @param minimal [If true only the minimal is AREF structure is created]
+ */
+
+void gdsForge::gdsARef(gdsAREF& in_AREF, bool minimal){
+	int data[1];
+	this->GDSwriteRec(GDS_SREF);
+
+	// ELFLAGS and PLEX are optional
+	if(!minimal){
+		data[0] = in_AREF.plex;
+		this->GDSwriteInt(GDS_PLEX, data, 1);
+	}
+
+	// name of the structure that is referenced
+	this->GDSwriteStr(GDS_SNAME, in_AREF.name);
+
+	// two byte, bit array controlling reflection, magnification and rotation.
+	bitset<16> bits;
+
+	// reflect across x-axis
+	bits.set(15, in_AREF.reflection);
+
+	// magnification, default 1
+	if(in_AREF.scale == 1)
+		bits.set(2, 0);
+	else
+		bits.set(2, 1);
+
+	// angle of rotation
+	if(in_AREF.angle == 0)
+		bits.set(1, 0);
+	else
+		bits.set(1, 1);
+
+	this->GDSwriteBitArr(GDS_STRANS, bits);
+
+	double arrDou[1];
+	// Magnification, default 1
+	if(in_AREF.scale != 1){
+		arrDou[0] = in_AREF.scale;
+		this->GDSwriteRea(GDS_MAG, arrDou, 1);
+	}
+
+	// Angle measured counterclockwise
+	if(in_AREF.angle != 0){
+		arrDou[0] = in_AREF.angle;
+		this->GDSwriteRea(GDS_ANGLE, arrDou, 1);
+	}
+
+	int colrow[2];
+	colrow[0] = in_AREF.colCnt;
+	colrow[1] = in_AREF.rowCnt;
+	this->GDSwriteInt(GDS_COLROW, colrow, 2);
+
+	int corXY[6];
+	corXY[0] = in_AREF.xCor;
+	corXY[1] = in_AREF.yCor;
+	corXY[2] = in_AREF.xCorRow;
+	corXY[3] = in_AREF.yCorRow;
+	corXY[4] = in_AREF.xCorCol;
+	corXY[5] = in_AREF.yCorCol;
+	this->GDSwriteInt(GDS_XY, corXY, 6);
+
+	// Optional goodies
+	if(!minimal){
+		data[0] = in_AREF.propattr;
+		this->GDSwriteInt(GDS_PROPATTR, data, 1);
+		this->GDSwriteStr(GDS_PROPVALUE, in_AREF.propvalue);
 	}
 
 	this->GDSwriteRec(GDS_ENDEL);
@@ -472,7 +547,6 @@ void gdsForge::gdsText(gdsTEXT in_TEXT, bool minimal){
 	data[0] = in_TEXT.text_type;
 	this->GDSwriteInt(GDS_TEXTTYPE, data, 1);
 
-
 	int corXY[2];
 	corXY[0] = in_TEXT.xCor;
 	corXY[1] = in_TEXT.yCor;
@@ -485,7 +559,6 @@ void gdsForge::gdsText(gdsTEXT in_TEXT, bool minimal){
 	if(!minimal){ 				//false
 		data[0] = in_TEXT.propattr;
 		this->GDSwriteInt(GDS_PROPATTR, data, 1);
-
 		this->GDSwriteStr(GDS_PROPVALUE, in_TEXT.propvalue);
 	}
 
@@ -641,7 +714,7 @@ int gdsForge::GDSwriteStr(int record, string inStr){
 
 	if(inStr.length() % 2 == 1){
 		// therefore odd
-		inStr.push_back(' ');
+		inStr.push_back('\0');
 	}
 
 	int lenStr = inStr.length();
