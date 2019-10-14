@@ -128,6 +128,22 @@ This is the highest class, holding all the information of a single .gds file.
 int gdsToText(string fileName);
 int gdsRecordToText(char *recIn);
 
+struct STRstruct{
+      string name = "\0";
+      int STRindex = -1;
+      int level = -1;
+      vector<STRstruct*> subs;
+
+      void to_str(){
+        cout << "STR[" << STRindex << "]: " << this->name << endl;
+        cout << "  level: " << this->level << endl;
+      }
+    };
+
+struct STRstruct* newSTRstruct(string inName,
+                                    unsigned int inSTRindex,
+                                    unsigned int inLevel);
+
 class gdscpp{  // (GDS file)
   private:
     int version_number=7;                     // GDS version number. Default to 7
@@ -136,6 +152,9 @@ class gdscpp{  // (GDS file)
     vector<gdsSTR> STR;                       // Holds all the structures of the gds file
     vector<int> last_modified;                // TODO: Default to current datetime if unread
     string library_name = "Untitled_library"; // Default libname
+
+    vector<STRstruct*> rootSTR;
+    vector<unsigned int> findRootSTR();
 
     int GDSrecord2ASCII(char *recIn);         // Does it belong here???
   public:
@@ -151,6 +170,9 @@ class gdscpp{  // (GDS file)
     double get_database_units();
     void to_str();
     void reset();
+
+    int createHierarchy();
+    int genDot(string fileName);
 };
 
 /*

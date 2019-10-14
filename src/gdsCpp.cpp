@@ -1283,8 +1283,161 @@ void gdscpp::setSTR(vector<gdsSTR> target_structure)
   STR.insert(STR.end(), target_structure.begin(), target_structure.end());
 }
 
-//Returns the database unit of gds file
+/**
+ * [gdscpp::createHierarchy - Creates a tree structure of all the GDS structure dependencies]
+ * @return [0 - Exit Success; 1 - Exit Failure]
+ */
+
 double gdscpp::get_database_units()
 {
   return units[1];
+}
+
+int gdscpp::createHierarchy(){
+  vector<unsigned int> rootSTRi;
+  rootSTRi = this->findRootSTR();
+
+  for(unsigned int i = 0; i < rootSTRi.size(); i++){
+    this->rootSTR.push_back(newSTRstruct(this->STR[rootSTRi[i]].name, 1, 0));
+  }
+
+  for(unsigned int i = 0; i < this->rootSTR.size(); i++){
+    this->rootSTR[i]->to_str();
+  }
+
+  // this->rootSTR[0]->subs.push_back(newSTRstruct("yoyo", 1, 0));
+
+  return 0;
+}
+
+/**
+ * [gdscpp::insertSTRstruct - Creates a node in the tree structure]
+ * @param  inName     [The name of the GDS structure]
+ * @param  inSTRindex [The index of the GDS structure]
+ * @param  inLevel    [The level on which the GDS structure sits]
+ * @return            [0 - Exit Success; 1 - Exit Failure]
+ */
+
+struct STRstruct* newSTRstruct(string inName, unsigned int inSTRindex, unsigned int inLevel){
+  struct STRstruct* node = (struct STRstruct*)malloc(sizeof(struct STRstruct));
+
+  node->name = inName;
+  node->STRindex = inSTRindex;
+  node->level = inLevel;
+
+  return node;
+}
+
+/**
+ * [gdscpp::findRootSTR finds the root structures]
+ * @return [vector of the STR indexes of the root GDS STR]
+ */
+
+vector<unsigned int> gdscpp::findRootSTR(){
+  cout << "Finding the root structures." << endl;
+  vector<string> mainSTR;
+  vector<string> refSTR;
+
+  vector<unsigned int> rootSTRindexes;
+
+  bool vecFound;
+
+  for(unsigned int i = 0; i < this->STR.size(); i++){
+    vecFound = false;
+    for(unsigned int j = 0; j < this->STR.size(); j++){
+      for(unsigned int k = 0; k < this->STR[j].SREF.size(); k++){
+        if(!this->STR[i].name.compare(this->STR[j].SREF[k].name)){
+          vecFound = true;
+          break;
+        }
+      }
+      if(vecFound){
+        break;
+      }
+    }
+    if(vecFound == false){
+      rootSTRindexes.push_back(i);
+    }
+  }
+
+  // display the root GDS STR
+  cout << "Root GDS structures: ";
+
+  vector<unsigned int>::iterator fooVec;
+  for(fooVec = rootSTRindexes.begin(); fooVec != rootSTRindexes.end(); fooVec++){
+    cout << "  " << this->STR[*fooVec].name;
+  }
+  cout << endl;
+
+  return rootSTRindexes;
+}
+
+/**
+ * [gdscpp::genDot - Creates the tree diagram of all the GDS structure dependencies]
+ * @param  fileName [The file name of the to be created dot file]
+ * @return          [0 - Exit Success; 1 - Exit Failure]
+ */
+
+int gdscpp::genDot(string fileName){
+  cout << "Generating Dot file:\"" << fileName << "\" file" << endl;
+
+  vector<string> fromSTR;
+  vector<string> toSTR;
+
+  bool foundSTR;
+  for(int i = 0; i < this->STR.size(); i++){
+    for(int j = 0; j < this->STR[i].SREF.size(); j++){
+      foundSTR = true;
+      for(unsigned int k = 0; k < fromSTR.size(); k++){
+        if(!fromSTR[k].compare(this->STR[i].name) && !toSTR[k].compare(this->STR[i].SREF[j].name)){
+          foundSTR = false;
+          break;
+        }
+      }
+      if(foundSTR){
+        fromSTR.push_back(this->STR[i].name);
+        toSTR.push_back(this->STR[i].SREF[j].name);
+      }
+    }
+  }
+
+  cout << "here 1" << endl;;
+
+  // ------------------------ creating dot file ------------------------
+
+  FILE *dotFile;
+  dotFile = fopen("foo.dot", "w");
+
+  string lineStr;
+
+  lineStr = "digraph GDStree {\n";
+  fputs(lineStr.c_str(), dotFile);
+
+  for(unsigned int i = 0; i < fromSTR.size(); i++){
+    lineStr = "\t" + fromSTR[i] + " -> " + toSTR[i] + ";\n";
+    fputs(lineStr.c_str(), dotFile);
+    }
+
+  lineStr = "}";
+  fputs(lineStr.c_str(), dotFile);
+
+  fclose(dotFile);
+  cout << "Dot file done." << endl;
+
+  // ------------------------ executing dot script ------------------------
+  string bashCmd;
+  bashCmd = "dot -Tjpg foo.dot -o " + fileName;
+
+  if(system(bashCmd.c_str()) == -1){
+    cout << "Bash command :\"" << bashCmd << "\" error." << endl;
+    return 1;
+  }
+
+  // bashCmd = "rm foo.dot";
+  // if(system(bashCmd.c_str()) == -1){
+  //   cout << "Bash command :\"" << bashCmd << "\" error." << endl;
+  //   return 1;
+  // }
+
+  return 0;
 }

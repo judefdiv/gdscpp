@@ -11,47 +11,47 @@
 
 #include "gdsParser.hpp"
 
-ifstream gdsFileRead;
-string gdsFileNameRead = "\0";
+// ifstream gdsFileRead;
+// string gdsFileNameRead = "\0";
 
-/**
- * [openGDSread - Creates/opens the binary file]
- * @param  fileName [The file name of the GDSII file]
- * @return          [Returns 1 if all good else 0 if error]
- */
+// /**
+//  * [openGDSread - Creates/opens the binary file]
+//  * @param  fileName [The file name of the GDSII file]
+//  * @return          [0 - Exit Success; 1 - Exit Failure]
+//  */
 
-int openGDSread(string fileName)
-{
-	gdsFileNameRead = fileName;
-	gdsFileRead.open(gdsFileNameRead, ios::in | ios::binary);
+// int openGDSread(string fileName)
+// {
+// 	gdsFileNameRead = fileName;
+// 	gdsFileRead.open(gdsFileNameRead, ios::in | ios::binary);
 
-	if (!gdsFileRead.is_open())
-	{
-		cout << "GDS file ->" << gdsFileNameRead << "<- FAILED to be opened." << endl;
-		return 0;
-	}
+// 	if (!gdsFileRead.is_open())
+// 	{
+// 		cout << "GDS file ->" << gdsFileNameRead << "<- FAILED to be opened." << endl;
+// 		return 0;
+// 	}
 
-	cout << "GDS file ->" << gdsFileNameRead << "<- opened." << endl;
-	return 1;
-}
+// 	cout << "GDS file ->" << gdsFileNameRead << "<- opened." << endl;
+// 	return 1;
+// }
 
-/**
- * [closeGDSread - closes the opened GDS file]
- * @return [Returns 1 if all good else 0 if error]
- */
+// /**
+//  * [closeGDSread - closes the opened GDS file]
+//  * @return [0 - Exit Success; 1 - Exit Failure]
+//  */
 
-int closeGDSread()
-{
-	if (gdsFileNameRead == "\0")
-	{
-		cout << "GDS file was not opened." << endl;
-		return 0;
-	}
+// int closeGDSread()
+// {
+// 	if (gdsFileNameRead == "\0")
+// 	{
+// 		cout << "GDS file was not opened." << endl;
+// 		return 0;
+// 	}
 
-	gdsFileRead.close();
-	cout << "GDS file ->" << gdsFileNameRead << "<- closed." << endl;
-	return 1;
-}
+// 	gdsFileRead.close();
+// 	cout << "GDS file ->" << gdsFileNameRead << "<- closed." << endl;
+// 	return 1;
+// }
 
 /**
  * [GDSdistill - Reads a single record and outputs it to the appropriate variable]
