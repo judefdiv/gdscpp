@@ -81,6 +81,7 @@ class gdscpp{  // (GDS file)
     //void setSTR(gdsSTR exVec){STR.push_back(exVec);};
     void getSTR(vector<gdsSTR>& exVec){exVec = STR;};
     int import(string fileName);
+    bool compare_name(string ref, int level);
     int identify_heirarchy();
     int write(string fileName);
     int quick2ASCII(string fileName);         // does not store data, legacy code.

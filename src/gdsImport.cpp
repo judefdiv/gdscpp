@@ -694,7 +694,60 @@ int gdscpp::import(string fileName)
   return 0;
 }
 
+/**
+ * [gdscpp::identify heirarchy]
+ * Populates gdscpp::map<int, vector<string>> Heirarchy
+ * @return          [0 - Exit Success; 1 - Exit Failure]
+ */
 int gdscpp::identify_heirarchy()
 {
+  vector<string> emptyvec;
+  Heirarchy.insert({1,emptyvec});
+  auto struct_it = STR.begin();
+  while (struct_it != STR.end())
+  {
+    if ( ( struct_it->SREF.empty() && ( struct_it->AREF.empty() ) ) )
+    {
+      Heirarchy[1].push_back(struct_it->name);
+    }
+    else
+    {
+      if (Heirarchy.count(2))
+      {
+        Heirarchy[2].push_back(struct_it->name);
+      }
+      else
+      {
+        Heirarchy.insert({2,emptyvec});
+        Heirarchy[2].push_back(struct_it->name);
+      }
+    }
+    struct_it++;
+  }
+  // At this stage all structures that use references are on level 2.
+  // We need to separate those that reference secondary structures and so on
+  // If there are no references there will only be one level of heirarchy.
+  if (Heirarchy.count(2))
+  {
+
+  }
   return EXIT_SUCCESS;
+}
+
+bool gdscpp::compare_name(string ref, int level)
+{
+  if (Heirarchy.count(level)) //Safeguard
+  {
+    auto level_searcher = Heirarchy[level].begin();
+    while (level_searcher != Heirarchy[level].end())
+    {
+      if (*level_searcher == ref)
+      {
+        /* code */
+      }
+
+      level_searcher++;
+    }
+  }
+  return false;
 }
