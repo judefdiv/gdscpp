@@ -41,6 +41,8 @@ class gdsForge{
 
 		vector<gdsSTR> STR;
 
+		vector<string> GDSfileNameToBeImport;
+
 		// Surface level
 
 		// UpperGround level
@@ -49,7 +51,7 @@ class gdsForge{
 		void gdsStrStart(string strName);
 		void gdsStrEnd();
 
-		void gdsCopyStr(string fileName);
+		int gdsCopyFile(string fileName);
 
 		void gdsPath(gdsPATH& in_PATH, bool minimal);
 		void gdsBoundary(gdsBOUNDARY& in_BOUNDARY, bool minimal);
@@ -73,9 +75,11 @@ class gdsForge{
 
 		int gdsCreate(string FileName, vector<gdsSTR>& inVec, double units[2]);
 
+		void importGDSfile(string fileName){
+			this->GDSfileNameToBeImport.push_back(fileName);
+		};
+
 		void to_str();
 };
-
-// void copyGDSstrs(string fileName);					// unsure, important function
 
 #endif

@@ -39,7 +39,11 @@ int gdsForge::gdsCreate(string FileName, vector<gdsSTR>& inVec, double units[2])
 
 	this->gdsBegin();
 
-	// gdsCopyStr("ImportFileStrs.gds2");
+	for(unsigned int i = 0; i < this->GDSfileNameToBeImport.size(); i++){
+		this->gdsCopyFile(this->GDSfileNameToBeImport[i]);
+	}
+
+
 	bool minimal = false;
 
 	for(unsigned int i = 0; i < this->STR.size(); i++){
@@ -199,16 +203,6 @@ void gdsForge::gdsBegin(){
 
 void gdsForge::gdsEnd(){
 	this->GDSwriteRec(GDS_ENDLIB);
-}
-
-
-/**
- * [gdsForge::gdsCopyStr - Copies structure from a GDS file. This function is just a passer]
- * @param fileName [Name of the file]
- */
-
-void gdsForge::gdsCopyStr(string fileName){
-	// this->copyGDSstrs(fileName);
 }
 
 /**
@@ -496,6 +490,87 @@ void gdsForge::gdsText(gdsTEXT in_TEXT, bool minimal){
 	}
 
 	this->GDSwriteRec(GDS_ENDEL);
+}
+
+
+/**
+ * [gdsForge::gdsCopyFile - Copies the structure from a GDS file to another]
+ * @param  fileName [Name of file to be imported]
+ * @return          [0 - Exit Success; 1 - Exit Failure]
+ */
+
+int gdsForge::gdsCopyFile(string fileName){
+  cout << "Copying GDS binaries from \"" << fileName << "\"" << endl;
+
+  ifstream gdsFileIn;
+
+  gdsFileIn.open(fileName, ios::in|ios::binary);
+
+  if(!gdsFileIn.is_open()){
+    cout << "FAILED to open GDS file \"" << fileName << "\"" << endl;
+    return 1;
+  }
+
+  char *readBlk;
+  uint32_t sizeBlk;
+  uint32_t hexKey;
+  bool cpEN = false;
+  bool firstLine = true;
+  string strName;
+  static set<string> StoredStr;
+
+  gdsFileIn.seekg(0, ios::beg);
+
+  do{
+    readBlk = new char [2];
+    gdsFileIn.read(readBlk, 2);                   // Get the size of the record
+    sizeBlk = (((unsigned char)readBlk[0] << 8) | (unsigned char)readBlk[1]);     // Interpret the size of the record
+
+    gdsFileIn.seekg(-2, ios::cur);
+    readBlk = new char [sizeBlk];                   // Reading in the full length of the record excluding the size
+    gdsFileIn.read(readBlk, sizeBlk);
+
+    hexKey = (((unsigned char)readBlk[2] << 8) | (unsigned char)readBlk[3]);
+
+    if(hexKey == GDS_BGNSTR){                       // Beginning of structure
+      cpEN = true;
+      firstLine = true;
+    }
+
+    if(cpEN && hexKey == GDS_STRNAME){              // get the name of the structure
+      strName = "";
+      for(uint8_t i = 4; i < sizeBlk; i++){
+        strName = strName + readBlk[i];
+      }
+
+      if(StoredStr.find(strName) != StoredStr.end()){ //found
+        cout << "Structure: \""<< strName << "\"" << " already copied." << endl;
+        cpEN = false;
+      }
+      else{   // didnt find
+        cout << "Structure: \""<< strName << "\""  << " copying" << endl;
+        StoredStr.insert(strName);
+        this->GDSwriteInt(GDS_BGNSTR, gsdTime(), 12);
+      }
+
+      firstLine = false;
+    }
+
+    if(cpEN && !firstLine){                                       // Write(copy) the GSD record
+      fwrite(readBlk, 1, sizeBlk, this->gdsFile);
+    }
+
+    if(hexKey == GDS_ENDSTR){                       //end of structure
+      cpEN = false;
+    }
+
+  } while(hexKey != GDS_ENDLIB);
+
+  delete[] readBlk;
+
+  gdsFileIn.close();
+  cout << "Copying GDS binaries of \"" << fileName << "\" done." << endl;
+  return 0;
 }
 
 /***********************************************************************************
