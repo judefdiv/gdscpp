@@ -1297,36 +1297,9 @@ int gdscpp::createHierarchy(){
   vector<unsigned int> rootSTRi;
   rootSTRi = this->findRootSTR();
 
-  for(unsigned int i = 0; i < rootSTRi.size(); i++){
-    this->rootSTR.push_back(newSTRstruct(this->STR[rootSTRi[i]].name, 1, 0));
-  }
-
-  for(unsigned int i = 0; i < this->rootSTR.size(); i++){
-    this->rootSTR[i]->to_str();
-  }
-
-  // this->rootSTR[0]->subs.push_back(newSTRstruct("yoyo", 1, 0));
-
   return 0;
 }
 
-/**
- * [gdscpp::insertSTRstruct - Creates a node in the tree structure]
- * @param  inName     [The name of the GDS structure]
- * @param  inSTRindex [The index of the GDS structure]
- * @param  inLevel    [The level on which the GDS structure sits]
- * @return            [0 - Exit Success; 1 - Exit Failure]
- */
-
-struct STRstruct* newSTRstruct(string inName, unsigned int inSTRindex, unsigned int inLevel){
-  struct STRstruct* node = (struct STRstruct*)malloc(sizeof(struct STRstruct));
-
-  node->name = inName;
-  node->STRindex = inSTRindex;
-  node->level = inLevel;
-
-  return node;
-}
 
 /**
  * [gdscpp::findRootSTR finds the root structures]
@@ -1401,8 +1374,6 @@ int gdscpp::genDot(string fileName){
     }
   }
 
-  cout << "here 1" << endl;;
-
   // ------------------------ creating dot file ------------------------
 
   FILE *dotFile;
@@ -1433,11 +1404,11 @@ int gdscpp::genDot(string fileName){
     return 1;
   }
 
-  // bashCmd = "rm foo.dot";
-  // if(system(bashCmd.c_str()) == -1){
-  //   cout << "Bash command :\"" << bashCmd << "\" error." << endl;
-  //   return 1;
-  // }
+  bashCmd = "rm foo.dot";
+  if(system(bashCmd.c_str()) == -1){
+    cout << "Bash command :\"" << bashCmd << "\" error." << endl;
+    return 1;
+  }
 
   return 0;
 }

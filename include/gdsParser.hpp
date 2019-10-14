@@ -25,10 +25,12 @@
 
 using namespace std;
 
-// int openGDSread(string fileName);           // must integrate...
-// int closeGDSread();                         // must integrate...
-
-int GDSdistill(char *recIn, uint32_t& GDSKey, bitset<16>& bitarr, vector<int>& integer, vector<double>& B8Real, string& words);
+int GDSdistill(char *recIn,
+                uint32_t& GDSKey,
+                bitset<16>& bitarr,
+                vector<int>& integer,
+                vector<double>& B8Real,
+                string& words);
 
 unsigned long long GDSfloatCalc(double inVar);											// low level
 unsigned long long bitShiftR(unsigned long long inVar, int cnt);		// ultra low level
@@ -79,6 +81,6 @@ string GDSkey2ASCII(unsigned int inHex);
 #define GDS_PROPVALUE    0x2c06
 #define GDS_BOX          0x2d00
 #define GDS_BOXTYPE      0x2e02
-#define GDS_PLEX         0x2F03
+#define GDS_PLEX         0x2f03
 
 #endif
