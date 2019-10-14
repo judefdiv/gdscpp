@@ -137,7 +137,7 @@ int gdscpp::import(string fileName)
                   switch (current_GDSKey)
                   {
                   case GDS_PLEX:
-                    //Ignore for now - seems to only be used with nodes
+                    plchold_bnd.plex = current_integer[0];
                     break;
                   case GDS_LAYER:
                     plchold_bnd.layer = current_integer[0];
@@ -215,7 +215,7 @@ int gdscpp::import(string fileName)
                   switch (current_GDSKey)
                   {
                   case GDS_PLEX:
-                    //Ignore for now - seems to only be used with nodes
+                    plchold_path.plex = current_integer[0];
                     break;
                   case GDS_LAYER:
                     plchold_path.layer = current_integer[0];
@@ -299,13 +299,14 @@ int gdscpp::import(string fileName)
                   switch (current_GDSKey)
                   {
                   case GDS_PLEX:
-                    //Ignore for now - seems to only be used with nodes
+                    plchold_sref.plex = current_integer[0];
                     break;
                   case GDS_SNAME:
                     plchold_sref.name = current_words;
                     break;
                   case GDS_STRANS:
                     plchold_sref.sref_flags = current_bitarr;
+                    plchold_sref.reflection = current_bitarr[15];
                     break;
                   case GDS_MAG:
                     plchold_sref.sref_flags.set(13, 1);     // Precaution incase other software forgot to set bit
@@ -371,13 +372,14 @@ int gdscpp::import(string fileName)
                   switch (current_GDSKey)
                   {
                   case GDS_PLEX:
-                    //Ignore for now - seems to only be used with nodes
+                    plchold_aref.plex = current_integer[0];
                     break;
                   case GDS_SNAME:
                     plchold_aref.name = current_words;
                     break;
                   case GDS_STRANS:
                     plchold_aref.aref_transformation_flags = current_bitarr;
+                    plchold_aref.reflection = current_bitarr[15];
                     break;
                   case GDS_MAG:
                     plchold_aref.aref_transformation_flags.set(13, 1); // Precaution incase other software forgot to set bit
@@ -388,16 +390,19 @@ int gdscpp::import(string fileName)
                     plchold_aref.angle = current_B8Real[0];
                     break;
                   case GDS_COLROW:
-                    plchold_aref.colrow = current_integer[0];
+                    plchold_aref.colCnt = current_integer[0];
+                    plchold_aref.rowCnt = current_integer[1];
                     break;
                   case GDS_XY:
                     //confirm xy as pairs
                     if (current_integer.size() % 2 == 0)
                     {
-                      // x append
-                      plchold_aref.xCor = current_integer[0];
-                      // y append
-                      plchold_aref.yCor = current_integer[1];
+                      plchold_aref.xCor    = current_integer[0];
+                      plchold_aref.yCor    = current_integer[1];
+                      plchold_aref.xCorRow = current_integer[2];
+                      plchold_aref.yCorRow = current_integer[3];
+                      plchold_aref.xCorCol = current_integer[4];
+                      plchold_aref.yCorCol = current_integer[5];
                     }
                     else
                     {
@@ -447,7 +452,7 @@ int gdscpp::import(string fileName)
                   switch (current_GDSKey)
                   {
                   case GDS_PLEX:
-                    //Ignore for now - seems to only be used with nodes
+                    plchold_text.plex = current_integer[0];
                     break;
                   case GDS_LAYER:
                     plchold_text.layer = current_integer[0];
