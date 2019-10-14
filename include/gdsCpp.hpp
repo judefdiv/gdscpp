@@ -9,88 +9,6 @@
  * File:				gdsCpp.hpp
  */
 
-// ############################ DETAILED DESCRIPTION ################################
-// To understand format better: http://boolean.klaasholwerda.nl/interface/bnf/gdsformat.html
-// =============================== GENERAL RECORDS ==================================
-/*                                      <Record>     < Done? >
-*                                       [HEADER]        [X]
-*                                       [BGNLIB]        [X]
-*                                       [LIBNAME]       [X]
-*                                       [REFLIBS]       [ ](Don't bother here unless needed.)
-*                                       [FONTS]         [ ](Don't bother here unless needed.)
-*                                       [ATTRTABLE]     [ ](Don't bother here unless needed.)
-*                                       [GENERATIONS]   [X]
-*                                       [<FormatType>]  [ ](Don't bother here unless needed.)
-*                                       [UNITS]         [X]
-*                                       [BGNSTR]        [ ]
-*                                       [STRNAME]       [X]
-*                                       [ENDLIB]        [ ]
-*/
-// =============================== ELEMENT RECORDS ==================================
-// Element records form part of a structure
-// --------------------------------- 1: BOUNDARY        [X]--------------------------
-//              PLEX       //Ignore for now - seems to only be used with nodes
-//              LAYER
-//              DATATYPE
-//              XY
-//              PROPATTR
-//              PROPVALUE
-// ----------------------------------- 2: PATH          [X]--------------------------
-//              PLEX       //Ignore for now - seems to only be used with nodes
-//              LAYER
-//              DATATYPE
-//              PATHTYPE
-//              WIDTH
-//              XY
-//              PROPATTR
-//              PROPVALUE
-// --------------------------- 3: STRUCTURE REFERENCE   [X]--------------------------
-//              SNAME
-//              STRANS Transformation )
-//              MAG                   )
-//              ANGLE                 )
-//              XY
-//              PROPATTR
-//              PROPVALUE
-// ----------------------------- 4: ARRAY REFERENCE     [X]--------------------------
-//              PLEX       //Ignore for now - seems to only be used with nodes
-//              SNAME
-//              STRANS Transformation )
-//              MAG                   )
-//              ANGLE                 )
-//              COLROW
-//              XY
-//              PROPATTR
-//              PROPVALUE
-// ----------------------------------- 5: TEXT          [X]--------------------------
-//              PLEX       //Ignore for now - seems to only be used with nodes
-//              LAYER
-//              TEXTTYPE
-//              PRESENTATION
-//              PATHTYPE
-//              WIDTH
-//              STRANS Transformation )
-//              MAG                   )
-//              ANGLE                 )
-//              XY
-//              STRING
-//              PROPATTR
-//              PROPVALUE
-// ----------------------------------- 6: NODE          [X]--------------------------
-//              PLEX
-//              LAYER
-//              NODETYPE
-//              XY
-//              PROPATTR
-//              PROPVALUE
-// ----------------------------------- 7: BOX           [X]--------------------------
-//              PLEX       //Ignore for now - seems to only be used with nodes
-//              LAYER
-//              BOXTYPE
-//              XY
-//              PROPATTR
-//              PROPVALUE
-
 #ifndef gdsCpp
 #define gdsCpp
 
@@ -132,18 +50,13 @@ struct STRstruct{
   string name = "\0";
   int STRindex = -1;
   int level = -1;
-  vector<STRstruct*> subs;
+  vector<unsigned int> children;
 
   void to_str(){
     cout << "STR[" << STRindex << "]: " << this->name << endl;
     cout << "  level: " << this->level << endl;
   }
 };
-
-// to be removed
-struct STRstruct* newSTRstruct(string inName,
-                                    unsigned int inSTRindex,
-                                    unsigned int inLevel);
 
 class gdscpp{  // (GDS file)
   private:
@@ -154,7 +67,6 @@ class gdscpp{  // (GDS file)
     vector<int> last_modified;                // TODO: Default to current datetime if unread
     string library_name = "Untitled_library"; // Default libname
 
-    vector<STRstruct*> rootSTR;
     vector<unsigned int> findRootSTR();
 
     int GDSrecord2ASCII(char *recIn);         // Does it belong here???
