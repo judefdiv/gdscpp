@@ -9,6 +9,8 @@
  * File:				gdsCpp.hpp
  */
 
+#include <utility>
+
 #include "gdscpp/gdsCpp.hpp"
 
 /**
@@ -17,7 +19,7 @@
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
 
-int gdsToText(string fileName)
+int gdsToText(const string &fileName)
 {
   ifstream gdsFile;
 
@@ -155,7 +157,7 @@ int gdscpp::write(string fileName)
 {
   gdsForge foo;
   foo.importGDSfile(this->GDSfileName);
-  return foo.gdsCreate(fileName, this->STR, this->units);
+  return foo.gdsCreate(std::move(fileName), this->STR, this->units);
 }
 
 /**
@@ -165,7 +167,7 @@ int gdscpp::write(string fileName)
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
 
-int gdscpp::quick2ASCII(string fileName)
+int gdscpp::quick2ASCII(const string &fileName)
 {
   ifstream gdsFile;
 
@@ -557,7 +559,7 @@ void gdsBOX::reset()
 }
 
 // Standard function for adding one structure onto the stack.
-void gdscpp::setSTR(gdsSTR target_structure)
+void gdscpp::setSTR(const gdsSTR &target_structure)
 {
   STR.push_back(target_structure);
   STR_Lookup.insert({target_structure.name, (STR.size() - 1)});
@@ -641,7 +643,7 @@ vector<unsigned int> gdscpp::findRootSTR()
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
 
-int gdscpp::genDot(string fileName)
+int gdscpp::genDot(const string &fileName)
 {
   cout << "Generating Dot file:\"" << fileName << "\" file" << endl;
 

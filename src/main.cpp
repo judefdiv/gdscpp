@@ -14,6 +14,7 @@
 #include <string> //string goodies
 // #include <map>
 #include <iomanip> // setprecision()
+#include <utility>
 
 #include "gdscpp/gdsCpp.hpp"
 #include "gdscpp/gdsForge.hpp" // used to testing function
@@ -175,7 +176,7 @@ void testGDS(string fileName)
 
   fooGDS.setSTR(arrSTR);
 
-  fooGDS.write(fileName);
+  fooGDS.write(std::move(fileName));
 }
 
 void helpScreen()

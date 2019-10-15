@@ -9,8 +9,8 @@
  * File:				gdsCpp.hpp
  */
 
-#ifndef gdsCpp
-#define gdsCpp
+#ifndef GDSCPP_GDSCPP_HPP
+#define GDSCPP_GDSCPP_HPP
 
 using namespace std;
 
@@ -43,7 +43,7 @@ class gdsBOX;      // ''
 This is the highest class, holding all the information of a single .gds file.
 */
 
-int gdsToText(string fileName);
+int gdsToText(const string &fileName);
 int gdsRecordToText(char *recIn);
 
 struct STRstruct
@@ -81,28 +81,28 @@ private:
 public:
   gdscpp(){};
   ~gdscpp(){};
-  void setSTR(gdsSTR target_structure);
+  void setSTR(const gdsSTR &target_structure);
   void setSTR(vector<gdsSTR> target_structure);
   // void setSTR(gdsSTR exVec){STR.push_back(exVec);};
   void getSTR(vector<gdsSTR> &exVec)
   {
     exVec = STR;
   };
-  int import(string fileName);
-  bool compare_name(string ref, int level);
+  int import(const string &fileName);
+  bool compare_name(const string &ref, int level);
   int identify_heirarchy();
   int write(string fileName);
-  int quick2ASCII(string fileName); // does not store data, legacy code.
+  int quick2ASCII(const string &fileName); // does not store data, legacy code.
   double get_database_units();
   void to_str();
   void reset();
-  void importGDSfile(string fileName)
+  void importGDSfile(const string &fileName)
   {
     this->GDSfileName.push_back(fileName);
   }
 
   int createHierarchy();
-  int genDot(string fileName);
+  int genDot(const string &fileName);
 };
 
 /*

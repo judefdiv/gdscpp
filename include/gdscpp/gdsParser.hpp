@@ -9,8 +9,8 @@
  * functions. File:				gdsParser.hpp
  */
 
-#ifndef gdsParser
-#define gdsParser
+#ifndef GDSCPP_GDSPARSER_HPP
+#define GDSCPP_GDSPARSER_HPP
 
 #include <bitset>
 #include <cstring>

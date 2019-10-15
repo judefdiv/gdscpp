@@ -16,7 +16,7 @@
  * @param  fileName [The file name of the GDS file that is going to be read in]
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
-int gdscpp::import(string fileName)
+int gdscpp::import(const string &fileName)
 {
   // Variable declarations
   ifstream gdsFile;
@@ -709,7 +709,7 @@ int gdscpp::identify_heirarchy()
   return EXIT_SUCCESS;
 }
 
-bool gdscpp::compare_name(string ref, int level)
+bool gdscpp::compare_name(const string &ref, int level)
 {
   if (Heirarchy.count(level)) // Safeguard
   {

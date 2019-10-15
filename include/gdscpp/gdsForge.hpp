@@ -9,8 +9,8 @@
  * File:				gdsForge.hpp
  */
 
-#ifndef GDSForge
-#define GDSForge
+#ifndef GDSCPP_GDSFORGE_HPP
+#define GDSCPP_GDSFORGE_HPP
 
 #include <bitset>
 #include <cstring>
@@ -53,14 +53,14 @@ private:
   void gdsStrStart(string strName);
   void gdsStrEnd();
 
-  int gdsCopyFile(string fileName);
+  int gdsCopyFile(const string &fileName);
 
   void gdsPath(gdsPATH &in_PATH, bool minimal);
   void gdsBoundary(gdsBOUNDARY &in_BOUNDARY, bool minimal);
   void gdsSRef(gdsSREF &in_SREF, bool minimal);
   void gdsARef(gdsAREF &in_AREF, bool minimal);
   void gdsNode(gdsNODE &in_NODE, bool minimal);
-  void gdsText(gdsTEXT in_TEXT, bool minimal);
+  void gdsText(const gdsTEXT &in_TEXT, bool minimal);
   // void gdsARefV2(gdsAREF in_AREF, bool minimal);
   // void gdsBOXV2(gdsBOX in_BOX, bool minimal);
 
@@ -76,7 +76,7 @@ public:
   gdsForge();
   ~gdsForge(){};
 
-  int gdsCreate(string FileName, vector<gdsSTR> &inVec, double units[2]);
+  int gdsCreate(const string &FileName, vector<gdsSTR> &inVec, double units[2]);
 
   void importGDSfile(vector<string> &fileNames)
   {

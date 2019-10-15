@@ -9,6 +9,8 @@
  * File:				gdsForge.cpp
  */
 
+#include <utility>
+
 #include "gdscpp/gdsForge.hpp"
 
 /**
@@ -26,7 +28,8 @@ gdsForge::gdsForge() {}
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
 
-int gdsForge::gdsCreate(string FileName, vector<gdsSTR> &inVec, double units[2])
+int gdsForge::gdsCreate(const string &FileName, vector<gdsSTR> &inVec,
+                        double units[2])
 {
   this->STR = inVec;
 
@@ -99,8 +102,8 @@ gdsBOUNDARY drawBoundary(int layer, vector<int> corX, vector<int> corY)
   gdsBOUNDARY foo;
 
   foo.layer = layer;
-  foo.xCor = corX;
-  foo.yCor = corY;
+  foo.xCor = std::move(corX);
+  foo.yCor = std::move(corY);
 
   return foo;
 }
@@ -121,8 +124,8 @@ gdsPATH drawPath(int layer, unsigned int width, vector<int> corX,
 
   foo.layer = layer;
   foo.width = width;
-  foo.xCor = corX;
-  foo.yCor = corY;
+  foo.xCor = std::move(corX);
+  foo.yCor = std::move(corY);
 
   return foo;
 }
@@ -172,7 +175,7 @@ gdsSREF drawSREF(string STRname, int Xcor, int Ycor)
 {
   gdsSREF foo;
 
-  foo.name = STRname;
+  foo.name = std::move(STRname);
   foo.xCor = Xcor;
   foo.yCor = Ycor;
 
@@ -223,7 +226,7 @@ void gdsForge::gdsEnd()
 void gdsForge::gdsStrStart(string strName)
 {
   this->GDSwriteInt(GDS_BGNSTR, gsdTime(), 12);
-  this->GDSwriteStr(GDS_STRNAME, strName);
+  this->GDSwriteStr(GDS_STRNAME, std::move(strName));
 }
 
 /**
@@ -545,7 +548,7 @@ void gdsForge::gdsNode(gdsNODE &in_NODE, bool minimal)
  * @param minimal [If true only the minimal is TEXT structure is created]
  */
 
-void gdsForge::gdsText(gdsTEXT in_TEXT, bool minimal)
+void gdsForge::gdsText(const gdsTEXT &in_TEXT, bool minimal)
 {
   int data[1];
   this->GDSwriteRec(GDS_TEXT);
@@ -585,7 +588,7 @@ void gdsForge::gdsText(gdsTEXT in_TEXT, bool minimal)
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
 
-int gdsForge::gdsCopyFile(string fileName)
+int gdsForge::gdsCopyFile(const string &fileName)
 {
   cout << "Copying GDS binaries from \"" << fileName << "\"" << endl;
 
