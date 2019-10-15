@@ -1,0 +1,5 @@
+project_name = "GdsCpp"
+project_type = "Library"
+project_version = "1.0"
+project_namespace = "gdscpp"
+target_name = "gdscpp"
