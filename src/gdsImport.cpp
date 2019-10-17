@@ -397,8 +397,8 @@ int gdscpp::import(string fileName)
                     //confirm xy as pairs
                     if (current_integer.size() % 2 == 0)
                     {
-                      plchold_aref.xCor    = current_integer[0];
-                      plchold_aref.yCor    = current_integer[1];
+                      plchold_aref.xCor = current_integer[0];
+                      plchold_aref.yCor = current_integer[1];
                       plchold_aref.xCorRow = current_integer[2];
                       plchold_aref.yCorRow = current_integer[3];
                       plchold_aref.xCorCol = current_integer[4];
@@ -706,29 +706,36 @@ int gdscpp::import(string fileName)
  */
 int gdscpp::identify_heirarchy()
 {
-  // map<int, set<string>> Heirarchy;
-  Heirarchy.clear();
-  set<string> empty_set;
-  set<string> allowed_list;    // Allowes structure names
-  int current_level=1;
-  Heirarchy.insert({current_level,empty_set});
+  // vector<vector<string>> heirarchy;
+  heirarchy.clear();
+  vector<string> string_vector;
+  vector<string> allowed_structures_list; // Allowes structure names
+  heirarchy.push_back(string_vector);     // Creates first level
+  vector<vector<string>>::iterator heir_iter = heirarchy.begin();
   auto struct_it = STR.begin();
   while (struct_it != STR.end())
   {
-    if ( ( struct_it->SREF.empty() && ( struct_it->AREF.empty() ) ) )
+    if ((struct_it->SREF.empty() && (struct_it->AREF.empty())))
     {
-      Heirarchy[current_level].insert(struct_it->name);
+      heir_iter = heirarchy.begin();
+      heir_iter->push_back(struct_it->name);
     }
     else
     {
-      if (Heirarchy.count(current_level+1))
+      heir_iter = heirarchy.begin();
+      heir_iter++;
+      if (heir_iter == heirarchy.end())
       {
-        Heirarchy[current_level+1].insert(struct_it->name);
+        heir_iter--;
+        string_vector.push_back(struct_it->name);
+        heirarchy.push_back(string_vector); // Creates second level
+        string_vector.clear();
+        heir_iter = heirarchy.end(); // | Point back to last line of heirarchy.
+        heir_iter--;                 // |
       }
       else
       {
-        Heirarchy.insert({current_level+1,empty_set});
-        Heirarchy[current_level+1].insert(struct_it->name);
+        heir_iter->push_back(struct_it->name);
       }
     }
     struct_it++;
@@ -736,71 +743,84 @@ int gdscpp::identify_heirarchy()
   // At this stage all structures that use references are on level 2.
   // We need to separate those that reference secondary structures and so on
   // If there are no references there will only be one level (no heirarchy).
-  current_level++;
-  bool nothing_added = false;
-  while (nothing_added == false)
+  if (heirarchy.size() > 1)
   {
-    if (Heirarchy.count(current_level)) // Heirarchy exists
+    bool nothing_added = false;
+    while ((nothing_added == false) && (heir_iter != heirarchy.end()))
     {
-      auto recursive_iter = Heirarchy[current_level-1].begin();
       // Add the previous level to allowable names
-      while (recursive_iter != Heirarchy[current_level-1].end())
+      heir_iter--; // Go to previous level to fetch allowed names
+      auto structures_iterator = heir_iter->begin();
+      while (structures_iterator != heir_iter->end())
       {
-        allowed_list.insert(*recursive_iter);
-        recursive_iter++;
+        allowed_structures_list.push_back(*structures_iterator);
+        structures_iterator++;
       }
       // Compare every name on current level's references to list of allowable names
-      recursive_iter = Heirarchy[current_level].begin();
+      heir_iter++; // Return to current level to compare this level's names vs allowed
+      structures_iterator = heir_iter->begin();
       int names_shifted = 0;
-      while (recursive_iter != Heirarchy[current_level].end())
+      while (structures_iterator != heir_iter->end()) // For each name in the set
       {
-        // TODO get what *recursive iter structure references
-        int fetch_index = STR_Lookup[*recursive_iter];
+        int fetch_index = STR_Lookup[*structures_iterator]; // Get what STR vector index *structures_iterator references
         vector<gdsSREF> srefs = STR[fetch_index].SREF;
         vector<gdsAREF> arefs = STR[fetch_index].AREF;
         auto SREF_it = srefs.begin();
         bool failed = false;
         while (SREF_it != srefs.end())
         {
-          if (!check_name(SREF_it->name, allowed_list))
+          if (!check_name(SREF_it->name, allowed_structures_list))
+          {
             failed = true;
+            break;
+          }
           SREF_it++;
         }
         auto AREF_it = arefs.begin();
         while (AREF_it != arefs.end())
         {
-          if (!check_name(AREF_it->name, allowed_list))
+          if (!check_name(AREF_it->name, allowed_structures_list))
+          {
             failed = true;
+            break;
+          }
           AREF_it++;
         }
         // if any of the SREF or aref of target structure fail test, the structure must be moved down
         if (failed == true)
         {
-          string struct_to_move = *recursive_iter;
-          recursive_iter = Heirarchy[current_level].erase(recursive_iter);
-          if (Heirarchy.count(current_level+1))
+          string struct_to_move = *structures_iterator;
+          structures_iterator = heir_iter->erase(structures_iterator);
+          heir_iter++;                      // Move to level below
+          if (heir_iter == heirarchy.end()) // if level below doesn't exist, make it.
           {
-            Heirarchy[current_level+1].insert(struct_to_move);
+            heir_iter--; // Reverse iterator to last element.
+            string_vector.push_back(struct_to_move);
+            heirarchy.push_back(string_vector); // Push back the set
+            string_vector.clear();              // Clear the temporary set container
           }
           else
           {
-            Heirarchy.insert({current_level+1,empty_set});
-            Heirarchy[current_level+1].insert(struct_to_move);
+            string_vector.push_back(struct_to_move); // Next level already exists, simply add the word
           }
-          names_shifted++;//Put in right place
+          heir_iter = heirarchy.end(); // |
+          heir_iter--;                 // | Return to current level.
+          heir_iter--;                 // |
+          names_shifted++;
         }
-        recursive_iter++;
+        else
+        {
+          structures_iterator++;
+        }
       }
       if (names_shifted == 0)
       {
-        nothing_added =true;
+        nothing_added = true;
       }
+      heir_iter++; // Move onto next level and repeat
     }
-    else
-    {
-      nothing_added = true;
-    }
-    current_level++;
+    // Reverse order of heirarchy function
+    reverse(heirarchy.begin(), heirarchy.end());
   }
   return EXIT_SUCCESS;
 }
@@ -811,14 +831,10 @@ int gdscpp::identify_heirarchy()
  * @param  ref_set [Set which name will be compared against]
  * @return         [true - Name allowed; false - name not allowed]
  */
-bool gdscpp::check_name(string name, set<string> ref_set)
+bool gdscpp::check_name(string name, vector<string> ref_vector)
 {
-  if (ref_set.count(name)==0)
-  {
-    return false;
-  }
-  else
-  {
+  if (find(ref_vector.begin(), ref_vector.end(), name) != ref_vector.end())
     return true;
-  }
+  else
+    return false;
 }

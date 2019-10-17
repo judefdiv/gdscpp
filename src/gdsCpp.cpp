@@ -486,6 +486,9 @@ void gdscpp::reset()
 void gdsSTR::reset()
 {
   string name = "\0";
+  heirarchical_level = 0;
+  bounding_box[0] = {0};
+  bounding_box[1] = {0};
   BOUNDARY.clear();
   PATH.clear();
   SREF.clear();

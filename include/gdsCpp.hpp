@@ -32,6 +32,7 @@ class gdsBOX;                                  // ''
 #include <vector>
 #include <stdio.h>
 #include <map>
+#include <unordered_map>
 #include <fstream>
 #include <bitset>
 #include <algorithm>
@@ -64,10 +65,8 @@ class gdscpp{  // (GDS file)
     int generations = 3;                      // Default generations. Don't really use
     double units[2] = {0.001, 1e-9};          // micron default
     vector<gdsSTR> STR;                       // Holds all the structures of the gds file
-    map<string, int> STR_Lookup;              // Allows for searching by name
-    // Key   = Level of heirarchy
-    // Value = Vector of structures belonging to level
-    map<int, set<string>> Heirarchy;
+    unordered_map<string, int> STR_Lookup;    // Allows for searching by name
+    vector<vector<string>> heirarchy;
     vector<int> last_modified;                // TODO: Default to current datetime if unread
     string library_name = "Untitled_library"; // Default libname
     vector<unsigned int> findRootSTR();
@@ -83,7 +82,7 @@ class gdscpp{  // (GDS file)
     //void setSTR(gdsSTR exVec){STR.push_back(exVec);};
     void getSTR(vector<gdsSTR>& exVec){exVec = STR;};
     int import(string fileName);
-    bool check_name(string name, set<string> ref_set);
+    bool check_name(string name, vector<string> ref_vector);
     int identify_heirarchy();
     int write(string fileName);
     int quick2ASCII(string fileName);         // does not store data, legacy code.
@@ -112,6 +111,9 @@ class gdsSTR{
     void reset();
 
     string name = "\0";
+
+    unsigned int heirarchical_level = 0;
+    int bounding_box[2] = {0,0};
 
     vector<int> last_modified;
     vector<gdsBOUNDARY> BOUNDARY;
