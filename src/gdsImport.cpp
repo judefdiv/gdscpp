@@ -694,17 +694,19 @@ int gdscpp::import(string fileName)
     }
   } while (current_GDSKey != GDS_ENDLIB);
   delete[] current_readBlk;
-  identify_heirarchy();
+  resolve_heirarchy_and_bounding_boxes();
   cout << "GDS file successfully imported." << endl;
   return 0;
 }
 
 /**
- * [gdscpp::identify heirarchy]
- * Populates gdscpp::map<int, vector<string>> Heirarchy
+ * [gdscpp::resolve_heirarchy_and_bounding_boxes]
+ * Populates vector<vector<string>> heirarchy
+ * then uses heirarchy to set heirarchy property of structures.
+ * Finally sets the bounding boxes of each structure.
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
-int gdscpp::identify_heirarchy()
+int gdscpp::resolve_heirarchy_and_bounding_boxes()
 {
   // ========== Part 1: Populate heirarchy ===========
   vector<vector<string>> heirarchy;
@@ -824,9 +826,10 @@ int gdscpp::identify_heirarchy()
     reverse(heirarchy.begin(), heirarchy.end());
   }
   // ========== Part 2: Set heirarchy into structures ===========
-  // vector<vector<string>> heirarchy;
-  heir_iter = heirarchy.begin();
-  while (heir_iter != heirarchy.end())
+  // ==========      Also calculate bounding boxes    ===========
+  heir_iter = heirarchy.end();
+  heir_iter--;
+  while (!(heir_iter < heirarchy.begin()))
   {
     auto structure_iterator = heir_iter->begin();
     while (structure_iterator != heir_iter->end())
@@ -835,9 +838,8 @@ int gdscpp::identify_heirarchy()
       STR[STR_index].heirarchical_level = heir_iter - heirarchy.begin();
       structure_iterator++;
     }
-    heir_iter++;
+    heir_iter--;
   }
-
   return EXIT_SUCCESS;
 }
 
@@ -853,4 +855,27 @@ bool gdscpp::check_name(string name, vector<string> ref_vector)
     return true;
   else
     return false;
+}
+
+int gdscpp::calculate_STR_bounding_box(int structure_index)
+{
+// Search through boundaries
+  // See if min, max x,y becomes the structures min, max x,y
+// Search through box
+// Search through paths
+    // Call path to polygon function
+    // See if path affects the bounding box
+    // See if min, max x,y becomes the structures min, max x,y
+// Search through SREF
+    // If bounding box of specified structure not yet determined, warn user
+    // Take bounding box of sref, scale it, rotate it
+    // Conver the rotated/scaled rectangle into a nin-rotated box
+    // See if min, max x,y becomes the structures min, max x,y
+// Search through AREF
+    // If bounding box of specified structure not yet determined, warn user
+    // Take bounding box of referenced structure
+    // perform array operations
+    // determine box of array
+    // See if min, max x,y becomes the structures min, max x,y
+// STR[STR_index].bounding_box[4] to function determined bounding box.
 }

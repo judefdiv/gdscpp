@@ -82,7 +82,8 @@ class gdscpp{  // (GDS file)
     void getSTR(vector<gdsSTR>& exVec){exVec = STR;};
     int import(string fileName);
     bool check_name(string name, vector<string> ref_vector);
-    int identify_heirarchy();
+    int resolve_heirarchy_and_bounding_boxes();
+    int calculate_STR_bounding_box(int structure_index);
     int write(string fileName);
     int quick2ASCII(string fileName);         // does not store data, legacy code.
     double get_database_units();
