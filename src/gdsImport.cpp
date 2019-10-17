@@ -706,7 +706,8 @@ int gdscpp::import(string fileName)
  */
 int gdscpp::identify_heirarchy()
 {
-  // vector<vector<string>> heirarchy;
+  // ========== Part 1: Populate heirarchy ===========
+  vector<vector<string>> heirarchy;
   heirarchy.clear();
   vector<string> string_vector;
   vector<string> allowed_structures_list; // Allowes structure names
@@ -822,6 +823,21 @@ int gdscpp::identify_heirarchy()
     // Reverse order of heirarchy function
     reverse(heirarchy.begin(), heirarchy.end());
   }
+  // ========== Part 2: Set heirarchy into structures ===========
+  // vector<vector<string>> heirarchy;
+  heir_iter = heirarchy.begin();
+  while (heir_iter != heirarchy.end())
+  {
+    auto structure_iterator = heir_iter->begin();
+    while (structure_iterator != heir_iter->end())
+    {
+      int STR_index = STR_Lookup[*structure_iterator];
+      STR[STR_index].heirarchical_level = heir_iter - heirarchy.begin();
+      structure_iterator++;
+    }
+    heir_iter++;
+  }
+
   return EXIT_SUCCESS;
 }
 

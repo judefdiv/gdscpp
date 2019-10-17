@@ -66,7 +66,6 @@ class gdscpp{  // (GDS file)
     double units[2] = {0.001, 1e-9};          // micron default
     vector<gdsSTR> STR;                       // Holds all the structures of the gds file
     unordered_map<string, int> STR_Lookup;    // Allows for searching by name
-    vector<vector<string>> heirarchy;
     vector<int> last_modified;                // TODO: Default to current datetime if unread
     string library_name = "Untitled_library"; // Default libname
     vector<unsigned int> findRootSTR();
@@ -113,7 +112,7 @@ class gdsSTR{
     string name = "\0";
 
     unsigned int heirarchical_level = 0;
-    int bounding_box[2] = {0,0};
+    int bounding_box[4] = {0,0,0,0};//x1,y1,x2,y2 (minimum number of points to represent box)
 
     vector<int> last_modified;
     vector<gdsBOUNDARY> BOUNDARY;
