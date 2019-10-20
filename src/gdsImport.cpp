@@ -693,6 +693,7 @@ int gdscpp::import(string fileName)
       }
     }
   } while (current_GDSKey != GDS_ENDLIB);
+  STR_Lookup.insert({"\0", 1000000000}); // Add null character to structure map with index 1 billion. Unlikely to be 1 billion structures
   delete[] current_readBlk;
   resolve_heirarchy_and_bounding_boxes();
   cout << "GDS file successfully imported." << endl;
@@ -836,6 +837,12 @@ int gdscpp::resolve_heirarchy_and_bounding_boxes()
     {
       int STR_index = STR_Lookup[*structure_iterator];
       STR[STR_index].heirarchical_level = heir_iter - heirarchy.begin();
+      int b_box[4] = {0, 0, 0, 0};
+      calculate_STR_bounding_box(STR_index, b_box);
+      STR[STR_index].bounding_box[0] = b_box[0];
+      STR[STR_index].bounding_box[1] = b_box[1];
+      STR[STR_index].bounding_box[2] = b_box[2];
+      STR[STR_index].bounding_box[3] = b_box[3];
       structure_iterator++;
     }
     heir_iter--;
@@ -857,25 +864,220 @@ bool gdscpp::check_name(string name, vector<string> ref_vector)
     return false;
 }
 
-int gdscpp::calculate_STR_bounding_box(int structure_index)
+int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
 {
-// Search through boundaries
-  // See if min, max x,y becomes the structures min, max x,y
-// Search through box
-// Search through paths
-    // Call path to polygon function
-    // See if path affects the bounding box
+  int bound_box[4] = {0, 0, 0, 0}; //x1,y1,x2,y2
+  // ======================= Look through boundaries =======================
+  auto str_iter = STR[structure_index].BOUNDARY.begin();
+  while (str_iter != STR[structure_index].BOUNDARY.end())
+  {
+    auto x_iter = str_iter->xCor.begin();
+    auto y_iter = str_iter->yCor.begin();
+    while (x_iter != str_iter->xCor.end())
+    {
+      if (*x_iter < bound_box[0])
+        bound_box[0] = *x_iter; //new minimum
+      if (*x_iter > bound_box[2])
+        bound_box[2] = *x_iter; //new maximum
+      if (*y_iter < bound_box[1])
+        bound_box[1] = *y_iter;
+      if (*y_iter > bound_box[3])
+        bound_box[3] = *y_iter;
+      x_iter++;
+      y_iter++;
+    }
+    str_iter++;
+  }
+  // ========================= Look through boxes ==========================
+  auto box_iter = STR[structure_index].BOX.begin();
+  while (box_iter != STR[structure_index].BOX.end())
+  {
+    auto x_iter = box_iter->xCor.begin();
+    auto y_iter = box_iter->yCor.begin();
+    while (x_iter != box_iter->xCor.end())
+    {
+      if (*x_iter < bound_box[0])
+        bound_box[0] = *x_iter; //new minimum
+      if (*x_iter > bound_box[2])
+        bound_box[2] = *x_iter; //new maximum
+      if (*y_iter < bound_box[1])
+        bound_box[1] = *y_iter;
+      if (*y_iter > bound_box[3])
+        bound_box[3] = *y_iter;
+      x_iter++;
+      y_iter++;
+    }
+    box_iter++;
+  }
+  // ========================= Look through paths ==========================
+  auto path_iter = STR[structure_index].PATH.begin();
+  while (path_iter != STR[structure_index].PATH.end())
+  {
+    // Neglect path type. Simplify work by assuming max half-width protrusion.
+    // Worst case scenario is that the bounding box is ever so slightly
+    // bigger than actually needed for a flat-cap situation.
+    int offset = (int)(round(((double)path_iter->width * 0.5)));
+    int local_bbox[4] = {
+        (*min_element(path_iter->xCor.begin(), path_iter->xCor.end()) - offset),
+        (*min_element(path_iter->yCor.begin(), path_iter->yCor.end()) - offset),
+        (*max_element(path_iter->xCor.begin(), path_iter->xCor.end()) + offset),
+        (*max_element(path_iter->yCor.begin(), path_iter->yCor.end()) + offset)};
+    if (local_bbox[0] < bound_box[0])
+      bound_box[0] = local_bbox[0]; //new minimum
+    if (local_bbox[2] > bound_box[2])
+      bound_box[2] = local_bbox[2]; //new maximum
+    if (local_bbox[1] < bound_box[1])
+      bound_box[1] = local_bbox[1];
+    if (local_bbox[3] > bound_box[3])
+      bound_box[3] = local_bbox[3];
+    path_iter++;
+  }
+  // ================== Look through structure references ==================
+  auto SREF_iter = STR[structure_index].SREF.begin();
+  while (SREF_iter != STR[structure_index].SREF.end())
+  {
+    // Warn user if specified structure's bounding box is not yet initialized
+    int target_structure_index = STR_Lookup[SREF_iter->name];
+    if (target_structure_index == 1000000000)
+    {
+      cout << "Error: reference to structure with no name."<<endl;
+      cout << "Terminating SREF bounding box check." <<endl;
+      break;
+    }
+    int referred_bound_box[4] =
+        {STR[target_structure_index].bounding_box[0],
+         STR[target_structure_index].bounding_box[1],
+         STR[target_structure_index].bounding_box[2],
+         STR[target_structure_index].bounding_box[3]};
+    if ((referred_bound_box[0] == 0) && (referred_bound_box[1] == 0) &&
+        (referred_bound_box[2] == 0) && (referred_bound_box[3] == 0))
+    {
+      cout << "Warning: Structure being referenced does not have an initialized" << endl;
+      cout << "bounding box. Therefore, bounding boxes of references will be inaccurate." << endl;
+      cout << "Calculate bounding boxes from the lowest level (unreferenced) upwards." << endl;
+    }
+    if (SREF_iter->reflection == true) // Reflect about x-axis
+    {
+      //Reflect the box about x-axis and swap because max becomes min
+      referred_bound_box[2] = -1 * referred_bound_box[4];
+      referred_bound_box[4] = -1 * referred_bound_box[2];
+    }
+    double x_1 = referred_bound_box[0];
+    double y_1 = referred_bound_box[1];
+    double x_2 = referred_bound_box[2];
+    double y_2 = referred_bound_box[3];
+    if (SREF_iter->scale != 1) // Multiply by scale factor
+    {
+      x_1 = x_1 * SREF_iter->scale;
+      x_2 = x_2 * SREF_iter->scale;
+      y_1 = y_1 * SREF_iter->scale;
+      y_2 = y_2 * SREF_iter->scale;
+    }
+    //Rotate
+    int angle = SREF_iter->angle;
+    if (angle > 0)
+    {
+      while (angle >= 360)
+      {
+        angle = angle - 360;
+      }
+      double x_1_new = x_1 * cos(angle * 3.141592653589 / 180) - y_1 * sin(angle * 3.141592653589 / 180);
+      double y_1_new = x_1 * sin(angle * 3.141592653589 / 180) + y_1 * cos(angle * 3.141592653589 / 180);
+      double x_2_new = x_2 * cos(angle * 3.141592653589 / 180) - y_2 * sin(angle * 3.141592653589 / 180);
+      double y_2_new = x_2 * sin(angle * 3.141592653589 / 180) + y_2 * cos(angle * 3.141592653589 / 180);
+      x_1 = x_1_new;
+      y_1 = y_1_new;
+      x_2 = x_2_new;
+      y_2 = y_2_new;
+      // convert back to vertical box by getting the new minimum and maximum
+      if (x_1 > x_2)
+      {
+        double temp_holder = x_2;
+        x_2 = x_1;
+        x_1 = temp_holder;
+      }
+      if (y_1 > y_2)
+      {
+        double temp_holder2 = y_2;
+        y_2 = y_1;
+        y_1 = temp_holder2;
+      }
+    }
     // See if min, max x,y becomes the structures min, max x,y
-// Search through SREF
-    // If bounding box of specified structure not yet determined, warn user
-    // Take bounding box of sref, scale it, rotate it
-    // Conver the rotated/scaled rectangle into a nin-rotated box
+    referred_bound_box[0] = (int)(round(x_1));
+    referred_bound_box[1] = (int)(round(y_1));
+    referred_bound_box[2] = (int)(round(x_2));
+    referred_bound_box[3] = (int)(round(y_2));
+    if (referred_bound_box[0] < bound_box[0])
+      bound_box[0] = referred_bound_box[0]; //new minimum
+    if (referred_bound_box[2] > bound_box[2])
+      bound_box[2] = referred_bound_box[2]; //new maximum
+    if (referred_bound_box[1] < bound_box[1])
+      bound_box[1] = referred_bound_box[1];
+    if (referred_bound_box[3] > bound_box[3])
+      bound_box[3] = referred_bound_box[3];
+    SREF_iter++;
+  }
+  // ==================== Look through array references ====================
+  auto AREF_iter = STR[structure_index].AREF.begin();
+  while (AREF_iter != STR[structure_index].AREF.end())
+  {
+    // Warn user if specified structure's bounding box is not yet initialized
+    int target_structure_index = STR_Lookup[AREF_iter->name];
+    if (target_structure_index == 1000000000)
+    {
+      cout << "Error: reference to structure with no name."<<endl;
+      cout << "Terminating AREF bounding box check." <<endl;
+      break;
+    }
+    int a_referred_bound_box[4] =
+        {STR[target_structure_index].bounding_box[0],
+         STR[target_structure_index].bounding_box[1],
+         STR[target_structure_index].bounding_box[2],
+         STR[target_structure_index].bounding_box[3]};
+    if ((a_referred_bound_box[0] == 0) && (a_referred_bound_box[1] == 0) &&
+        (a_referred_bound_box[2] == 0) && (a_referred_bound_box[3] == 0))
+    {
+      cout << "Warning: Structure being referenced for AREF does not have an initialized" << endl;
+      cout << "bounding box. Therefore, bounding boxes of references will be inaccurate." << endl;
+      cout << "Calculate bounding boxes from the lowest level (unreferenced) upwards." << endl;
+    }
+    // fetch bounding box of the array reference structure
+    int x_min = AREF_iter->xCor;
+    if (AREF_iter->xCorCol < x_min)
+      x_min = AREF_iter->xCorCol;
+    if (AREF_iter->xCorRow < x_min)
+      x_min = AREF_iter->xCorRow;
+    int x_max = AREF_iter->xCor;
+    if (AREF_iter->xCorCol > x_max)
+      x_max = AREF_iter->xCorCol;
+    if (AREF_iter->xCorRow > x_max)
+      x_max = AREF_iter->xCorRow;
+    int y_min = AREF_iter->yCor;
+    if (AREF_iter->yCorCol < y_min)
+      y_min = AREF_iter->yCorCol;
+    if (AREF_iter->yCorRow < y_min)
+      y_min = AREF_iter->yCorRow;
+    int y_max = AREF_iter->yCor;
+    if (AREF_iter->yCorCol > y_max)
+      y_max = AREF_iter->yCorCol;
+    if (AREF_iter->yCorRow > y_max)
+      y_max = AREF_iter->yCorRow;
     // See if min, max x,y becomes the structures min, max x,y
-// Search through AREF
-    // If bounding box of specified structure not yet determined, warn user
-    // Take bounding box of referenced structure
-    // perform array operations
-    // determine box of array
-    // See if min, max x,y becomes the structures min, max x,y
-// STR[STR_index].bounding_box[4] to function determined bounding box.
+    if (x_min < bound_box[0])
+      bound_box[0] = x_min; //new minimum
+    if (x_max > bound_box[2])
+      bound_box[2] = x_max; //new maximum
+    if (y_min < bound_box[1])
+      bound_box[1] = y_min;
+    if (y_max > bound_box[3])
+      bound_box[3] = y_max;
+    AREF_iter++;
+  }
+  // =============== Send the bounding box to specified array ==============
+  destination[0] = bound_box[0];
+  destination[1] = bound_box[1];
+  destination[2] = bound_box[2];
+  destination[3] = bound_box[3];
+  return EXIT_SUCCESS;
 }
