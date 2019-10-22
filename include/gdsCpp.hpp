@@ -84,6 +84,8 @@ class gdscpp{  // (GDS file)
     bool check_name(string name, vector<string> ref_vector);
     int resolve_heirarchy_and_bounding_boxes();
     int calculate_STR_bounding_box(int structure_index, int *destination);
+    int fetch_boundary_bounding_box(gdsBOUNDARY target_boundary, int *destination);
+    int fetch_box_bounding_box(gdsBOX target_box, int *destination);
     int write(string fileName);
     int quick2ASCII(string fileName);         // does not store data, legacy code.
     double get_database_units();

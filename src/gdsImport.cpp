@@ -864,48 +864,59 @@ bool gdscpp::check_name(string name, vector<string> ref_vector)
     return false;
 }
 
+// Calculates the bounding box for the structure at the specified index.
+// Places result in destination array.
 int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
 {
-  int bound_box[4] = {0, 0, 0, 0}; //x1,y1,x2,y2
+  int bound_box[4];           // xmin, ymin, xmax, ymax of structure
+  bool box_initialized = false;
   // ======================= Look through boundaries =======================
-  auto str_iter = STR[structure_index].BOUNDARY.begin();
-  while (str_iter != STR[structure_index].BOUNDARY.end())
+  auto boundary_iterator = STR[structure_index].BOUNDARY.begin();
+  while (boundary_iterator != STR[structure_index].BOUNDARY.end())
   {
-    auto x_iter = str_iter->xCor.begin();
-    auto y_iter = str_iter->yCor.begin();
-    while (x_iter != str_iter->xCor.end())
+    int STR_bound_box[4];
+    if (box_initialized == false)
     {
-      if (*x_iter < bound_box[0])
-        bound_box[0] = *x_iter; //new minimum
-      if (*x_iter > bound_box[2])
-        bound_box[2] = *x_iter; //new maximum
-      if (*y_iter < bound_box[1])
-        bound_box[1] = *y_iter;
-      if (*y_iter > bound_box[3])
-        bound_box[3] = *y_iter;
-      x_iter++;
-      y_iter++;
+      // Initialize bounding box
+      fetch_boundary_bounding_box(*boundary_iterator, bound_box);
+      box_initialized = true;
     }
-    str_iter++;
+    else
+    {
+      // Compare for minimum/maximums
+      fetch_boundary_bounding_box(*boundary_iterator, STR_bound_box);
+      if (STR_bound_box[0] < bound_box[0])
+        bound_box[0] = STR_bound_box[0];
+      if (STR_bound_box[1] < bound_box[1])
+        bound_box[1] = STR_bound_box[1];
+      if (STR_bound_box[2] > bound_box[2])
+        bound_box[2] = STR_bound_box[2];
+      if (STR_bound_box[3] > bound_box[3])
+        bound_box[3] = STR_bound_box[3];
+    }
+    boundary_iterator++;
   }
   // ========================= Look through boxes ==========================
   auto box_iter = STR[structure_index].BOX.begin();
   while (box_iter != STR[structure_index].BOX.end())
   {
-    auto x_iter = box_iter->xCor.begin();
-    auto y_iter = box_iter->yCor.begin();
-    while (x_iter != box_iter->xCor.end())
+    int BOX_bound_box[4];
+    if (box_initialized == false)
     {
-      if (*x_iter < bound_box[0])
-        bound_box[0] = *x_iter; //new minimum
-      if (*x_iter > bound_box[2])
-        bound_box[2] = *x_iter; //new maximum
-      if (*y_iter < bound_box[1])
-        bound_box[1] = *y_iter;
-      if (*y_iter > bound_box[3])
-        bound_box[3] = *y_iter;
-      x_iter++;
-      y_iter++;
+      fetch_box_bounding_box(*box_iter, bound_box);
+      box_initialized = true;
+    }
+    else
+    {
+      fetch_box_bounding_box(*box_iter, BOX_bound_box);
+      if (BOX_bound_box[0] < bound_box[0])
+        bound_box[0] = BOX_bound_box[0];
+      if (BOX_bound_box[1] < bound_box[1])
+        bound_box[1] = BOX_bound_box[1];
+      if (BOX_bound_box[2] > bound_box[2])
+        bound_box[2] = BOX_bound_box[2];
+      if (BOX_bound_box[3] > bound_box[3])
+        bound_box[3] = BOX_bound_box[3];
     }
     box_iter++;
   }
@@ -922,6 +933,14 @@ int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
         (*min_element(path_iter->yCor.begin(), path_iter->yCor.end()) - offset),
         (*max_element(path_iter->xCor.begin(), path_iter->xCor.end()) + offset),
         (*max_element(path_iter->yCor.begin(), path_iter->yCor.end()) + offset)};
+    if (box_initialized == false)
+    {
+      bound_box[0] = local_bbox[0];
+      bound_box[1] = local_bbox[1];
+      bound_box[2] = local_bbox[2];
+      bound_box[3] = local_bbox[3];
+      box_initialized = true;
+    }
     if (local_bbox[0] < bound_box[0])
       bound_box[0] = local_bbox[0]; //new minimum
     if (local_bbox[2] > bound_box[2])
@@ -940,15 +959,16 @@ int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
     int target_structure_index = STR_Lookup[SREF_iter->name];
     if (target_structure_index == 1000000000)
     {
-      cout << "Error: reference to structure with no name."<<endl;
-      cout << "Terminating SREF bounding box check." <<endl;
+      cout << "Error: reference to structure with no name." << endl;
+      cout << "Terminating SREF bounding box check." << endl;
       break;
     }
-    int referred_bound_box[4] =
-        {STR[target_structure_index].bounding_box[0],
-         STR[target_structure_index].bounding_box[1],
-         STR[target_structure_index].bounding_box[2],
-         STR[target_structure_index].bounding_box[3]};
+    int referred_bound_box[4];
+    referred_bound_box[0] = STR[target_structure_index].bounding_box[0];
+    referred_bound_box[1] = STR[target_structure_index].bounding_box[1];
+    referred_bound_box[2] = STR[target_structure_index].bounding_box[2];
+    referred_bound_box[3] = STR[target_structure_index].bounding_box[3];
+
     if ((referred_bound_box[0] == 0) && (referred_bound_box[1] == 0) &&
         (referred_bound_box[2] == 0) && (referred_bound_box[3] == 0))
     {
@@ -1003,11 +1023,21 @@ int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
         y_1 = temp_holder2;
       }
     }
+    // Offset shape according to translation
+    referred_bound_box[0] = (int)(round(x_1)) + SREF_iter->xCor;
+    referred_bound_box[1] = (int)(round(y_1)) + SREF_iter->yCor;
+    referred_bound_box[2] = (int)(round(x_2)) + SREF_iter->xCor;
+    referred_bound_box[3] = (int)(round(y_2)) + SREF_iter->yCor;
+
+    if(box_initialized==false)
+    {
+      bound_box[0]=referred_bound_box[0];
+      bound_box[1]=referred_bound_box[1];
+      bound_box[2]=referred_bound_box[2];
+      bound_box[3]=referred_bound_box[3];
+      box_initialized=true;
+    }
     // See if min, max x,y becomes the structures min, max x,y
-    referred_bound_box[0] = (int)(round(x_1));
-    referred_bound_box[1] = (int)(round(y_1));
-    referred_bound_box[2] = (int)(round(x_2));
-    referred_bound_box[3] = (int)(round(y_2));
     if (referred_bound_box[0] < bound_box[0])
       bound_box[0] = referred_bound_box[0]; //new minimum
     if (referred_bound_box[2] > bound_box[2])
@@ -1016,6 +1046,7 @@ int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
       bound_box[1] = referred_bound_box[1];
     if (referred_bound_box[3] > bound_box[3])
       bound_box[3] = referred_bound_box[3];
+
     SREF_iter++;
   }
   // ==================== Look through array references ====================
@@ -1026,8 +1057,8 @@ int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
     int target_structure_index = STR_Lookup[AREF_iter->name];
     if (target_structure_index == 1000000000)
     {
-      cout << "Error: reference to structure with no name."<<endl;
-      cout << "Terminating AREF bounding box check." <<endl;
+      cout << "Error: reference to structure with no name." << endl;
+      cout << "Terminating AREF bounding box check." << endl;
       break;
     }
     int a_referred_bound_box[4] =
@@ -1063,6 +1094,16 @@ int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
       y_max = AREF_iter->yCorCol;
     if (AREF_iter->yCorRow > y_max)
       y_max = AREF_iter->yCorRow;
+
+    if(box_initialized==false)
+    {
+      bound_box[0]=x_min;
+      bound_box[1]=y_min;
+      bound_box[2]=x_max;
+      bound_box[3]=y_max;
+      box_initialized=true;
+    }
+
     // See if min, max x,y becomes the structures min, max x,y
     if (x_min < bound_box[0])
       bound_box[0] = x_min; //new minimum
@@ -1079,5 +1120,60 @@ int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
   destination[1] = bound_box[1];
   destination[2] = bound_box[2];
   destination[3] = bound_box[3];
+  return EXIT_SUCCESS;
+}
+
+// Returns the bounding box of a BOUNDARY into the specified destination.
+int gdscpp::fetch_boundary_bounding_box(gdsBOUNDARY target_boundary, int *destination)
+{
+  // Must start as a point in the geometry
+  int bounding_box[4] = {target_boundary.xCor[0], target_boundary.yCor[0],
+                         target_boundary.xCor[0], target_boundary.yCor[0]};
+  auto x_iter = target_boundary.xCor.begin();
+  auto y_iter = target_boundary.yCor.begin();
+  while (x_iter != target_boundary.xCor.end())
+  {
+    if (*x_iter < bounding_box[0])
+      bounding_box[0] = *x_iter; //new minimum
+    if (*x_iter > bounding_box[2])
+      bounding_box[2] = *x_iter; //new maximum
+    if (*y_iter < bounding_box[1])
+      bounding_box[1] = *y_iter;
+    if (*y_iter > bounding_box[3])
+      bounding_box[3] = *y_iter;
+    x_iter++;
+    y_iter++;
+  }
+  destination[0] = bounding_box[0];
+  destination[1] = bounding_box[1];
+  destination[2] = bounding_box[2];
+  destination[3] = bounding_box[3];
+  return EXIT_SUCCESS;
+}
+
+int gdscpp::fetch_box_bounding_box(gdsBOX target_box, int *destination)
+{
+  // Must start as a point in the geometry
+  int bounding_box[4] = {target_box.xCor[0], target_box.yCor[0],
+                         target_box.xCor[0], target_box.yCor[0]};
+  auto x_iter = target_box.xCor.begin();
+  auto y_iter = target_box.yCor.begin();
+  while (x_iter != target_box.xCor.end())
+  {
+    if (*x_iter < bounding_box[0])
+      bounding_box[0] = *x_iter; //new minimum
+    if (*x_iter > bounding_box[2])
+      bounding_box[2] = *x_iter; //new maximum
+    if (*y_iter < bounding_box[1])
+      bounding_box[1] = *y_iter;
+    if (*y_iter > bounding_box[3])
+      bounding_box[3] = *y_iter;
+    x_iter++;
+    y_iter++;
+  }
+  destination[0] = bounding_box[0];
+  destination[1] = bounding_box[1];
+  destination[2] = bounding_box[2];
+  destination[3] = bounding_box[3];
   return EXIT_SUCCESS;
 }
