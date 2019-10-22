@@ -979,8 +979,9 @@ int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
     if (SREF_iter->reflection == true) // Reflect about x-axis
     {
       //Reflect the box about x-axis and swap because max becomes min
-      referred_bound_box[2] = -1 * referred_bound_box[4];
-      referred_bound_box[4] = -1 * referred_bound_box[2];
+      int placeholder = referred_bound_box[1];
+      referred_bound_box[1] = -1 * referred_bound_box[3];
+      referred_bound_box[3] = -1 * placeholder;
     }
     double x_1 = referred_bound_box[0];
     double y_1 = referred_bound_box[1];
@@ -1029,7 +1030,7 @@ int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
     referred_bound_box[2] = (int)(round(x_2)) + SREF_iter->xCor;
     referred_bound_box[3] = (int)(round(y_2)) + SREF_iter->yCor;
 
-    if(box_initialized==false)
+    if(box_initialized == false)
     {
       bound_box[0]=referred_bound_box[0];
       bound_box[1]=referred_bound_box[1];
@@ -1095,7 +1096,7 @@ int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
     if (AREF_iter->yCorRow > y_max)
       y_max = AREF_iter->yCorRow;
 
-    if(box_initialized==false)
+    if(box_initialized == false)
     {
       bound_box[0]=x_min;
       bound_box[1]=y_min;
