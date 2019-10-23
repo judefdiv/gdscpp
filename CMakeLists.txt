@@ -17,5 +17,5 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Ensures that the header files of the project is included
 target_include_directories(${PROJECT_NAME} PRIVATE
-  ${PROJECT_SOURCE_DIR}/include
+  ${PROJECT_SOURCE_DIR}/include/gdscpp
 )

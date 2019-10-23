@@ -1,40 +1,34 @@
 /**
- * Author:  		Jude de Villiers
- * Origin:  		E&E Engineering - Stellenbosch University
- * For:					Supertools, Coldflux Project - IARPA
- * Created: 		2019-08-21
+ * Author:		J.F. de Villiers & H.F. Herbst
+ * Origin:  	E&E Engineering - Stellenbosch University
+ * For:			Supertools, Coldflux Project - IARPA
+ * Created: 	2019-08-21
  * Modified:
  * license:
  * Description: Primary file for the program.
- * File:				main.cpp
+ * File:		main.cpp
  */
 
-#include <iostream>									//stream
-#include <string>									//string goodies
+// ============================ Includes ============================
+#include <iostream>							//stream
+#include <string>							//string goodies
 #include <set>
-// #include <map>
-#include <iomanip> 									// setprecision()
-
+#include <iomanip> 							// setprecision()
 #include "gdsCpp.hpp"
-#include "gdsForge.hpp"								// used to testing function
+#include "gdsForge.hpp"						// used to testing function
 
+// ========================== Miscellanious ==========================
 #define versionNo 0.1
-#define outfileName "data/results/gds/"				// Default file output name
+#define outfileName "data/results/gds/"		// Default file output name
 using namespace std;
 
-/**
- * Declaring functions
- */
-
+// ================= Local Function Declarations =====================
 void welcomeScreen();
 void helpScreen();
 int RunTool(int argCount, char** argValues);
 void testGDS(string fileName);
 
-/**
- * Main loop
- */
-
+// =========================== Main Loop =============================
 int main(int argc, char* argv[]){
 	// welcomeScreen();
 	if(!RunTool(argc, argv)) return 0;
@@ -48,7 +42,6 @@ int main(int argc, char* argv[]){
  * @param  argValues [The input argument array]
  * @return           [1 - all good; 0 - error]
  */
-
 int RunTool(int argCount, char** argValues){
 	welcomeScreen();
 
@@ -165,6 +158,10 @@ int RunTool(int argCount, char** argValues){
 	return 0;
 }
 
+/**
+ * [testGDS - Simple testing function for gdsForge]
+ * @param  fileName  [File name of string]
+ */
 void testGDS(string fileName){
 	gdscpp fooGDS;
 
@@ -200,9 +197,9 @@ void helpScreen(){
 }
 
 /**
- * Welcoming screen
+ * [welcomeScreen - Displays ascii art of GDS-cpp logo]
+ * @param  fileName  [File name of string]
  */
-
 void welcomeScreen(){
 	cout << "              ___     ___" << endl;
 	cout << "             |   |   |   |" << endl;
@@ -212,7 +209,7 @@ void welcomeScreen(){
 	cout << "|__|   |     __|_______|__     |   |__|" << endl;
 	cout << "       |____|             |____|" << endl;
 	cout << " __         |             |         __" << endl;
-	cout << "|  |________|   GSD-cpp   |________|  |" << endl;
+	cout << "|  |________|   GDS-cpp   |________|  |" << endl;
 	cout << "|__|        |             |        |__|" << endl;
 	cout << "        ____|             |____" << endl;
 	cout << " __    |    |_____________|    |    __" << endl;

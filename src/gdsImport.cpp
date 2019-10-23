@@ -1,5 +1,5 @@
 /**
- * Author:
+ * Author:      J.F. de Villiers & H.F. Herbst
  * Origin:  		E&E Engineering - Stellenbosch University
  * For:					Supertools, Coldflux Project - IARPA
  * Created: 		2019-10-14
@@ -9,14 +9,22 @@
  * File:				gdsCpp.hpp
  */
 
+// ========================= Includes =========================
 #include "gdsCpp.hpp"
+
+// ====================== Miscellanious =======================
+using namespace std;
+
+// ================= Structure Declarations ===================
 struct POINT
 {
   double x = 0;
   double y = 0;
 };
-
+// ================== Function Declarations ===================
 int rotate_point(double cx, double cy, double angle, POINT &subject);
+
+// ====================== Function Code =======================
 
 /**
  * [gdscpp::read description]
@@ -26,7 +34,7 @@ int rotate_point(double cx, double cy, double angle, POINT &subject);
 int gdscpp::import(string fileName)
 {
   //Variable declarations
-  ifstream gdsFile;
+  std::ifstream gdsFile;
   char *current_readBlk;
   uint32_t current_sizeBlk;
   uint32_t current_GDSKey;
@@ -47,9 +55,7 @@ int gdscpp::import(string fileName)
   gdsNODE plchold_node;
   gdsBOX plchold_box;
 
-  //Method
   gdsFile.open(fileName, ios::in | ios::binary);
-
   if (!gdsFile.is_open())
   {
     cout << "Error: GDS file \"" << fileName << "\" FAILED to be opened." << endl;
@@ -195,7 +201,7 @@ int gdscpp::import(string fileName)
                 }
               } while (current_GDSKey != GDS_ENDEL);
               plchold_str.BOUNDARY.push_back(plchold_bnd);
-              //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end secondary nest ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end secondary nest ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               break;
             case GDS_PATH:
               //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ secondary nest [PATH] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -279,7 +285,7 @@ int gdscpp::import(string fileName)
                 }
               } while (current_GDSKey != GDS_ENDEL);
               plchold_str.PATH.push_back(plchold_path);
-              //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end secondary nest ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end secondary nest ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               break;
             case GDS_SREF:
               //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ secondary nest [SREF] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -352,7 +358,7 @@ int gdscpp::import(string fileName)
                 }
               } while (current_GDSKey != GDS_ENDEL);
               plchold_str.SREF.push_back(plchold_sref);
-              //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end secondary nest ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end secondary nest ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               break;
             case GDS_AREF:
               //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ secondary nest [AREF] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -859,9 +865,9 @@ int gdscpp::resolve_heirarchy_and_bounding_boxes()
 
 /**
  * [gdscpp::check name]
- * @param  name    [Set which name will be compared against]
- * @param  ref_set [Set which name will be compared against]
- * @return         [true - Name allowed; false - name not allowed]
+ * @param  name       [Set which name will be compared against]
+ * @param  ref_vector [Vector to search through]
+ * @return            [true - Name allowed; false - name not allowed]
  */
 bool gdscpp::check_name(string name, vector<string> ref_vector)
 {
@@ -871,8 +877,13 @@ bool gdscpp::check_name(string name, vector<string> ref_vector)
     return false;
 }
 
-// Calculates the bounding box for the structure at the specified index.
-// Places result in destination array.
+/**
+ * [gdscpp::calculate_STR_bounding_box - Calculates the bounding box
+ *  for the structure at the specified index. Places result in destination array.]
+ * @param  structure_index  [Index of structure in gdscpp object]
+ * @param  destination      [Vector to save results in]
+ * @return                  [0 - Function completed]
+ */
 int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
 {
   int bound_box[4];           // xmin, ymin, xmax, ymax of structure
@@ -1176,7 +1187,13 @@ int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
   return EXIT_SUCCESS;
 }
 
-// Returns the bounding box of a BOUNDARY into the specified destination.
+/**
+ * [gdscpp::fetch_boundary_bounding_box - Returns the bounding box
+ *  of a BOUNDARY into the specified destination.]
+ * @param  target_boundary  [Boundary to fetch bounding box for]
+ * @param  destination      [Array to save results in]
+ * @return                  [0 - Function completed]
+ */
 int gdscpp::fetch_boundary_bounding_box(gdsBOUNDARY target_boundary, int *destination)
 {
   // Must start as a point in the geometry
@@ -1204,6 +1221,13 @@ int gdscpp::fetch_boundary_bounding_box(gdsBOUNDARY target_boundary, int *destin
   return EXIT_SUCCESS;
 }
 
+/**
+ * [gdscpp::fetch_box_bounding_box - Returns the bounding box
+ *  of a BOX into the specified destination.]
+ * @param  target_box       [Box to fetch bounding box for]
+ * @param  destination      [Array to save results in]
+ * @return                  [0 - Function completed]
+ */
 int gdscpp::fetch_box_bounding_box(gdsBOX target_box, int *destination)
 {
   // Must start as a point in the geometry

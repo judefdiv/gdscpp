@@ -1,16 +1,16 @@
 /**
- * Author:
- * Origin:  		E&E Engineering - Stellenbosch University
- * For:					Supertools, Coldflux Project - IARPA
- * Created: 		2019-08-26
+ * Author:		J.F. de Villiers & H.F. Herbst
+ * Origin:  	E&E Engineering - Stellenbosch University
+ * For:			Supertools, Coldflux Project - IARPA
+ * Created: 	2019-08-26
  * Modified:
  * license:
  * Description: Creates GDS files using the gdsClass
- * File:				gdsForge.cpp
+ * File:		gdsForge.cpp
  */
 
 #include "gdsForge.hpp"
-
+using namespace std;
 /**
  * Constructor
  */
@@ -26,7 +26,6 @@ gdsForge::gdsForge(){
  * @param  double   [The scale the GDS file must use]
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
-
 int gdsForge::gdsCreate(string FileName, vector<gdsSTR>& inVec, double units[2]){
 	this->STR = inVec;
 
@@ -92,7 +91,6 @@ int gdsForge::gdsCreate(string FileName, vector<gdsSTR>& inVec, double units[2])
  * @param  corY  [The Y-coordinates]
  * @return       [Class of GDS boundary which can be used in a GDS structure]
  */
-
 gdsBOUNDARY drawBoundary(int layer, vector<int> corX, vector<int> corY){
 	gdsBOUNDARY foo;
 
@@ -111,7 +109,6 @@ gdsBOUNDARY drawBoundary(int layer, vector<int> corX, vector<int> corY){
  * @param  corY  [The Y-coordinates]
  * @return       [Class of GDS path which can be used in a GDS structure]
  */
-
 gdsPATH drawPath(int layer, unsigned int width, vector<int> corX, vector<int> corY){
 	gdsPATH foo;
 
@@ -132,7 +129,6 @@ gdsPATH drawPath(int layer, unsigned int width, vector<int> corX, vector<int> co
  * @param  trY   [Top Right Y coordinate]
  * @return       [Class of GDS boundary which can be used in a GDS structure]
  */
-
 gdsBOUNDARY draw2ptBox(int layer, int blX, int blY, int trX, int trY){
 	vector<int> ptsX;
 	vector<int> ptsY;
@@ -161,7 +157,6 @@ gdsBOUNDARY draw2ptBox(int layer, int blX, int blY, int trX, int trY){
  * @param  Ycor    [Y coordinate]
  * @return         [Class of GDS s-reference which can be used in a GDS structure]
  */
-
 gdsSREF drawSREF(string STRname, int Xcor, int Ycor){
 	gdsSREF foo;
 
@@ -179,7 +174,6 @@ gdsSREF drawSREF(string STRname, int Xcor, int Ycor){
 /**
  * [gdsForge::gdsBegin - Starts of the GDS file with the correct stuffs]
  */
-
 void gdsForge::gdsBegin(){
 	int tempArr[1];
 
@@ -199,7 +193,6 @@ void gdsForge::gdsBegin(){
 /**
  * [gdsForge::gdsEnd - End the GDS file]
  */
-
 void gdsForge::gdsEnd(){
 	this->GDSwriteRec(GDS_ENDLIB);
 }
@@ -208,7 +201,6 @@ void gdsForge::gdsEnd(){
  * [gdsForge::gdsStrStart - Outputs the correct GDS records to start a structure]
  * @param strName [The name of the structure]
  */
-
 void gdsForge::gdsStrStart(string strName){
 	this->GDSwriteInt(GDS_BGNSTR, gsdTime(), 12);
 	this->GDSwriteStr(GDS_STRNAME, strName);
@@ -217,7 +209,6 @@ void gdsForge::gdsStrStart(string strName){
 /**
  * [gdsForge::gdsStrEnd - Outputs the correct GDs records to end a structure]
  */
-
 void gdsForge::gdsStrEnd(){
 	this->GDSwriteRec(GDS_ENDSTR);
 }
@@ -227,7 +218,6 @@ void gdsForge::gdsStrEnd(){
  * @param in_PATH [The class containing the PATH structure]
  * @param minimal [If true only the minimal is PATH structure is created]
  */
-
 void gdsForge::gdsPath(gdsPATH& in_PATH, bool minimal){
 	int data[1];
 	int corXY[in_PATH.xCor.size()*2];
@@ -288,7 +278,6 @@ void gdsForge::gdsPath(gdsPATH& in_PATH, bool minimal){
  * @param in_BOUNDARY [The class containing the BOUNDARY structure]
  * @param minimal [If true only the minimal is BOUNDARY structure is created]
  */
-
 void gdsForge::gdsBoundary(gdsBOUNDARY& in_BOUNDARY, bool minimal){
 	int data[1];
 	int corXY[in_BOUNDARY.xCor.size()*2];
@@ -338,7 +327,6 @@ void gdsForge::gdsBoundary(gdsBOUNDARY& in_BOUNDARY, bool minimal){
  * @param in_SREF [The class containing the SREF structure]
  * @param minimal [If true only the minimal is SREF structure is created]
  */
-
 void gdsForge::gdsSRef(gdsSREF& in_SREF, bool minimal){
 	int data[1];
 	this->GDSwriteRec(GDS_SREF);
@@ -402,7 +390,6 @@ void gdsForge::gdsSRef(gdsSREF& in_SREF, bool minimal){
  * @param in_SREF [The class containing the AREF structure]
  * @param minimal [If true only the minimal is AREF structure is created]
  */
-
 void gdsForge::gdsARef(gdsAREF& in_AREF, bool minimal){
 	int data[1];
 	this->GDSwriteRec(GDS_SREF);
@@ -478,7 +465,6 @@ void gdsForge::gdsARef(gdsAREF& in_AREF, bool minimal){
  * @param gdsNODE [The class containing the NODE structure]
  * @param minimal [If true only the minimal is NODE structure is created]
  */
-
 void gdsForge::gdsNode(gdsNODE& in_NODE, bool minimal){
 	int data[1];
 	int corXY[in_NODE.xCor.size()*2];
@@ -531,7 +517,6 @@ void gdsForge::gdsNode(gdsNODE& in_NODE, bool minimal){
  * @param gdsTEXT [The class containing the TEXT structure]
  * @param minimal [If true only the minimal is TEXT structure is created]
  */
-
 void gdsForge::gdsText(gdsTEXT in_TEXT, bool minimal){
 	int data[1];
 	this->GDSwriteRec(GDS_TEXT);
@@ -571,7 +556,6 @@ void gdsForge::gdsText(gdsTEXT in_TEXT, bool minimal){
  * @param  fileName [Name of file to be imported]
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
-
 int gdsForge::gdsCopyFile(string fileName){
   cout << "Copying GDS binaries from \"" << fileName << "\"" << endl;
 
@@ -657,7 +641,6 @@ int gdsForge::gdsCopyFile(string fileName){
  * @param cnt    [Amount of integers to be written]
  * @return 			 [0 - Exit Success; 1 - Exit Failure]
  */
-
 int gdsForge::GDSwriteInt(int record, int arrInt[], int cnt){
 	unsigned int dataSize = record & 0xff;
 
@@ -703,7 +686,6 @@ int gdsForge::GDSwriteInt(int record, int arrInt[], int cnt){
  * @param  inStr  [The string to be written]
  * @return 				[0 - Exit Success; 1 - Exit Failure]
  */
-
 int gdsForge::GDSwriteStr(int record, string inStr){
 	if((record & 0xff) != 0x06){
 		cout << "Incorrect record: 0x" << hex << record << endl;
@@ -738,7 +720,6 @@ int gdsForge::GDSwriteStr(int record, string inStr){
  * @param  inBits [Bits that must be written]
  * @return 				[0 - Exit Success; 1 - Exit Failure]
  */
-
 int gdsForge::GDSwriteBitArr(int record, bitset<16> inBits){
 	if((record & 0xff) != 0x01){
 		cout << "Incorrect record: 0x" << hex << record << endl;
@@ -774,7 +755,6 @@ int gdsForge::GDSwriteBitArr(int record, bitset<16> inBits){
  * @param cnt    [Amount of doubles to be written]
  * @return 		   [0 - Exit Success; 1 - Exit Failure]
  */
-
 int gdsForge::GDSwriteRea(int record, double arrInt[], int cnt){
 	unsigned int dataSize = record & 0xff;
 	unsigned long long realVal;
@@ -814,7 +794,6 @@ int gdsForge::GDSwriteRea(int record, double arrInt[], int cnt){
 /**
  * [gdsForge::GDSwriteUnits - Hard coding the UNIT record for precision]
  */
-
 void gdsForge::GDSwriteUnits(){
 	unsigned char data[20];
 
@@ -847,7 +826,6 @@ void gdsForge::GDSwriteUnits(){
  * @param record [GDS record type]
  * @return 			 [0 - Exit Success; 1 - Exit Failure]
  */
-
 int gdsForge::GDSwriteRec(int record){
 	unsigned char OHout[4];
 
