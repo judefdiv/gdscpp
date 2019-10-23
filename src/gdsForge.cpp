@@ -47,28 +47,32 @@ int gdsForge::gdsCreate(string FileName, vector<gdsSTR>& inVec, double units[2])
 
 	for(unsigned int i = 0; i < this->STR.size(); i++){
 		// Start of the structure
-		gdsStrStart(this->STR[i].name);
+		this->gdsStrStart(this->STR[i].name);
 			// References
 			for(unsigned int j = 0; j < this->STR[i].SREF.size(); j++){
-				gdsSRef(this->STR[i].SREF[j], minimal);
+				this->gdsSRef(this->STR[i].SREF[j], minimal);
+			}
+			// Array References
+			for(unsigned int j = 0; j < this->STR[i].SREF.size(); j++){
+				this->gdsARef(this->STR[i].AREF[j], minimal);
 			}
 			// Boundaries
 			for(unsigned int j = 0; j < this->STR[i].BOUNDARY.size(); j++){
-				gdsBoundary(this->STR[i].BOUNDARY[j], minimal);
+				this->gdsBoundary(this->STR[i].BOUNDARY[j], minimal);
 			}
 			// Paths
 			for(unsigned int j = 0; j < this->STR[i].PATH.size(); j++){
-				gdsPath(this->STR[i].PATH[j], minimal);
+				this->gdsPath(this->STR[i].PATH[j], minimal);
 			}
 			// Nodes
 			for(unsigned int j = 0; j < this->STR[i].NODE.size(); j++){
-				gdsNode(this->STR[i].NODE[j], minimal);
+				this->gdsNode(this->STR[i].NODE[j], minimal);
 			}
 			// Texts
 			for(unsigned int j = 0; j < this->STR[i].TEXT.size(); j++){
-				gdsText(this->STR[i].TEXT[j], minimal);
+				this->gdsText(this->STR[i].TEXT[j], minimal);
 			}
-		gdsStrEnd();
+		this->gdsStrEnd();
 
 	}
 
