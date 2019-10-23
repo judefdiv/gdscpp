@@ -10,6 +10,13 @@
  */
 
 #include "gdsCpp.hpp"
+struct POINT
+{
+  double x = 0;
+  double y = 0;
+};
+
+int rotate_point(double cx, double cy, double angle, POINT &subject);
 
 /**
  * [gdscpp::read description]
@@ -1062,6 +1069,7 @@ int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
       cout << "Terminating AREF bounding box check." << endl;
       break;
     }
+    // fetch bounding box of the array reference structure
     int a_referred_bound_box[4] =
         {STR[target_structure_index].bounding_box[0],
          STR[target_structure_index].bounding_box[1],
@@ -1074,37 +1082,81 @@ int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
       cout << "bounding box. Therefore, bounding boxes of references will be inaccurate." << endl;
       cout << "Calculate bounding boxes from the lowest level (unreferenced) upwards." << endl;
     }
-    // fetch bounding box of the array reference structure
-    int x_min = AREF_iter->xCor;
-    if (AREF_iter->xCorCol < x_min)
-      x_min = AREF_iter->xCorCol;
-    if (AREF_iter->xCorRow < x_min)
-      x_min = AREF_iter->xCorRow;
-    int x_max = AREF_iter->xCor;
-    if (AREF_iter->xCorCol > x_max)
-      x_max = AREF_iter->xCorCol;
-    if (AREF_iter->xCorRow > x_max)
-      x_max = AREF_iter->xCorRow;
-    int y_min = AREF_iter->yCor;
-    if (AREF_iter->yCorCol < y_min)
-      y_min = AREF_iter->yCorCol;
-    if (AREF_iter->yCorRow < y_min)
-      y_min = AREF_iter->yCorRow;
-    int y_max = AREF_iter->yCor;
-    if (AREF_iter->yCorCol > y_max)
-      y_max = AREF_iter->yCorCol;
-    if (AREF_iter->yCorRow > y_max)
-      y_max = AREF_iter->yCorRow;
+    // Rotate array reference back to original dimensions
+    POINT cor, corRow, corCol, true_max;
+    POINT enclosed_array[4];
+    int aref_angle = AREF_iter->angle;
+    cor.x     = (double)AREF_iter->xCor;
+    cor.y     = (double)AREF_iter->yCor;
+    corRow.x  = (double)AREF_iter->xCorRow;
+    corRow.y  = (double)AREF_iter->yCorRow;
+    corCol.x  = (double)AREF_iter->xCorCol;
+    corCol.y  = (double)AREF_iter->yCorCol;
+    rotate_point(cor.x, cor.y, (-aref_angle) , corRow);
+    rotate_point(cor.x, cor.y, (-aref_angle) , corCol);
+    // Determine the true endpoints (without blank space at end)
+    int referred_structure_width  = a_referred_bound_box[2]-a_referred_bound_box[0];
+    int referred_structure_height = a_referred_bound_box[3]-a_referred_bound_box[1];
+    double column_spacing = (corRow.x - cor.x)/AREF_iter->colCnt;
+    double row_spacing    = (corCol.y - cor.y)/AREF_iter->rowCnt;
+    true_max.x = corRow.x - column_spacing + referred_structure_width;
+    true_max.y = corCol.y - row_spacing    + referred_structure_height;
+    enclosed_array[0].x = cor.x;
+    enclosed_array[0].y = cor.y;
+    enclosed_array[1].x = true_max.x;
+    enclosed_array[1].y = cor.y;
+    enclosed_array[2].x = true_max.x;
+    enclosed_array[2].y = true_max.y;
+    enclosed_array[3].x = cor.x;
+    enclosed_array[3].y = true_max.y;
+    // Rotate the 4 points of the box to their correct positions
+    rotate_point(cor.x,cor.y, aref_angle , enclosed_array[0]);
+    rotate_point(cor.x,cor.y, aref_angle , enclosed_array[1]);
+    rotate_point(cor.x,cor.y, aref_angle , enclosed_array[2]);
+    rotate_point(cor.x,cor.y, aref_angle , enclosed_array[3]);
+    // Determine min/maxes for new box
+    int x_min, y_min, x_max, y_max;
+    x_min = (int)enclosed_array[0].x;
+    if ( enclosed_array[1].x < (double)x_min )
+      x_min = (int)enclosed_array[1].x;
+    if ( enclosed_array[2].x < (double)x_min )
+      x_min = (int)enclosed_array[2].x;
+    if ( enclosed_array[3].x < (double)x_min )
+      x_min = (int)enclosed_array[3].x;
 
-    if(box_initialized == false)
+    x_max = (int)enclosed_array[0].x;
+    if ( enclosed_array[1].x > (double)x_max )
+      x_max = (int)enclosed_array[1].x;
+    if ( enclosed_array[2].x > (double)x_max )
+      x_max = (int)enclosed_array[2].x;
+    if ( enclosed_array[3].x > (double)x_max )
+      x_min = (int)enclosed_array[3].x;
+
+    y_min = (int)enclosed_array[0].y;
+    if ( enclosed_array[1].y < (double)y_min )
+      y_min = (int)enclosed_array[1].y;
+    if ( enclosed_array[2].y < (double)y_min )
+      y_min = (int)enclosed_array[2].y;
+    if ( enclosed_array[3].y < (double)y_min )
+      y_min = (int)enclosed_array[3].y;
+
+    y_max = (int)enclosed_array[0].y;
+    if ( enclosed_array[1].y > (double)y_max )
+      y_max = (int)enclosed_array[1].y;
+    if ( enclosed_array[2].y > (double)y_max )
+      y_max = (int)enclosed_array[2].y;
+    if ( enclosed_array[3].y > (double)y_max )
+      y_max = (int)enclosed_array[3].y;
+
+    // Do the comparison against the structure bounding box
+    if (box_initialized == false)
     {
-      bound_box[0]=x_min;
-      bound_box[1]=y_min;
-      bound_box[2]=x_max;
-      bound_box[3]=y_max;
-      box_initialized=true;
+      bound_box[0] = x_min;
+      bound_box[1] = y_min;
+      bound_box[2] = x_max;
+      bound_box[3] = y_max;
+      box_initialized = true;
     }
-
     // See if min, max x,y becomes the structures min, max x,y
     if (x_min < bound_box[0])
       bound_box[0] = x_min; //new minimum
@@ -1177,4 +1229,35 @@ int gdscpp::fetch_box_bounding_box(gdsBOX target_box, int *destination)
   destination[2] = bounding_box[2];
   destination[3] = bounding_box[3];
   return EXIT_SUCCESS;
+}
+
+/**
+ * [Rotate Point]
+ * Rotates a specified POINT's co-ordinates by reference.
+ * @param  cx     [ The x co-ordinate of the point to rotate around ]
+ * @param  cy     [ The y co-ordinate of the point to rotate around ]
+ * @param angle   [ The angle (in degrees) which the point must be rotated by (anticlockwise from x-axis)]
+ * @param subject [ The point which must be rotated]
+ * @return        [0 - Exit Success]
+ */
+int rotate_point(double cx,double cy, double angle, POINT &subject)
+{
+  POINT p = subject;
+  angle = angle * 3.141592653589 / 180; // convert angle to radians
+  double s = sin(angle);
+  double c = cos(angle);
+
+  // translate point back to origin:
+  p.x -= cx;
+  p.y -= cy;
+
+  // rotate point
+  double xnew = p.x * c - p.y * s;
+  double ynew = p.x * s + p.y * c;
+
+  // translate point back:
+  p.x = round(xnew + cx);
+  p.y = round(ynew + cy);
+  subject = p;          // Overwrite the original point with the rotated one.
+  return EXIT_SUCCESS;  // Indicate successful conversion.
 }
