@@ -1,5 +1,5 @@
 /**
- * Author:
+ * Author:      J.F. de Villiers & H.F. Herbst
  * Origin:  		E&E Engineering - Stellenbosch University
  * For:					Supertools, Coldflux Project - IARPA
  * Created: 		2019-08-26
@@ -9,14 +9,17 @@
  * File:				gdsCpp.hpp
  */
 
+// ========================= Includes =========================
 #include "gdsCpp.hpp"
+// ====================== Miscellanious =======================
+using namespace std;
 
+// ====================== Function Code =======================
 /**
  * [gdsToText - Quick converts the GDS file to ASCII without storing the data]
  * @param  fileName [File name of the to be converted gds file]
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
-
 int gdsToText(string fileName){
   ifstream gdsFile;
 
@@ -60,13 +63,11 @@ int gdsToText(string fileName){
   return 0;
 }
 
-
 /**
  * [gdsRecordToText - Converts a GDS record to ASCII]
  * @param  recIn [The pointer in memory to the GDS record to be converted]
  * @return       [0 - Exit Success; 1 - Exit Failure]
  */
-
 int gdsRecordToText(char *recIn){
   uint32_t GDSKey;
   bitset<16> bitarr;
@@ -154,7 +155,6 @@ int gdsRecordToText(char *recIn){
  * @param  fileName [The file name of the GDS file that is going to generated]
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
-
 int gdscpp::write(string fileName){
   gdsForge foo;
   foo.importGDSfile(this->GDSfileName);
@@ -166,7 +166,6 @@ int gdscpp::write(string fileName){
  * @param  fileName [File name of the to be converted gds file]
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
-
 int gdscpp::quick2ASCII(string fileName)
 {
   ifstream gdsFile;
@@ -219,7 +218,6 @@ int gdscpp::quick2ASCII(string fileName)
  * @param  recIn [Char pointer to the start of binary GDS record]
  * @return       [0 - Exit Success; 1 - Exit Failure]
  */
-
 int gdscpp::GDSrecord2ASCII(char *recIn)
 {
   uint32_t sizeBlk;
@@ -339,7 +337,6 @@ int gdscpp::GDSrecord2ASCII(char *recIn)
 /**
  * [gdscpp::to_str - Displays all the stored data in the class]
  */
-
 void gdscpp::to_str()
 {
   cout << "GDScpp class:" << endl;
@@ -353,7 +350,6 @@ void gdscpp::to_str()
 /**
  * [gdsSTR::to_str - Displays all the stored data in the class]
  */
-
 void gdsSTR::to_str()
 {
   cout << "GDS STR class:" << endl;
@@ -387,7 +383,6 @@ void gdsSTR::to_str()
 /**
  * [gdsSREF::to_str - Displays all the stored data in the class]
  */
-
 void gdsSREF::to_str()
 {
   cout << "GDS REF class:" << endl;
@@ -403,7 +398,6 @@ void gdsSREF::to_str()
 /**
  * [gdsBOUNDARY::to_str - Displays all the stored data in the class]
  */
-
 void gdsBOUNDARY::to_str()
 {
   cout << "GDS BOUNDARY class:" << endl;
@@ -420,7 +414,6 @@ void gdsBOUNDARY::to_str()
 /**
  * [gdsPATH::to_str - Displays all the stored data in the class]
  */
-
 void gdsPATH::to_str()
 {
   cout << "GDS PATH class:" << endl;
@@ -438,7 +431,6 @@ void gdsPATH::to_str()
 /**
  * [gdsNODE::to_str - Displays all the stored data in the class]
  */
-
 void gdsNODE::to_str()
 {
   cout << "GDS NODE class:" << endl;
@@ -458,7 +450,6 @@ void gdsNODE::to_str()
 /**
  * [gdsTEXT::to_str - Displays all the stored data in the class]
  */
-
 void gdsTEXT::to_str()
 {
   cout << "GDS TEXT class:" << endl;
@@ -486,6 +477,9 @@ void gdscpp::reset()
 void gdsSTR::reset()
 {
   string name = "\0";
+  heirarchical_level = 0;
+  bounding_box[0] = {0};
+  bounding_box[1] = {0};
   BOUNDARY.clear();
   PATH.clear();
   SREF.clear();
@@ -532,6 +526,7 @@ void gdsSREF::reset()
   propvalue = "\0";
 }
 
+// Re-sets the specified SREF object to its default values
 void gdsAREF::reset()
 {
   name = "\0";
@@ -551,6 +546,7 @@ void gdsAREF::reset()
   propvalue = "\0";
 }
 
+// Re-sets the specified SREF object to its default values
 void gdsTEXT::reset()
 {
   presentation_flags.reset();
@@ -568,6 +564,7 @@ void gdsTEXT::reset()
   propvalue = "\0";
 }
 
+// Re-sets the specified SREF object to its default values
 void gdsNODE::reset()
 {
   plex = 0; // optional
@@ -580,6 +577,7 @@ void gdsNODE::reset()
   propvalue = "\0";
 }
 
+// Re-sets the specified SREF object to its default values
 void gdsBOX::reset()
 {
   plex = 0; // optional
@@ -595,8 +593,11 @@ void gdsBOX::reset()
 // Standard function for adding one structure onto the stack.
 void gdscpp::setSTR(gdsSTR target_structure)
 {
-  STR.push_back(target_structure);
-  STR_Lookup.insert({target_structure.name, (STR.size()-1)});
+  if (!STR_Lookup.count(target_structure.name))//if doesn't already exist
+  {
+    STR.push_back(target_structure);
+    STR_Lookup.insert({target_structure.name, (STR.size()-1)});
+  }
 }
 
 // Overloaded function for appending multiple structures
@@ -606,15 +607,18 @@ void gdscpp::setSTR(vector<gdsSTR> target_structure)
 }
 
 /**
- * [gdscpp::createHierarchy - Creates a tree structure of all the GDS structure dependencies]
- * @return [0 - Exit Success; 1 - Exit Failure]
+ * [gdscpp::get_database_units]
+ * @return [database units of gdscpp object]
  */
-
 double gdscpp::get_database_units()
 {
   return units[1];
 }
 
+/**
+ * [gdscpp::createHierarchy - Creates a tree structure of all the GDS structure dependencies]
+ * @return [0 - Exit Success; 1 - Exit Failure]
+ */
 int gdscpp::createHierarchy(){
   vector<unsigned int> rootSTRi;
   rootSTRi = this->findRootSTR();
@@ -627,7 +631,6 @@ int gdscpp::createHierarchy(){
  * [gdscpp::findRootSTR finds the root structures]
  * @return [vector of the STR indexes of the root GDS STR]
  */
-
 vector<unsigned int> gdscpp::findRootSTR(){
   cout << "Finding the root structures." << endl;
   vector<string> mainSTR;
@@ -672,7 +675,6 @@ vector<unsigned int> gdscpp::findRootSTR(){
  * @param  fileName [The file name of the to be created dot file]
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
-
 int gdscpp::genDot(string fileName){
   cout << "Generating Dot file:\"" << fileName << "\" file" << endl;
 

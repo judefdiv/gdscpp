@@ -1,16 +1,19 @@
 /**
- * Author:  		Jude de Villiers
- * Origin:  		E&E Engineering - Stellenbosch University
- * For:				Supertools, Coldflux Project - IARPA
- * Created: 		2019-03-20
+ * Author:		J.F. de Villiers & H.F. Herbst
+ * Origin:  	E&E Engineering - Stellenbosch University
+ * For:			Supertools, Coldflux Project - IARPA
+ * Created: 	2019-03-20
  * Modified:
  * license:
- * Description: 	Library file containing GDSII reading and writing functions.
- * File:			gdsParser.cpp
+ * Description: Library file containing GDSII reading and writing functions.
+ * File:		gdsParser.cpp
  */
 
+// ========================= Includes =========================
 #include "gdsParser.hpp"
 
+// ====================== Miscellanious =======================
+using namespace std;
 /**
  * [GDSdistill - Reads a single record and outputs it to the appropriate variable]
  * @param  recIn   [Char pointer to the start of binary GDS record]
@@ -22,6 +25,13 @@
  * @return         [0 - Exit Success; 1 - Exit Failure]
  */
 
+// ====================== Function Code =======================
+
+/**
+ * [GDSdistill]
+ * @param  			[To be filled in]
+ * @return          [0 - Exit Success; 1 - Exit Failure]
+ */
 int GDSdistill(char *recIn, uint32_t &GDSKey, bitset<16> &bitarr, vector<int> &integer, vector<double> &B8Real, string &words)
 {
 	uint32_t sizeBlk;
@@ -114,7 +124,6 @@ int GDSdistill(char *recIn, uint32_t &GDSKey, bitset<16> &bitarr, vector<int> &i
 /**
  * BUG loss of extreme precession, use UNIT function for unit header;
  */
-
 unsigned long long GDSfloatCalc(double inVar)
 {
 	uint64_t GDSdec = 0;
@@ -171,7 +180,6 @@ unsigned long long GDSfloatCalc(double inVar)
  * @param  inVar [variable to be shifted to the right]
  * @return       [shifted variable]
  */
-
 unsigned long long bitShiftR(unsigned long long inVar, int cnt)
 {
 
@@ -199,7 +207,6 @@ unsigned long long bitShiftR(unsigned long long inVar, int cnt)
  * @param  inVar [variable to be shifted to the left]
  * @return       [shifted variable]
  */
-
 unsigned long long bitShiftL(unsigned long long inVar, int cnt)
 {
 
@@ -228,7 +235,6 @@ unsigned long long bitShiftL(unsigned long long inVar, int cnt)
  * @param  cnt    [Amount of bytes that must be concatenated]
  * @return        [The concatenated value]
  */
-
 int conBytes(char inArry[], int start, int cnt)
 {
 	int outVal = 0;
@@ -258,7 +264,6 @@ unsigned long long conBytesLL(char inArry[], int start, int cnt)
  * @return [Gets the time in GDS format.]
  *           [year, month, day, hour, minute, seconds][last modification, last access]
  */
-
 int *gsdTime()
 {
 	static int timeIO[12];
@@ -287,12 +292,12 @@ int *gsdTime()
 
 	return timeIO;
 }
+
 /**
  * [GDSkey2ASCII - Converters a GDS header to text]
  * @param  inHex [Teh GDS header value]
  * @return       [The equivalent string for the hex value if found else NULL]
  */
-
 string GDSkey2ASCII(unsigned int inHex)
 {
 	static map<int, string> GDSkeys;
