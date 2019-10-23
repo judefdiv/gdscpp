@@ -68,6 +68,7 @@ class gdscpp
 private:
   int version_number = 7;                          // GDS version number. Default to 7
   int generations = 3;                             // Default generations. Don't really use
+  int highest_heirarchical_level = 0;              // Zero_indexed
   double units[2] = {0.001, 1e-9};                 // micron default
   std::vector<gdsSTR> STR;                         // Holds all the structures of the gds file
   std::unordered_map<std::string, int> STR_Lookup; // Allows for searching by name

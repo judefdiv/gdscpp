@@ -723,6 +723,7 @@ int gdscpp::import(string fileName)
 int gdscpp::resolve_heirarchy_and_bounding_boxes()
 {
   // ========== Part 1: Populate heirarchy ===========
+  int heirarchical_levels = 0;
   vector<vector<string>> heirarchy;
   heirarchy.clear();
   vector<string> string_vector;
@@ -856,6 +857,8 @@ int gdscpp::resolve_heirarchy_and_bounding_boxes()
       STR[STR_index].bounding_box[1] = b_box[1];
       STR[STR_index].bounding_box[2] = b_box[2];
       STR[STR_index].bounding_box[3] = b_box[3];
+      if (STR[STR_index].heirarchical_level > highest_heirarchical_level)
+        highest_heirarchical_level = STR[STR_index].heirarchical_level;
       structure_iterator++;
     }
     heir_iter--;
