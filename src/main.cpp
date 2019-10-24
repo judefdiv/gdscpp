@@ -128,7 +128,7 @@ int RunTool(int argCount, char** argValues){
 			gdscpp gdsfile;
 			gdsfile.import(gdsFName);
 			// gdsfile.createHierarchy();
-			// gdsfile.genDot("tree.jpg");
+			gdsfile.genDot("data/tree.jpg");
 			return 1;
 		}
 		else{

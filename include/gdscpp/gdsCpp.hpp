@@ -86,6 +86,7 @@ public:
   void setSTR(std::vector<gdsSTR> target_structure);
   //void setSTR(gdsSTR exVec){STR.push_back(exVec);};
   void getSTR(std::vector<gdsSTR> &exVec) { exVec = STR; };
+  int get_highest_heirarchical_level() { return highest_heirarchical_level; };
   int import(std::string fileName);
   bool check_name(std::string name, std::vector<std::string> ref_vector);
   int resolve_heirarchy_and_bounding_boxes();

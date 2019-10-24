@@ -23,7 +23,7 @@ Examples of what GDScpp can do:
 ## Needed stuffs
 ``` bash
 apt install build-essencials 	# for compiling
-apt install dot               # for creating hierarchy diagram(dot file)
+apt install graphviz            # for creating hierarchy diagram(dot file)
 ```
 ## To Compile
 ``` bash
