@@ -32,7 +32,7 @@
 
 gdsBOUNDARY draw2ptBox(int layer, int blX, int blY, int trX, int trY);
 gdsBOUNDARY drawBoundary(int layer, std::vector<int> corX, std::vector<int> corY);
-gdsPATH drawPath(int layer, unsigned int width, std::vector<int> corX, std::vector<int> corY);
+gdsPATH drawPath(int layer, unsigned int width, unsigned int path_type, std::vector<int> corX, std::vector<int> corY);
 gdsSREF drawSREF(std::string STRname, int Xcor, int Ycor);
 
 // ============================= Classes ============================

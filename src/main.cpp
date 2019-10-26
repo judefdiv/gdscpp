@@ -168,12 +168,16 @@ void testGDS(string fileName){
 	vector<gdsSTR> arrSTR;
 	arrSTR.resize(arrSTR.size()+1);
 
-	arrSTR.back().name = "MyStr";
-	arrSTR.back().BOUNDARY.push_back(draw2ptBox(1, -10000, -10000, 10000, 10000));
-	arrSTR.back().SREF.push_back(drawSREF("LSmitll_AND2T", 100000, 100000));
-	arrSTR.back().SREF.push_back(drawSREF("LSmitll_AND2T", -100000, -100000));
+	arrSTR.back().name = "Hein_structure";
+	// arrSTR.back().BOUNDARY.push_back(draw2ptBox(1, -10000, -10000, 10000, 10000));
+	// arrSTR.back().SREF.push_back(drawSREF("LSmitll_AND2T", 100000, 100000));
+	// arrSTR.back().SREF.push_back(drawSREF("LSmitll_AND2T", -100000, -100000));
+	// arrSTR.back().PATH.push_back(drawPath(int layer,  unsigned int width,  vector<int> corX,  vector<int> corY));
+	vector<int> x_co_ordinates = {0,100,100,200};
+	vector<int> y_co_ordinates = {0,100,0,0};
+	arrSTR.back().PATH.push_back( drawPath(60, 5, 2, x_co_ordinates, y_co_ordinates) );
 
-	fooGDS.importGDSfile("data/LSmitll_AND2T.gds");
+	// fooGDS.importGDSfile("data/LSmitll_AND2T.gds");
 
 	fooGDS.setSTR(arrSTR);
 
