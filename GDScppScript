@@ -4,6 +4,11 @@ clear
 
 echo "------------- Script to for GDScpp ---------------"
 
+# clang-format
+find src/ -iname *.hpp -o -iname *.cpp | xargs clang-format -i
+find include/gdscpp/ -iname *.hpp -o -iname *.cpp | xargs clang-format -i
+
+# compile
 cd build
 cmake .. && \
 make && \

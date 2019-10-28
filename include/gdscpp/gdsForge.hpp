@@ -13,17 +13,16 @@
 #define GDSForge
 
 // ============================ Includes ============================
-#include <string>
-#include <iostream>
-#include <vector>
-#include <fstream>
-#include <stdio.h>
-#include <map>
-#include <set>
-#include <math.h>
-#include <cstring>
 #include <bitset>
-
+#include <cstring>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <math.h>
+#include <set>
+#include <stdio.h>
+#include <string>
+#include <vector>
 #include "gdsCpp.hpp"
 #include "gdsParser.hpp"
 
@@ -31,8 +30,10 @@
 // Functions to easily draw in GDSfiles
 
 gdsBOUNDARY draw2ptBox(int layer, int blX, int blY, int trX, int trY);
-gdsBOUNDARY drawBoundary(int layer, std::vector<int> corX, std::vector<int> corY);
-gdsPATH drawPath(int layer, unsigned int width, unsigned int path_type, std::vector<int> corX, std::vector<int> corY);
+gdsBOUNDARY drawBoundary(int layer, std::vector<int> corX,
+                         std::vector<int> corY);
+gdsPATH drawPath(int layer, unsigned int width, unsigned int path_type,
+                 std::vector<int> corX, std::vector<int> corY);
 gdsSREF drawSREF(std::string STRname, int Xcor, int Ycor);
 
 // ============================= Classes ============================
@@ -81,7 +82,8 @@ public:
   gdsForge();
   ~gdsForge(){};
 
-  int gdsCreate(std::string FileName, std::vector<gdsSTR> &inVec, double units[2]);
+  int gdsCreate(std::string FileName, std::vector<gdsSTR> &inVec,
+                double units[2]);
 
   void importGDSfile(std::vector<std::string> &fileNames)
   {

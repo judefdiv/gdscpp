@@ -24,18 +24,18 @@ class gdsNODE;     // ''
 class gdsBOX;      // ''
 
 // ========================== Includes ========================
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <vector>
-#include <stdio.h>
-#include <map>
-#include <unordered_map>
-#include <fstream>
-#include <bitset>
-#include <algorithm>
-#include "gdsParser.hpp"
 #include "gdsForge.hpp"
+#include "gdsParser.hpp"
+#include <algorithm>
+#include <bitset>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <sstream>
+#include <stdio.h>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 // ================== Function Declarations ===================
 
@@ -44,36 +44,24 @@ int gdsRecordToText(char *recIn);
 
 // ================= Structure Declarations ===================
 
-struct STRstruct
-{
-  std::string name = "\0";
-  int STRindex = -1;
-  int level = -1;
-  std::vector<unsigned int> children;
-
-  void to_str()
-  {
-    std::cout << "STR[" << STRindex << "]: " << this->name << std::endl;
-    std::cout << "  level: " << this->level << std::endl;
-  }
-};
-
 // ===================== Class Definitions ====================
 
 /*
- * [gdscpp - This is the highest class, holding all the information of a single .gds file.]
+ * [gdscpp - This is the highest class, holding all the information of a single
+ * .gds file.]
  */
 class gdscpp
 { // (GDS file)
 private:
-  int version_number = 7;                          // GDS version number. Default to 7
-  int generations = 3;                             // Default generations. Don't really use
-  int highest_heirarchical_level = 0;              // Zero_indexed
-  double units[2] = {0.001, 1e-9};                 // micron default
-  std::vector<gdsSTR> STR;                         // Holds all the structures of the gds file
-  std::unordered_map<std::string, int> STR_Lookup; // Allows for searching by name
-  std::vector<int> last_modified;                  // TODO: Default to current datetime if unread
-  std::string library_name = "Untitled_library";   // Default libname
+  int version_number = 7;             // GDS version number. Default to 7
+  int generations = 3;                // Default generations. Don't really use
+  int highest_heirarchical_level = 0; // Zero_indexed
+  double units[2] = {0.001, 1e-9};    // micron default
+  std::vector<gdsSTR> STR; // Holds all the structures of the gds file
+  std::unordered_map<std::string, int>
+      STR_Lookup;                 // Allows for searching by name
+  std::vector<int> last_modified; // TODO: Default to current datetime if unread
+  std::string library_name = "Untitled_library"; // Default libname
   std::vector<unsigned int> findRootSTR();
 
   int GDSrecord2ASCII(char *recIn); // Does it belong here???
@@ -84,14 +72,23 @@ public:
   ~gdscpp(){};
   void setSTR(gdsSTR target_structure);
   void setSTR(std::vector<gdsSTR> target_structure);
-  //void setSTR(gdsSTR exVec){STR.push_back(exVec);};
-  void getSTR(std::vector<gdsSTR> &exVec, std::unordered_map<std::string, int> &exMap) { exVec = STR; exMap = STR_Lookup; };
-  int get_highest_heirarchical_level() { return highest_heirarchical_level; };
+  // void setSTR(gdsSTR exVec){STR.push_back(exVec);};
+  void getSTR(std::vector<gdsSTR> &exVec,
+              std::unordered_map<std::string, int> &exMap)
+  {
+    exVec = STR;
+    exMap = STR_Lookup;
+  };
+  int get_highest_heirarchical_level()
+  {
+    return highest_heirarchical_level;
+  };
   int import(std::string fileName);
   bool check_name(std::string name, std::vector<std::string> ref_vector);
   int resolve_heirarchy_and_bounding_boxes();
   int calculate_STR_bounding_box(int structure_index, int *destination);
-  int fetch_boundary_bounding_box(gdsBOUNDARY target_boundary, int *destination);
+  int fetch_boundary_bounding_box(gdsBOUNDARY target_boundary,
+                                  int *destination);
   int fetch_box_bounding_box(gdsBOX target_box, int *destination);
   int write(std::string fileName);
   int quick2ASCII(std::string fileName); // does not store data, legacy code.
@@ -123,7 +120,8 @@ public:
   std::string name = "\0";
 
   unsigned int heirarchical_level = 0;
-  int bounding_box[4] = {0, 0, 0, 0}; //x1,y1,x2,y2 (minimum number of points to represent box)
+  int bounding_box[4] = {
+      0, 0, 0, 0}; // x1,y1,x2,y2 (minimum number of points to represent box)
 
   std::vector<int> last_modified;
   std::vector<gdsBOUNDARY> BOUNDARY;
@@ -161,10 +159,10 @@ public:
 
 /*
  * [gdsPATH - Subclass of a gdsSTR class which stores path structures.]
- * Pathtype: This record contains a value that describes the type of path endpoints. The value is
- * 0 for square-ended paths that endflush with their endpoints
- * 1 for round-ended paths
- * 2 for square-ended paths that extend a half-width beyond their endpoints
+ * Pathtype: This record contains a value that describes the type of path
+ * endpoints. The value is 0 for square-ended paths that endflush with their
+ * endpoints 1 for round-ended paths 2 for square-ended paths that extend a
+ * half-width beyond their endpoints
  */
 class gdsPATH
 {
@@ -188,7 +186,8 @@ public:
 };
 
 /*
- * [gdsSREF - Subclass of a gdsSTR class which stores structure reference structures.]
+ * [gdsSREF - Subclass of a gdsSTR class which stores structure reference
+ * structures.]
  */
 class gdsSREF
 {
@@ -213,8 +212,9 @@ public:
 };
 
 /*
- * [gdsAREF - Subclass of a gdsSTR class which stores array reference structures.]
-*/
+ * [gdsAREF - Subclass of a gdsSTR class which stores array reference
+ * structures.]
+ */
 class gdsAREF
 {
 private:
@@ -258,10 +258,12 @@ public:
 
   /* Bits 10 and 11, taken together as a binary number,
    * specify the font (00 means font 0, 01 rneans font 1,
-   * 10 means font 2, and 11 means font 3). Bits 12 and 13 specify the vertical justification
-   * (00 means top, 01 means middle, and 10 means bottom). Bits 14 and 15 specify the horizontal justification
-   * (00 means left, 01 means center, and 10 means right). Bits 0 through 9 are reserved for future use and must be cleared.
-   * If this record is omitted, then top-left justification and font 0 are assumed.
+   * 10 means font 2, and 11 means font 3). Bits 12 and 13 specify the vertical
+   * justification (00 means top, 01 means middle, and 10 means bottom). Bits 14
+   * and 15 specify the horizontal justification (00 means left, 01 means
+   * center, and 10 means right). Bits 0 through 9 are reserved for future use
+   * and must be cleared. If this record is omitted, then top-left justification
+   * and font 0 are assumed.
    */
   int plex = 0;
   std::bitset<16> presentation_flags;
@@ -281,7 +283,7 @@ public:
 
 /*
  * [gdsNODE - Subclass of a gdsSTR class which stores node structures.]
-*/
+ */
 class gdsNODE
 {
 private:
@@ -304,7 +306,7 @@ public:
 
 /*
  * [gdsBOX - Subclass of a gdsSTR class which stores box structures.]
-*/
+ */
 class gdsBOX
 {
 private:
