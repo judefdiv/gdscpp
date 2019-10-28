@@ -3,5 +3,8 @@ data/
 build/
 Sourcetrail/
 .vscode/
+.clangd/
 *.sublime-project
 *.sublime-workspace
+*.gds
+*.gds2

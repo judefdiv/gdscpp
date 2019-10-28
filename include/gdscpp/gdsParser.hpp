@@ -27,14 +27,14 @@ int GDSdistill(char *recIn, uint32_t &GDSKey, std::bitset<16> &bitarr,
                std::vector<int> &integer, std::vector<double> &B8Real,
                std::string &words);
 
-unsigned long long GDSfloatCalc(double inVar); // low level
-unsigned long long bitShiftR(unsigned long long inVar,
-                             int cnt); // ultra low level
-unsigned long long bitShiftL(unsigned long long inVar,
-                             int cnt);           // ultra low level
+uint64_t GDSfloatCalc(double inVar); // low level
+uint64_t bitShiftR(uint64_t inVar,
+                   int cnt); // ultra low level
+uint64_t bitShiftL(uint64_t inVar,
+                   int cnt);                     // ultra low level
 int conBytes(char inArry[], int start, int cnt); // ultra low level
-unsigned long long conBytesLL(char inArry[], int start,
-                              int cnt); // ultra low level
+uint64_t conBytesLL(char inArry[], int start,
+                    int cnt); // ultra low level
 
 int *gsdTime();
 std::string GDSkey2ASCII(unsigned int inHex);

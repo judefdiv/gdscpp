@@ -20,7 +20,7 @@ using namespace std;
  * @param  fileName [File name of the to be converted gds file]
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
-int gdsToText(string fileName)
+int gdsToText(const std::string &fileName)
 {
   ifstream gdsFile;
 
@@ -78,7 +78,6 @@ int gdsRecordToText(char *recIn)
   vector<double> B8Real;
   string words;
   string keyName;
-  string lineOut;
 
   uint8_t dataType;
 
@@ -152,7 +151,7 @@ int gdsRecordToText(char *recIn)
  * @param  fileName [The file name of the GDS file that is going to generated]
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
-int gdscpp::write(string fileName)
+int gdscpp::write(const std::string &fileName)
 {
   gdsForge foo;
   foo.importGDSfile(this->GDSfileName);
@@ -165,7 +164,7 @@ int gdscpp::write(string fileName)
  * @param  fileName [File name of the to be converted gds file]
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
-int gdscpp::quick2ASCII(string fileName)
+int gdscpp::quick2ASCII(const std::string &fileName)
 {
   ifstream gdsFile;
 
@@ -296,15 +295,15 @@ int gdscpp::GDSrecord2ASCII(char *recIn)
     cout << "}" << endl;
   } else if (dataType == 6) {
     // ASCII string
-    string foo = "";
+    string fooStr = "";
     sizeBlk++;
     for (i = 4; i <= sizeBlk; i++) {
       if (recIn[i] ==
           '\0') // if string record's size is odd, it must be padded with NULL
         continue;
-      foo = foo + recIn[i];
+      fooStr = fooStr + recIn[i];
     }
-    cout << ":{\"" << foo << "\"}" << endl;
+    cout << ":{\"" << fooStr << "\"}" << endl;
   } else {
     cout << "Smoke detected." << endl;
   }
@@ -604,11 +603,8 @@ int gdscpp::createHierarchy()
 vector<unsigned int> gdscpp::findRootSTR()
 {
   cout << "Finding the root structures." << endl;
-  vector<string> mainSTR;
-  vector<string> refSTR;
 
   vector<unsigned int> rootSTRindexes;
-
   bool vecFound;
 
   for (unsigned int i = 0; i < this->STR.size(); i++) {
@@ -648,7 +644,7 @@ vector<unsigned int> gdscpp::findRootSTR()
  * @param  fileName [The file name of the to be created dot file]
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
-int gdscpp::genDot(string fileName)
+int gdscpp::genDot(const std::string &fileName)
 {
   cout << "Generating Dot file:\"" << fileName << "\" file" << endl;
 

@@ -108,7 +108,7 @@ int GDSdistill(char *recIn, uint32_t &GDSKey, bitset<16> &bitarr,
 /**
  * BUG loss of extreme precession, use UNIT function for unit header;
  */
-unsigned long long GDSfloatCalc(double inVar)
+uint64_t GDSfloatCalc(double inVar)
 {
   uint64_t GDSdec = 0;
   unsigned long long integral;
@@ -160,21 +160,22 @@ unsigned long long GDSfloatCalc(double inVar)
  * @param  inVar [variable to be shifted to the right]
  * @return       [shifted variable]
  */
-unsigned long long bitShiftR(unsigned long long inVar, int cnt)
+uint64_t bitShiftR(uint64_t inVar, int cnt)
 {
 
-  if (cnt > 32) { // tempULL = (1 << i);
-    inVar = inVar >> 30;
-    inVar = inVar >> 2;
-    inVar = inVar >> (cnt - 32);
-  } else if (cnt > 30) {
-    inVar = inVar >> 30;
-    inVar = inVar >> (cnt - 30);
-  } else {
-    inVar = inVar >> cnt;
-  }
+  // if (cnt > 32) { // tempULL = (1 << i);
+  //   inVar = inVar >> 30;
+  //   inVar = inVar >> 2;
+  //   inVar = inVar >> (cnt - 32);
+  // } else if (cnt > 30) {
+  //   inVar = inVar >> 30;
+  //   inVar = inVar >> (cnt - 30);
+  // } else {
+  //   inVar = inVar >> cnt;
+  // }
 
-  return inVar;
+  // return inVar;
+  return inVar >> cnt;
 }
 
 /**
@@ -182,21 +183,22 @@ unsigned long long bitShiftR(unsigned long long inVar, int cnt)
  * @param  inVar [variable to be shifted to the left]
  * @return       [shifted variable]
  */
-unsigned long long bitShiftL(unsigned long long inVar, int cnt)
+uint64_t bitShiftL(uint64_t inVar, int cnt)
 {
 
-  if (cnt > 32) { // tempULL = (1 << i);
-    inVar = inVar << 30;
-    inVar = inVar << 2;
-    inVar = inVar << (cnt - 32);
-  } else if (cnt > 30) {
-    inVar = inVar << 30;
-    inVar = inVar << (cnt - 30);
-  } else {
-    inVar = inVar << cnt;
-  }
+  // if (cnt > 32) { // tempULL = (1 << i);
+  //   inVar = inVar << 30;
+  //   inVar = inVar << 2;
+  //   inVar = inVar << (cnt - 32);
+  // } else if (cnt > 30) {
+  //   inVar = inVar << 30;
+  //   inVar = inVar << (cnt - 30);
+  // } else {
+  //   inVar = inVar << cnt;
+  // }
 
-  return inVar;
+  // return inVar;
+  return inVar << cnt;
 }
 
 /**
@@ -216,7 +218,7 @@ int conBytes(char inArry[], int start, int cnt)
   return outVal;
 }
 
-unsigned long long conBytesLL(char inArry[], int start, int cnt)
+uint64_t conBytesLL(char inArry[], int start, int cnt)
 {
   unsigned long long outVal = 0;
 

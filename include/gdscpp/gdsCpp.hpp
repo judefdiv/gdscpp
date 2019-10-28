@@ -39,7 +39,7 @@ class gdsBOX;      // ''
 
 // ================== Function Declarations ===================
 
-int gdsToText(std::string fileName);
+int gdsToText(const std::string &fileName);
 int gdsRecordToText(char *recIn);
 
 // ================= Structure Declarations ===================
@@ -90,18 +90,19 @@ public:
   int fetch_boundary_bounding_box(gdsBOUNDARY target_boundary,
                                   int *destination);
   int fetch_box_bounding_box(gdsBOX target_box, int *destination);
-  int write(std::string fileName);
-  int quick2ASCII(std::string fileName); // does not store data, legacy code.
+  int write(const std::string &fileName);
+  int quick2ASCII(
+      const std::string &fileName); // does not store data, legacy code.
   double get_database_units();
   void to_str();
   void reset();
-  void importGDSfile(std::string fileName)
+  void importGDSfile(const std::string &fileName)
   {
     this->GDSfileName.push_back(fileName);
   }
 
   int createHierarchy();
-  int genDot(std::string fileName);
+  int genDot(const std::string &fileName);
 };
 
 /*

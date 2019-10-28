@@ -17,7 +17,7 @@
 #include <set>
 #include <string> //string goodies
 
-// ========================== Miscellanious ==========================
+// ========================== Miscellaneous ==========================
 #define versionNo 0.1
 #define outfileName "data/results/gds/" // Default file output name
 using namespace std;
@@ -205,7 +205,6 @@ void helpScreen()
 
 /**
  * [welcomeScreen - Displays ascii art of GDS-cpp logo]
- * @param  fileName  [File name of string]
  */
 void welcomeScreen()
 {

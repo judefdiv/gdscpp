@@ -13,18 +13,18 @@
 #define GDSForge
 
 // ============================ Includes ============================
+#include "gdsCpp.hpp"
+#include "gdsParser.hpp"
 #include <bitset>
 #include <cstring>
 #include <fstream>
 #include <iostream>
 #include <map>
-#include <math.h>
+#include <cmath.h>
 #include <set>
 #include <stdio.h>
 #include <string>
 #include <vector>
-#include "gdsCpp.hpp"
-#include "gdsParser.hpp"
 
 // ===================== Function Declarations ======================
 // Functions to easily draw in GDSfiles
@@ -61,14 +61,12 @@ private:
 
   int gdsCopyFile(std::string fileName);
 
-  void gdsPath(gdsPATH &in_PATH, bool minimal);
-  void gdsBoundary(gdsBOUNDARY &in_BOUNDARY, bool minimal);
-  void gdsSRef(gdsSREF &in_SREF, bool minimal);
-  void gdsARef(gdsAREF &in_AREF, bool minimal);
-  void gdsNode(gdsNODE &in_NODE, bool minimal);
-  void gdsText(gdsTEXT in_TEXT, bool minimal);
-  // void gdsARefV2(gdsAREF in_AREF, bool minimal);
-  // void gdsBOXV2(gdsBOX in_BOX, bool minimal);
+  void gdsPath(const gdsPATH &in_PATH, bool minimal);
+  void gdsBoundary(const gdsBOUNDARY &in_BOUNDARY, bool minimal);
+  void gdsSRef(const gdsSREF &in_SREF, bool minimal);
+  void gdsARef(const gdsAREF &in_AREF, bool minimal);
+  void gdsNode(const gdsNODE &in_NODE, bool minimal);
+  void gdsText(const gdsTEXT &in_TEXT, bool minimal);
 
   // Lower level
   int GDSwriteRec(int record);
@@ -80,7 +78,7 @@ private:
 
 public:
   gdsForge();
-  ~gdsForge(){};
+  ~gdsForge() {}
 
   int gdsCreate(std::string FileName, std::vector<gdsSTR> &inVec,
                 double units[2]);
@@ -88,7 +86,7 @@ public:
   void importGDSfile(std::vector<std::string> &fileNames)
   {
     this->GDSfileNameToBeImport = fileNames;
-  };
+  }
 
   void to_str();
 };

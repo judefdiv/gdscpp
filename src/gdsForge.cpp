@@ -45,32 +45,32 @@ int gdsForge::gdsCreate(string FileName, vector<gdsSTR> &inVec, double units[2])
 
   bool minimal = false;
 
-  for (unsigned int i = 0; i < this->STR.size(); i++) {
+  for (const auto &gds_str : this->STR) {
     // Start of the structure
-    this->gdsStrStart(this->STR[i].name);
+    this->gdsStrStart(gds_str.name);
     // References
-    for (unsigned int j = 0; j < this->STR[i].SREF.size(); j++) {
-      this->gdsSRef(this->STR[i].SREF[j], minimal);
+    for (const auto &gds_sref : gds_str.SREF) {
+      this->gdsSRef(gds_sref, minimal);
     }
     // Array References
-    // for (unsigned int j = 0; j < this->STR[i].SREF.size(); j++) {
-    //   this->gdsARef(this->STR[i].AREF[j], minimal);
-    // }
+    for (const auto &gds_aref : gds_str.AREF) {
+      this->gdsARef(gds_aref, minimal);
+    }
     // Boundaries
-    for (unsigned int j = 0; j < this->STR[i].BOUNDARY.size(); j++) {
-      this->gdsBoundary(this->STR[i].BOUNDARY[j], minimal);
+    for (const auto &gds_boundary : gds_str.BOUNDARY) {
+      this->gdsBoundary(gds_boundary, minimal);
     }
     // Paths
-    for (unsigned int j = 0; j < this->STR[i].PATH.size(); j++) {
-      this->gdsPath(this->STR[i].PATH[j], minimal);
+    for (const auto &gds_path : gds_str.PATH) {
+      this->gdsPath(gds_path, minimal);
     }
     // Nodes
-    for (unsigned int j = 0; j < this->STR[i].NODE.size(); j++) {
-      this->gdsNode(this->STR[i].NODE[j], minimal);
+    for (const auto &gds_node : gds_str.NODE) {
+      this->gdsNode(gds_node, minimal);
     }
     // Texts
-    for (unsigned int j = 0; j < this->STR[i].TEXT.size(); j++) {
-      this->gdsText(this->STR[i].TEXT[j], minimal);
+    for (const auto &gds_text : gds_str.TEXT) {
+      this->gdsText(gds_text, minimal);
     }
     this->gdsStrEnd();
   }
@@ -238,7 +238,7 @@ void gdsForge::gdsStrEnd()
  * @param in_PATH [The class containing the PATH structure]
  * @param minimal [If true only the minimal is PATH structure is created]
  */
-void gdsForge::gdsPath(gdsPATH &in_PATH, bool minimal)
+void gdsForge::gdsPath(const gdsPATH &in_PATH, bool minimal)
 {
   int data[1];
   int corXY[in_PATH.xCor.size() * 2];
@@ -296,7 +296,7 @@ void gdsForge::gdsPath(gdsPATH &in_PATH, bool minimal)
  * @param in_BOUNDARY [The class containing the BOUNDARY structure]
  * @param minimal [If true only the minimal is BOUNDARY structure is created]
  */
-void gdsForge::gdsBoundary(gdsBOUNDARY &in_BOUNDARY, bool minimal)
+void gdsForge::gdsBoundary(const gdsBOUNDARY &in_BOUNDARY, bool minimal)
 {
   int data[1];
   int corXY[in_BOUNDARY.xCor.size() * 2];
@@ -345,7 +345,7 @@ void gdsForge::gdsBoundary(gdsBOUNDARY &in_BOUNDARY, bool minimal)
  * @param in_SREF [The class containing the SREF structure]
  * @param minimal [If true only the minimal is SREF structure is created]
  */
-void gdsForge::gdsSRef(gdsSREF &in_SREF, bool minimal)
+void gdsForge::gdsSRef(const gdsSREF &in_SREF, bool minimal)
 {
   int data[1];
   this->GDSwriteRec(GDS_SREF);
@@ -409,7 +409,7 @@ void gdsForge::gdsSRef(gdsSREF &in_SREF, bool minimal)
  * @param in_SREF [The class containing the AREF structure]
  * @param minimal [If true only the minimal is AREF structure is created]
  */
-void gdsForge::gdsARef(gdsAREF &in_AREF, bool minimal)
+void gdsForge::gdsARef(const gdsAREF &in_AREF, bool minimal)
 {
   int data[1];
   this->GDSwriteRec(GDS_SREF);
@@ -485,7 +485,7 @@ void gdsForge::gdsARef(gdsAREF &in_AREF, bool minimal)
  * @param gdsNODE [The class containing the NODE structure]
  * @param minimal [If true only the minimal is NODE structure is created]
  */
-void gdsForge::gdsNode(gdsNODE &in_NODE, bool minimal)
+void gdsForge::gdsNode(const gdsNODE &in_NODE, bool minimal)
 {
   int data[1];
   int corXY[in_NODE.xCor.size() * 2];
@@ -537,7 +537,7 @@ void gdsForge::gdsNode(gdsNODE &in_NODE, bool minimal)
  * @param gdsTEXT [The class containing the TEXT structure]
  * @param minimal [If true only the minimal is TEXT structure is created]
  */
-void gdsForge::gdsText(gdsTEXT in_TEXT, bool minimal)
+void gdsForge::gdsText(const gdsTEXT &in_TEXT, bool minimal)
 {
   int data[1];
   this->GDSwriteRec(GDS_TEXT);
