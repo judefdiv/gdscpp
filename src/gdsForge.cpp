@@ -42,7 +42,7 @@ int gdsForge::gdsCreate(string FileName, vector<gdsSTR>& inVec, double units[2])
 		this->gdsCopyFile(this->GDSfileNameToBeImport[i]);
 	}
 
-	bool minimal = true;
+	bool minimal = false;
 
 	for(unsigned int i = 0; i < this->STR.size(); i++){
 		// Start of the structure
@@ -107,19 +107,21 @@ gdsBOUNDARY drawBoundary(int layer, vector<int> corX, vector<int> corY){
 
 /**
  * [drawPath - Easily create a GDS path]
- * @param  layer [The layer number]
- * @param  width [The thickness of the track]
- * @param  corX  [The X-coordinates]
- * @param  corY  [The Y-coordinates]
- * @return       [Class of GDS path which can be used in a GDS structure]
+ * @param  layer 		[The layer number]
+ * @param  width 		[The thickness of the track]
+ * @param  path_type  	[0 flush 1 round 2 half-width]
+ * @param  corX  		[The X-coordinates]
+ * @param  corY  		[The Y-coordinates]
+ * @return       		[Class of GDS path which can be used in a GDS structure]
  */
-gdsPATH drawPath(int layer, unsigned int width, vector<int> corX, vector<int> corY){
+gdsPATH drawPath(int layer, unsigned int width, unsigned int path_type, vector<int> corX, vector<int> corY){
 	gdsPATH foo;
 
 	foo.layer = layer;
 	foo.width = width;
 	foo.xCor = corX;
 	foo.yCor = corY;
+	foo.pathtype = path_type;
 
 	return foo;
 }
