@@ -25,7 +25,8 @@ gdsForge::gdsForge() {}
  * @param  double   [The scale the GDS file must use]
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
-int gdsForge::gdsCreate(string FileName, vector<gdsSTR> &inVec, double units[2])
+int gdsForge::gdsCreate(const string &FileName, vector<gdsSTR> &inVec,
+                        double units[2])
 {
   this->STR = inVec;
 
@@ -43,7 +44,7 @@ int gdsForge::gdsCreate(string FileName, vector<gdsSTR> &inVec, double units[2])
     this->gdsCopyFile(this->GDSfileNameToBeImport[i]);
   }
 
-  bool minimal = false;
+  bool minimal = true;
 
   for (const auto &gds_str : this->STR) {
     // Start of the structure
@@ -96,13 +97,14 @@ int gdsForge::gdsCreate(string FileName, vector<gdsSTR> &inVec, double units[2])
  * @param  corY  [The Y-coordinates]
  * @return       [Class of GDS boundary which can be used in a GDS structure]
  */
-gdsBOUNDARY drawBoundary(int layer, vector<int> corX, vector<int> corY)
+gdsBOUNDARY drawBoundary(int layer, vector<int> &corX, vector<int> &corY)
 {
   gdsBOUNDARY foo;
 
   foo.layer = layer;
   foo.xCor = corX;
   foo.yCor = corY;
+  // foo.dataType = 1;
 
   return foo;
 }
@@ -111,14 +113,13 @@ gdsBOUNDARY drawBoundary(int layer, vector<int> corX, vector<int> corY)
  * [drawPath - Easily create a GDS path]
  * @param  layer 		[The layer number]
  * @param  width 		[The thickness of the track]
- * @param  path_type  	[0 flush 1 round 2 half-width]
  * @param  corX  		[The X-coordinates]
  * @param  corY  		[The Y-coordinates]
  * @return       		[Class of GDS path which can be used in a GDS
  * structure]
  */
-gdsPATH drawPath(int layer, unsigned int width, unsigned int path_type,
-                 vector<int> corX, vector<int> corY)
+gdsPATH drawPath(int layer, unsigned int width, vector<int> &corX,
+                 vector<int> &corY)
 {
   gdsPATH foo;
 
@@ -126,7 +127,7 @@ gdsPATH drawPath(int layer, unsigned int width, unsigned int path_type,
   foo.width = width;
   foo.xCor = corX;
   foo.yCor = corY;
-  foo.pathtype = path_type;
+  // foo.pathtype = path_type;
 
   return foo;
 }
@@ -170,13 +171,38 @@ gdsBOUNDARY draw2ptBox(int layer, int blX, int blY, int trX, int trY)
  * @return         [Class of GDS s-reference which can be used in a GDS
  * structure]
  */
-gdsSREF drawSREF(string STRname, int Xcor, int Ycor)
+gdsSREF drawSREF(const string &STRname, int Xcor, int Ycor)
 {
   gdsSREF foo;
 
   foo.name = STRname;
   foo.xCor = Xcor;
   foo.yCor = Ycor;
+
+  return foo;
+}
+
+/**
+ * [drawSREF - A more complex functions that generates a structure reference]
+ * @param  STRname [The name of the structure that must be referenced]
+ * @param  Xcor    [X coordinate]
+ * @param  Ycor    [Y coordinate]
+ * @param  angle   [The angle at which the reference should be]
+ * @param  mag     [The scale of what the reference should be]
+ * @param  mirror  [Is the structure mirrored]
+ * @return         [description]
+ */
+gdsSREF drawSREF(const string &STRname, int Xcor, int Ycor, double angle,
+                 double mag, bool mirror)
+{
+  gdsSREF foo;
+
+  foo.name = STRname;
+  foo.xCor = Xcor;
+  foo.yCor = Ycor;
+  foo.scale = mag;
+  foo.angle = angle;
+  foo.reflection = mirror;
 
   return foo;
 }
@@ -219,7 +245,7 @@ void gdsForge::gdsEnd()
  * structure]
  * @param strName [The name of the structure]
  */
-void gdsForge::gdsStrStart(string strName)
+void gdsForge::gdsStrStart(const string &strName)
 {
   this->GDSwriteInt(GDS_BGNSTR, gsdTime(), 12);
   this->GDSwriteStr(GDS_STRNAME, strName);
@@ -256,7 +282,7 @@ void gdsForge::gdsPath(const gdsPATH &in_PATH, bool minimal)
   this->GDSwriteInt(GDS_DATATYPE, data, 1);
 
   if (minimal) { // true
-    data[0] = 1;
+    data[0] = 2;
     this->GDSwriteInt(GDS_PATHTYPE, data, 1);
   } else { // false
     data[0] = in_PATH.pathtype;
@@ -576,7 +602,7 @@ void gdsForge::gdsText(const gdsTEXT &in_TEXT, bool minimal)
  * @param  fileName [Name of file to be imported]
  * @return          [0 - Exit Success; 1 - Exit Failure]
  */
-int gdsForge::gdsCopyFile(string fileName)
+int gdsForge::gdsCopyFile(const string &fileName)
 {
   cout << "Copying GDS binaries from \"" << fileName << "\"" << endl;
 

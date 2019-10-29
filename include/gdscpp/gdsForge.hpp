@@ -16,11 +16,11 @@
 #include "gdsCpp.hpp"
 #include "gdsParser.hpp"
 #include <bitset>
+#include <cmath>
 #include <cstring>
 #include <fstream>
 #include <iostream>
 #include <map>
-#include <cmath.h>
 #include <set>
 #include <stdio.h>
 #include <string>
@@ -30,11 +30,13 @@
 // Functions to easily draw in GDSfiles
 
 gdsBOUNDARY draw2ptBox(int layer, int blX, int blY, int trX, int trY);
-gdsBOUNDARY drawBoundary(int layer, std::vector<int> corX,
-                         std::vector<int> corY);
-gdsPATH drawPath(int layer, unsigned int width, unsigned int path_type,
-                 std::vector<int> corX, std::vector<int> corY);
-gdsSREF drawSREF(std::string STRname, int Xcor, int Ycor);
+gdsBOUNDARY drawBoundary(int layer, std::vector<int> &corX,
+                         std::vector<int> &corY);
+gdsPATH drawPath(int layer, unsigned int width, std::vector<int> &corX,
+                 std::vector<int> &corY);
+gdsSREF drawSREF(const std::string &STRname, int Xcor, int Ycor);
+gdsSREF drawSREF(const std::string &STRname, int Xcor, int Ycor, double angle,
+                 double mag, bool mirror);
 
 // ============================= Classes ============================
 
@@ -56,10 +58,10 @@ private:
   // UpperGround level
   void gdsBegin();
   void gdsEnd();
-  void gdsStrStart(std::string strName);
+  void gdsStrStart(const std::string &strName);
   void gdsStrEnd();
 
-  int gdsCopyFile(std::string fileName);
+  int gdsCopyFile(const std::string &fileName);
 
   void gdsPath(const gdsPATH &in_PATH, bool minimal);
   void gdsBoundary(const gdsBOUNDARY &in_BOUNDARY, bool minimal);
@@ -80,7 +82,7 @@ public:
   gdsForge();
   ~gdsForge() {}
 
-  int gdsCreate(std::string FileName, std::vector<gdsSTR> &inVec,
+  int gdsCreate(const std::string &FileName, std::vector<gdsSTR> &inVec,
                 double units[2]);
 
   void importGDSfile(std::vector<std::string> &fileNames)

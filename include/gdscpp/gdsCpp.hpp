@@ -62,9 +62,7 @@ private:
       STR_Lookup;                 // Allows for searching by name
   std::vector<int> last_modified; // TODO: Default to current datetime if unread
   std::string library_name = "Untitled_library"; // Default libname
-  std::vector<unsigned int> findRootSTR();
 
-  int GDSrecord2ASCII(char *recIn); // Does it belong here???
   std::vector<std::string> GDSfileName;
 
 public:
@@ -91,8 +89,6 @@ public:
                                   int *destination);
   int fetch_box_bounding_box(gdsBOX target_box, int *destination);
   int write(const std::string &fileName);
-  int quick2ASCII(
-      const std::string &fileName); // does not store data, legacy code.
   double get_database_units();
   void to_str();
   void reset();
@@ -101,7 +97,7 @@ public:
     this->GDSfileName.push_back(fileName);
   }
 
-  int createHierarchy();
+  std::vector<unsigned int> findRootSTR();
   int genDot(const std::string &fileName);
 };
 
