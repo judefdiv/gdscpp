@@ -4,11 +4,21 @@ clear
 
 echo "------------- Script to for GDScpp ---------------"
 
+# clang-format
+find src/ -iname *.hpp -o -iname *.cpp | xargs clang-format -i
+find include/gdscpp/ -iname *.hpp -o -iname *.cpp | xargs clang-format -i
+
+# compile
 cd build
 cmake .. && \
 make && \
 cd ../
 # ./build/gdscpp -i ./data/LSmitll_jtlt.gds
-./build/gdscpp -g -o ./data/test.gds
+# ./build/gdscpp -rw -o ./data/test.gds
+
+./build/gdscpp -rw ./data/LSmitll_jtlt.gds
+./build/gdscpp -i ./outGDS.gds
+
+# ./build/gdscpp -g -o ./data/test.gds
 
 echo "------------------ Script ended -------------------"

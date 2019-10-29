@@ -1,0 +1,15 @@
+BasedOnStyle: LLVM
+AlwaysBreakTemplateDeclarations: true
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterStruct: true
+  AfterClass: true
+  AfterFunction: true
+  SplitEmptyRecord: false
+BreakConstructorInitializers: AfterColon
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+FixNamespaceComments: true
+ReflowComments: true
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortBlocksOnASingleLine: true
+# IndentPPDirectives: BeforeHash
