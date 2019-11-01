@@ -1,12 +1,12 @@
 /**
- * Author:		J.F. de Villiers & H.F. Herbst
- * Origin:  	E&E Engineering - Stellenbosch University
- * For:			Supertools, Coldflux Project - IARPA
- * Created: 	2019-08-21
+ * Author:		  J.F. de Villiers & H.F. Herbst
+ * Origin:  	  E&E Engineering - Stellenbosch University
+ * For:			    Supertools, Coldflux Project - IARPA
+ * Created: 	  2019-08-21
  * Modified:
- * license:
+ * license:     MIT License
  * Description: Primary file for the program.
- * File:		main.cpp
+ * File:		    main.cpp
  */
 
 // ============================ Includes ============================

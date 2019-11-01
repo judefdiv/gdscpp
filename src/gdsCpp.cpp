@@ -4,8 +4,8 @@
  * For:					Supertools, Coldflux Project - IARPA
  * Created: 		2019-08-26
  * Modified:
- * license:
- * Description: .
+ * license:     MIT License
+ * Description: The main GDScpp file.
  * File:				gdsCpp.hpp
  */
 

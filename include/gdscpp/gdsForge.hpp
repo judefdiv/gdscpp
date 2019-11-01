@@ -4,7 +4,7 @@
  * For:				  Supertools, Coldflux Project - IARPA
  * Created: 		2019-08-26
  * Modified:
- * license:
+ * license:     MIT License
  * Description: Header for GDS drawing functions.
  * File:			  gdsForge.hpp
  */
