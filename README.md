@@ -48,12 +48,16 @@ int main(int argc, char *argv[]){
 
   fooSTR.name = "example";
 
-  std::vector<int> corX = {0, 200, 400};
+  std::vector<int> corX = {  0, 200, 400};
   std::vector<int> corY = {700, 900, 700};
   fooSTR.PATH.push_back(drawPath(1, 5, corX, corY));
 
-  corX = {0, 150, 150, 250, 250, 150, 150, 400, 400, 0, 0};
-  corY = {0, 0, 250, 250, 150, 150, 0, 0, 400, 400, 0};
+  corX = {200, 200};
+  corY = {900, 000};
+  fooSTR.PATH.push_back(drawPath(1, 5, corX, corY));
+
+  corX = {0, 150, 150, 250, 250, 150, 150, 400, 400,   0, 0};
+  corY = {0,   0, 250, 250, 150, 150,   0,   0, 400, 400, 0};
   fooSTR.BOUNDARY.push_back(drawBoundary(2, corX, corY));
 
   fooGDS.setSTR(fooSTR);
@@ -63,6 +67,8 @@ int main(int argc, char *argv[]){
 }
 
 ```
+
+![gdsExample](gdsExample.jpg)
 
 ### GDS Interpreter
 
@@ -100,6 +106,8 @@ generates a diagram of the hierarchical structure of the GDS file.
 * Improve text handling
 * When reading in GDS files into memory, check for redundancies
 * aref has not been tested.
+* rename "setSTR" to "push_back"?
+* create a map to easily find the structures
 
 ## Notes
 * Text and nodes are not fully supported.
