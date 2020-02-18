@@ -1,6 +1,6 @@
 # GDScpp
 
-GDScpp is a C++ library that make GDS file manipulation easier. __Even thou GSDcpp can be compiled as a stand along program, it is intended to be used as a library.__
+GDScpp is a C++ library that make GDS file manipulation easier. __Even though GDScpp can be compiled as a stand along program, it is intended to be used as a library.__
 
 Version: 1.0
 
@@ -108,6 +108,7 @@ generates a diagram of the hierarchical structure of the GDS file.
 * aref has not been tested.
 * rename "setSTR" to "push_back"?
 * create a map to easily find the structures
+* Allow GDScpp to be easier used as a library
 
 ## Notes
 * Text and nodes are not fully supported.
