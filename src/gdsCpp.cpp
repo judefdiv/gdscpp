@@ -430,6 +430,11 @@ double gdscpp::get_database_units()
   return units[1];
 }
 
+double gdscpp::get_database_units_in_m()
+{
+  return units[0];
+}
+
 /**
  * [gdscpp::findRootSTR finds the root structures]
  * @return [vector of the STR indexes of the root GDS STR]

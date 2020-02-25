@@ -1,14 +1,14 @@
 # GDScpp
 
-GDScpp is a C++ library that make GDS file manipulation easier. __Even though GDScpp can be compiled as a stand along program, it is intended to be used as a library.__
+GDScpp is a C++ library that make GDS file manipulation easier. __Even though GDScpp can be compiled as a stand-alone program, it is intended to be used as a library.__
 
 Version: 1.0
 
 ## Features
 
-* GDS to ASCII.
-* Easily create GDS file.
-* Importing GDS files.
+* Convert GDS data to ASCII.
+* Easily create GDS files.
+* Import GDS files.
 * Extract the root GDS structures.
 * Create a hierarchy diagram of all the GDS structure dependencies.
 * Direct importing of GDS files with redundancy checking
@@ -36,7 +36,7 @@ make
 
 ## Usage
 
-A few examples is provided in _example_ folder to show some of the capabilities of GDScpp.
+A few examples are provided in the _examples_ folder to show some of GDScpp's functionality.
 
 ``` cpp
 
@@ -72,10 +72,11 @@ int main(int argc, char *argv[]){
 
 ### GDS Interpreter
 
-Translates GDS file directly to ASCII.
-
+Translate GDS file directly to ASCII.
 ``` bash
 ./gdscpp -i input.gds
+or
+./gdscpp -i input.gds >> outfile.txt
 ```
 
 ### GDS Read Write
@@ -102,16 +103,17 @@ generates a diagram of the hierarchical structure of the GDS file.
 ./gdscpp -r input.gds
 ```
 
-## To Do
-* Improve text handling
-* When reading in GDS files into memory, check for redundancies
-* aref has not been tested.
+## Work in progress
+* Improvement of text handling
+* GDS read-in redundancy checking
+* In-depth testing of array reference functionality
 * rename "setSTR" to "push_back"?
 * create a map to easily find the structures
-* Allow GDScpp to be easier used as a library
+* Refactoring of GDSCPP into a more standard library format
 
 ## Notes
 * Text and nodes are not fully supported.
 * Box is currently not supported.
 
 ## Change Log
+2020-02-25  Updated Readme, added get_database_units_in_m function.

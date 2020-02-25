@@ -90,6 +90,7 @@ public:
   int fetch_box_bounding_box(gdsBOX target_box, int *destination);
   int write(const std::string &fileName);
   double get_database_units();
+  double get_database_units_in_m();
   void to_str();
   void reset();
   void importGDSfile(const std::string &fileName)
