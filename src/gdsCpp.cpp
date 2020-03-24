@@ -4,8 +4,8 @@
  * For:					Supertools, Coldflux Project - IARPA
  * Created: 		2019-08-26
  * Modified:
- * license:
- * Description: .
+ * license:     MIT License
+ * Description: The main GDScpp file.
  * File:				gdsCpp.hpp
  */
 
@@ -428,6 +428,11 @@ void gdscpp::setSTR(vector<gdsSTR> target_structure)
 double gdscpp::get_database_units()
 {
   return units[1];
+}
+
+double gdscpp::get_database_units_in_m()
+{
+  return units[0];
 }
 
 /**

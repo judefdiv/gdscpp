@@ -1,12 +1,12 @@
 /**
- * Author:		J.F. de Villiers & H.F. Herbst
- * Origin:  	E&E Engineering - Stellenbosch University
- * For:			Supertools, Coldflux Project - IARPA
- * Created: 	2019-08-26
+ * Author:		  J.F. de Villiers & H.F. Herbst
+ * Origin:  	  E&E Engineering - Stellenbosch University
+ * For:			    Supertools, Coldflux Project - IARPA
+ * Created: 	  2019-08-26
  * Modified:
- * license:
+ * license:     MIT License
  * Description: Creates GDS files using the gdsClass
- * File:		gdsForge.cpp
+ * File:		    gdsForge.cpp
  */
 
 #include "gdsForge.hpp"

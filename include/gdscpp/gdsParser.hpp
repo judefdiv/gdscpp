@@ -1,12 +1,12 @@
 /**
- * Author:          J.F. de Villiers & H.F. Herbst
+ * Author:      J.F. de Villiers & H.F. Herbst
  * Origin:  		E&E Engineering - Stellenbosch University
- * For:				Supertools, Coldflux Project - IARPA
+ * For:				  Supertools, Coldflux Project - IARPA
  * Created: 		2019-08-26
  * Modified:
- * license:
- * Description:     Library/parser file containing all the low level GDSII
- * functions. File:			gdsParser.hpp
+ * license:     MIT License
+ * Description: Library of all the low level GDSII functions.
+ * File:			  gdsParser.hpp
  */
 
 #ifndef gdsParser

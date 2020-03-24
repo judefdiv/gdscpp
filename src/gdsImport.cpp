@@ -4,7 +4,7 @@
  * For:					Supertools, Coldflux Project - IARPA
  * Created: 		2019-10-14
  * Modified:
- * license:
+ * license:     MIT License
  * Description: Import function for storing gds in memory
  * File:				gdsCpp.hpp
  */
