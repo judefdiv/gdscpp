@@ -791,9 +791,10 @@ int gdscpp::resolve_heirarchy_and_bounding_boxes()
             heirarchy.push_back(string_vector); // Push back the set
             string_vector.clear(); // Clear the temporary set container
           } else {
-            string_vector.push_back(
-                struct_to_move); // Next level already exists, simply add the
-                                 // word
+            // string_vector.push_back(
+            //     struct_to_move); // Next level already exists, simply add the
+            //                      // word
+            heir_iter->push_back(struct_to_move);//Adding the word [22 Apr]
           }
           heir_iter = heirarchy.end(); // |
           heir_iter--;                 // | Return to current level.
