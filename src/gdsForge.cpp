@@ -454,7 +454,7 @@ void gdsForge::gdsSRef(const gdsSREF &in_SREF, bool minimal)
 void gdsForge::gdsARef(const gdsAREF &in_AREF, bool minimal)
 {
   int data[1];
-  this->GDSwriteRec(GDS_SREF);
+  this->GDSwriteRec(GDS_AREF);
 
   // ELFLAGS and PLEX are optional
   if (minimal == false) {
@@ -590,6 +590,13 @@ void gdsForge::gdsText(const gdsTEXT &in_TEXT, bool minimal)
     this->GDSwriteInt(GDS_PLEX, data, 1);
   }
 
+  // Layer number, 0 to 63
+  data[0] = in_TEXT.layer;
+  this->GDSwriteInt(GDS_LAYER, data, 1);
+
+  data[0] = in_TEXT.text_type;
+  this->GDSwriteInt(GDS_TEXTTYPE, data, 1);
+
   // PRESENTATION; PATHTYPE, WIDTH, STRANS, MAG, and ANGLE are optional
   bitset<16> bits;
 
@@ -612,13 +619,6 @@ void gdsForge::gdsText(const gdsTEXT &in_TEXT, bool minimal)
     bits.set(1, 1);
 
   this->GDSwriteBitArr(GDS_STRANS, bits);
-
-  // Layer number, 0 to 63
-  data[0] = in_TEXT.layer;
-  this->GDSwriteInt(GDS_LAYER, data, 1);
-
-  data[0] = in_TEXT.text_type;
-  this->GDSwriteInt(GDS_TEXTTYPE, data, 1);
 
   int corXY[2];
   corXY[0] = in_TEXT.xCor;
