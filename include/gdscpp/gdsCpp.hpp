@@ -60,7 +60,7 @@ private:
   std::vector<gdsSTR> STR; // Holds all the structures of the gds file
   std::unordered_map<std::string, int>
       STR_Lookup;                 // Allows for searching by name
-  std::vector<int> last_modified; // TODO: Default to current datetime if unread
+  std::vector<int> last_modified; // TODO: Default to current datetime
   std::string library_name = "Untitled_library"; // Default libname
 
   std::vector<std::string> GDSfileName;

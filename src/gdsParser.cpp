@@ -315,6 +315,8 @@ string GDSkey2ASCII(unsigned int inHex)
     GDSkeys[0x2a02] = "NODETYPE";
     GDSkeys[0x2b02] = "PROPATTR";
     GDSkeys[0x2c06] = "PROPVALUE";
+    GDSkeys[0x2d00] = "BOX";
+    GDSkeys[0x2e02] = "GDS_BOXTYPE";
     GDSkeys[0x2f03] = "PLEX";
   }
 
