@@ -131,7 +131,7 @@ gdsPATH drawPath(int layer, unsigned int width, vector<int> &corX,
   foo.width = width;
   foo.xCor = corX;
   foo.yCor = corY;
-  // foo.pathtype = path_type;
+  foo.pathtype = 2;
 
   return foo;
 }
@@ -289,13 +289,8 @@ void gdsForge::gdsPath(const gdsPATH &in_PATH, bool minimal)
   data[0] = in_PATH.dataType;
   this->GDSwriteInt(GDS_DATATYPE, data, 1);
 
-  if (minimal == true) { // true
-    data[0] = 2;
-    this->GDSwriteInt(GDS_PATHTYPE, data, 1);
-  } else { // false
-    data[0] = in_PATH.pathtype;
-    this->GDSwriteInt(GDS_PATHTYPE, data, 1);
-  }
+  data[0] = in_PATH.pathtype;
+  this->GDSwriteInt(GDS_PATHTYPE, data, 1);
 
   // Width of tracks
   data[0] = in_PATH.width;

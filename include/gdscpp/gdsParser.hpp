@@ -29,9 +29,9 @@ int GDSdistill(char *recIn, uint32_t &GDSKey, std::bitset<16> &bitarr,
 
 uint64_t GDSfloatCalc(double inVar); // low level
 uint64_t bitShiftR(uint64_t inVar,
-                   int cnt); // ultra low level
+                   int cnt); // ultra low level - should be removed
 uint64_t bitShiftL(uint64_t inVar,
-                   int cnt);                     // ultra low level
+                   int cnt); // ultra low level - should be removed
 int conBytes(char inArry[], int start, int cnt); // ultra low level
 uint64_t conBytesLL(char inArry[], int start,
                     int cnt); // ultra low level
