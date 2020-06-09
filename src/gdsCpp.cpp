@@ -171,11 +171,29 @@ void gdscpp::to_str()
 }
 
 /**
+ * [gdscpp::bb_to_str - Outputs the bounding boxes of all the structures]
+ */
+
+void gdscpp::bb_to_str()
+{
+  for (auto &foo : this->STR) {
+    foo.bb_cout();
+  }
+}
+
+/**
  * [gdsSTR::to_str - Displays all the stored data in the class]
  */
 void gdsSTR::to_str()
 {
   cout << "GDS STR class:" << endl;
+
+  cout << "  Name: " << this->name << endl;
+
+  cout << "  BBox: " << bounding_box[0] << ", ";
+  cout << bounding_box[1] << "; ";
+  cout << bounding_box[2] << ", ";
+  cout << bounding_box[3] << endl;
 
   for (unsigned int i = 0; i < this->SREF.size(); i++) {
     this->SREF[i].to_str();
@@ -405,8 +423,20 @@ void gdsBOX::reset()
   propvalue = "\0";
 }
 
-// Standard function for adding one structure onto the stack.
+// Legacy.
 void gdscpp::setSTR(gdsSTR target_structure)
+{
+  this->push_back_STR(target_structure);
+}
+
+// Legacy
+void gdscpp::setSTR(vector<gdsSTR> target_structure)
+{
+  this->push_back_STR(target_structure);
+}
+
+// Standard function for adding one structure onto the stack.
+void gdscpp::push_back_STR(gdsSTR target_structure)
 {
   if (!STR_Lookup.count(target_structure.name)) // if doesn't already exist
   {
@@ -416,7 +446,7 @@ void gdscpp::setSTR(gdsSTR target_structure)
 }
 
 // Overloaded function for appending multiple structures
-void gdscpp::setSTR(vector<gdsSTR> target_structure)
+void gdscpp::push_back_STR(vector<gdsSTR> target_structure)
 {
   STR.insert(STR.end(), target_structure.begin(), target_structure.end());
 }

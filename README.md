@@ -109,7 +109,8 @@ generates a diagram of the hierarchical structure of the GDS file.
 * In-depth testing of array reference functionality
 * rename "setSTR" to "push_back"?
 * create a map to easily find the structures
-* Refactoring of GDSCPP into a more standard library format
+* Refactoring of GDScpp into a more standard library format
+* Extract a desired GDS structure to a separate file
 
 ## Notes
 * Text and nodes are not fully supported.

@@ -73,6 +73,10 @@ int gdsForge::gdsCreate(const string &FileName, vector<gdsSTR> &inVec,
     for (const auto &gds_text : gds_str.TEXT) {
       this->gdsText(gds_text, minimal);
     }
+    // Box
+    for (const auto &gds_box : gds_str.BOX) {
+      this->gdsBox(gds_box, minimal);
+    }
     this->gdsStrEnd();
   }
 
@@ -86,8 +90,8 @@ int gdsForge::gdsCreate(const string &FileName, vector<gdsSTR> &inVec,
 }
 
 /***********************************************************************************
- ********************* Functions to easily draw in GDSfiles
- *************************
+ ********************** Functions to easily draw in GDSfiles
+ ************************
  ***********************************************************************************/
 
 /**
@@ -127,7 +131,7 @@ gdsPATH drawPath(int layer, unsigned int width, vector<int> &corX,
   foo.width = width;
   foo.xCor = corX;
   foo.yCor = corY;
-  // foo.pathtype = path_type;
+  foo.pathtype = 2;
 
   return foo;
 }
@@ -208,8 +212,8 @@ gdsSREF drawSREF(const string &STRname, int Xcor, int Ycor, double angle,
 }
 
 /***********************************************************************************
- **************************** UpperGround Level
- *************************************
+ ******************************** UpperGround Level
+ *********************************
  ***********************************************************************************/
 
 /**
@@ -272,6 +276,10 @@ void gdsForge::gdsPath(const gdsPATH &in_PATH, bool minimal)
   this->GDSwriteRec(GDS_PATH);
 
   // ELFLAGS and PLEX are optional
+  if (minimal == false) {
+    data[0] = in_PATH.plex;
+    this->GDSwriteInt(GDS_PLEX, data, 1);
+  }
 
   // Layer number, 0 to 63
   data[0] = in_PATH.layer;
@@ -281,13 +289,8 @@ void gdsForge::gdsPath(const gdsPATH &in_PATH, bool minimal)
   data[0] = in_PATH.dataType;
   this->GDSwriteInt(GDS_DATATYPE, data, 1);
 
-  if (minimal) { // true
-    data[0] = 2;
-    this->GDSwriteInt(GDS_PATHTYPE, data, 1);
-  } else { // false
-    data[0] = in_PATH.pathtype;
-    this->GDSwriteInt(GDS_PATHTYPE, data, 1);
-  }
+  data[0] = in_PATH.pathtype;
+  this->GDSwriteInt(GDS_PATHTYPE, data, 1);
 
   // Width of tracks
   data[0] = in_PATH.width;
@@ -307,7 +310,7 @@ void gdsForge::gdsPath(const gdsPATH &in_PATH, bool minimal)
   this->GDSwriteInt(GDS_XY, corXY, in_PATH.xCor.size() * 2);
 
   // Optional goodies
-  if (!minimal) { // false
+  if (minimal == false) { // false
     data[0] = in_PATH.propattr;
     this->GDSwriteInt(GDS_PROPATTR, data, 1);
 
@@ -330,6 +333,10 @@ void gdsForge::gdsBoundary(const gdsBOUNDARY &in_BOUNDARY, bool minimal)
   this->GDSwriteRec(GDS_BOUNDARY);
 
   // ELFLAGS and PLEX are optional
+  if (minimal == false) { // false
+    data[0] = in_BOUNDARY.plex;
+    this->GDSwriteInt(GDS_PLEX, data, 1);
+  }
 
   // Layer number, 0 to 63
   data[0] = in_BOUNDARY.layer;
@@ -356,7 +363,7 @@ void gdsForge::gdsBoundary(const gdsBOUNDARY &in_BOUNDARY, bool minimal)
   this->GDSwriteInt(GDS_XY, corXY, in_BOUNDARY.xCor.size() * 2);
 
   // Optional goodies
-  if (!minimal) { // false
+  if (minimal == false) { // false
     data[0] = in_BOUNDARY.propattr;
     this->GDSwriteInt(GDS_PROPATTR, data, 1);
 
@@ -377,6 +384,10 @@ void gdsForge::gdsSRef(const gdsSREF &in_SREF, bool minimal)
   this->GDSwriteRec(GDS_SREF);
 
   // ELFLAGS and PLEX are optional
+  if (minimal == false) {
+    data[0] = in_SREF.plex;
+    this->GDSwriteInt(GDS_PLEX, data, 1);
+  }
 
   // name of the structure that is referenced
   this->GDSwriteStr(GDS_SNAME, in_SREF.name);
@@ -420,7 +431,7 @@ void gdsForge::gdsSRef(const gdsSREF &in_SREF, bool minimal)
   this->GDSwriteInt(GDS_XY, corXY, 2);
 
   // Optional goodies
-  if (!minimal) {
+  if (minimal == false) {
     data[0] = in_SREF.propattr;
     this->GDSwriteInt(GDS_PROPATTR, data, 1);
 
@@ -438,10 +449,10 @@ void gdsForge::gdsSRef(const gdsSREF &in_SREF, bool minimal)
 void gdsForge::gdsARef(const gdsAREF &in_AREF, bool minimal)
 {
   int data[1];
-  this->GDSwriteRec(GDS_SREF);
+  this->GDSwriteRec(GDS_AREF);
 
   // ELFLAGS and PLEX are optional
-  if (!minimal) {
+  if (minimal == false) {
     data[0] = in_AREF.plex;
     this->GDSwriteInt(GDS_PLEX, data, 1);
   }
@@ -497,7 +508,7 @@ void gdsForge::gdsARef(const gdsAREF &in_AREF, bool minimal)
   this->GDSwriteInt(GDS_XY, corXY, 6);
 
   // Optional goodies
-  if (!minimal) {
+  if (minimal == false) {
     data[0] = in_AREF.propattr;
     this->GDSwriteInt(GDS_PROPATTR, data, 1);
     this->GDSwriteStr(GDS_PROPVALUE, in_AREF.propvalue);
@@ -519,7 +530,7 @@ void gdsForge::gdsNode(const gdsNODE &in_NODE, bool minimal)
   this->GDSwriteRec(GDS_NODE);
 
   // ELFLAGS and PLEX are optional
-  if (!minimal) { // false
+  if (minimal == false) { // false
     data[0] = in_NODE.plex;
     this->GDSwriteInt(GDS_PLEX, data, 1);
   }
@@ -548,7 +559,7 @@ void gdsForge::gdsNode(const gdsNODE &in_NODE, bool minimal)
   this->GDSwriteInt(GDS_XY, corXY, in_NODE.xCor.size() * 2);
 
   // Optional goodies
-  if (!minimal) { // false
+  if (minimal == false) { // false
     data[0] = in_NODE.propattr;
     this->GDSwriteInt(GDS_PROPATTR, data, 1);
 
@@ -569,8 +580,10 @@ void gdsForge::gdsText(const gdsTEXT &in_TEXT, bool minimal)
   this->GDSwriteRec(GDS_TEXT);
 
   // ELFLAGS and PLEX are optional
-
-  // PRESENTATION; PATHTYPE, WIDTH, STRANS, MAG, and ANGLE are optional
+  if (minimal == false) {
+    data[0] = in_TEXT.plex;
+    this->GDSwriteInt(GDS_PLEX, data, 1);
+  }
 
   // Layer number, 0 to 63
   data[0] = in_TEXT.layer;
@@ -578,6 +591,29 @@ void gdsForge::gdsText(const gdsTEXT &in_TEXT, bool minimal)
 
   data[0] = in_TEXT.text_type;
   this->GDSwriteInt(GDS_TEXTTYPE, data, 1);
+
+  // PRESENTATION; PATHTYPE, WIDTH, STRANS, MAG, and ANGLE are optional
+  bitset<16> bits;
+
+  // this->GDSwriteBitArr(GDS_PRESENTATION, presentation_flags);
+  this->GDSwriteBitArr(GDS_PRESENTATION, bits);
+
+  data[0] = in_TEXT.width;
+  this->GDSwriteInt(GDS_WIDTH, data, 1);
+
+  // magnification, default 1
+  if (in_TEXT.scale == 1)
+    bits.set(2, 0);
+  else
+    bits.set(2, 1);
+
+  // angle of rotation
+  if (in_TEXT.angle == 0)
+    bits.set(1, 0);
+  else
+    bits.set(1, 1);
+
+  this->GDSwriteBitArr(GDS_STRANS, bits);
 
   int corXY[2];
   corXY[0] = in_TEXT.xCor;
@@ -588,10 +624,62 @@ void gdsForge::gdsText(const gdsTEXT &in_TEXT, bool minimal)
   this->GDSwriteStr(GDS_STRING, in_TEXT.textbody);
 
   // Optional goodies
-  if (!minimal) { // false
+  if (minimal == false) { // false
     data[0] = in_TEXT.propattr;
     this->GDSwriteInt(GDS_PROPATTR, data, 1);
     this->GDSwriteStr(GDS_PROPVALUE, in_TEXT.propvalue);
+  }
+
+  this->GDSwriteRec(GDS_ENDEL);
+}
+
+/**
+ * [gdsForge::gdsBox - Create the BOX structure]
+ * @param in_BOX  [The class containing the BOX structure]
+ * @param minimal [If true only the minimal is TEXT structure is created]
+ */
+
+void gdsForge::gdsBox(const gdsBOX &in_BOX, bool minimal)
+{
+  int data[1];
+  int corXY[in_BOX.xCor.size() * 2];
+
+  this->GDSwriteRec(GDS_BOX);
+
+  // ELFLAGS and PLEX are optional
+  if (minimal == false) {
+    data[0] = in_BOX.plex;
+    this->GDSwriteInt(GDS_PLEX, data, 1);
+  }
+
+  // Layer number, 0 to 63
+  data[0] = in_BOX.layer;
+  this->GDSwriteInt(GDS_LAYER, data, 1);
+
+  // unimportant, set to zero.
+  data[0] = in_BOX.boxtype;
+  this->GDSwriteInt(GDS_BOXTYPE, data, 1);
+
+  // XY coordinates
+  // boundary must be closed, first and last coordinate must be the same
+  // minimum of 4 points(triangle)
+
+  for (int i = 0; i < in_BOX.xCor.size() * 2; i++) {
+    if (i % 2) {
+      corXY[i] = in_BOX.yCor[i / 2];
+    } else {
+      corXY[i] = in_BOX.xCor[i / 2];
+    }
+  }
+
+  this->GDSwriteInt(GDS_XY, corXY, in_BOX.xCor.size() * 2);
+
+  // Optional goodies
+  if (minimal == false) { // false
+    data[0] = in_BOX.propattr;
+    this->GDSwriteInt(GDS_PROPATTR, data, 1);
+
+    this->GDSwriteStr(GDS_PROPVALUE, in_BOX.propvalue);
   }
 
   this->GDSwriteRec(GDS_ENDEL);
@@ -681,8 +769,8 @@ int gdsForge::gdsCopyFile(const string &fileName)
 }
 
 /***********************************************************************************
- **************************** UnderGround Level
- *************************************
+ ******************************** UnderGround Level
+ *********************************
  ***********************************************************************************/
 
 /**
