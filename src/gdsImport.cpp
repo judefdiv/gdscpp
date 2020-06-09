@@ -690,7 +690,7 @@ int gdscpp::import(string fileName)
       {"\0", 1000000000}); // Add null character to structure map with index 1
                            // billion. Unlikely to be 1 billion structures
   delete[] current_readBlk;
-  // resolve_heirarchy_and_bounding_boxes();
+  resolve_heirarchy_and_bounding_boxes();
   cout << "GDS file successfully imported." << endl;
   return 0;
 }
