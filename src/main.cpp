@@ -78,6 +78,7 @@ int RunTool(int argCount, char **argValues)
     foo = string(argValues[i]);
     if (foo.find(".gds") != string::npos || foo.find(".gds2") != string::npos) {
       gdsFName = foo;
+      i=argCount;
     }
   }
 
