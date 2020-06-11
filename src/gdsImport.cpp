@@ -690,7 +690,7 @@ int gdscpp::import(string fileName)
       {"\0", 1000000000}); // Add null character to structure map with index 1
                            // billion. Unlikely to be 1 billion structures
   delete[] current_readBlk;
-  // resolve_heirarchy_and_bounding_boxes();
+  resolve_heirarchy_and_bounding_boxes();
   cout << "GDS file successfully imported." << endl;
   return 0;
 }
@@ -794,7 +794,7 @@ int gdscpp::resolve_heirarchy_and_bounding_boxes()
             // string_vector.push_back(
             //     struct_to_move); // Next level already exists, simply add the
             //                      // word
-            heir_iter->push_back(struct_to_move);//WIP
+            heir_iter->push_back(struct_to_move);//Adding the word [22 Apr]
           }
           heir_iter = heirarchy.end(); // |
           heir_iter--;                 // | Return to current level.
