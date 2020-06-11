@@ -57,10 +57,10 @@ private:
   int generations = 3;                // Default generations. Don't really use
   int highest_heirarchical_level = 0; // Zero_indexed
   double units[2] = {0.001, 1e-9};    // micron default
-  std::vector<gdsSTR> STR; // Holds all the structures of the gds file
+  // std::vector<gdsSTR> STR; // Holds all the structures of the gds file
   std::unordered_map<std::string, int>
       STR_Lookup;                 // Allows for searching by name
-  std::vector<int> last_modified; // TODO: Default to current datetime if unread
+  std::vector<int> last_modified; // TODO: Default to current datetime
   std::string library_name = "Untitled_library"; // Default libname
 
   std::vector<std::string> GDSfileName;
@@ -68,9 +68,15 @@ private:
 public:
   gdscpp(){};
   ~gdscpp(){};
-  void setSTR(gdsSTR target_structure);
-  void setSTR(std::vector<gdsSTR> target_structure);
-  // void setSTR(gdsSTR exVec){STR.push_back(exVec);};
+
+  std::vector<gdsSTR> STR; // Holds all the structures of the gds file
+
+  void setSTR(gdsSTR target_structure); // <-- to be replaced with push_back_STR
+  void setSTR(std::vector<gdsSTR> target_structure); // to be replaced
+  void push_back_STR(
+      gdsSTR target_structure); // <-- to be replaced with push_back_STR
+  void push_back_STR(std::vector<gdsSTR> target_structure); // to be replaced
+
   void getSTR(std::vector<gdsSTR> &exVec,
               std::unordered_map<std::string, int> &exMap)
   {
@@ -83,15 +89,18 @@ public:
   };
   int import(std::string fileName);
   bool check_name(std::string name, std::vector<std::string> ref_vector);
+
   int resolve_heirarchy_and_bounding_boxes();
   int calculate_STR_bounding_box(int structure_index, int *destination);
   int fetch_boundary_bounding_box(gdsBOUNDARY target_boundary,
                                   int *destination);
   int fetch_box_bounding_box(gdsBOX target_box, int *destination);
+
   int write(const std::string &fileName);
   double get_database_units();
   double get_database_units_in_m();
   void to_str();
+  void bb_to_str();
   void reset();
   void importGDSfile(const std::string &fileName)
   {
@@ -120,6 +129,14 @@ public:
   unsigned int heirarchical_level = 0;
   int bounding_box[4] = {
       0, 0, 0, 0}; // x1,y1,x2,y2 (minimum number of points to represent box)
+
+  void bb_cout()
+  {
+    std::cout << name << " BBox: " << bounding_box[0] << ", ";
+    std::cout << bounding_box[1] << "; ";
+    std::cout << bounding_box[2] << ", ";
+    std::cout << bounding_box[3] << std::endl;
+  };
 
   std::vector<int> last_modified;
   std::vector<gdsBOUNDARY> BOUNDARY;

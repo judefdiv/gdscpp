@@ -69,6 +69,7 @@ private:
   void gdsARef(const gdsAREF &in_AREF, bool minimal);
   void gdsNode(const gdsNODE &in_NODE, bool minimal);
   void gdsText(const gdsTEXT &in_TEXT, bool minimal);
+  void gdsBox(const gdsBOX &in_BOX, bool minimal);
 
   // Lower level
   int GDSwriteRec(int record);

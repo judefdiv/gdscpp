@@ -14,6 +14,9 @@
 
 // ====================== Miscellanious =======================
 using namespace std;
+
+// ====================== Function Code =======================
+
 /**
  * [GDSdistill - Reads a single record and outputs it to the appropriate
  * variable]
@@ -24,14 +27,6 @@ using namespace std;
  * @param  B8Real  [Vector of 8 Byte real value]
  * @param  words   [A string value]
  * @return         [0 - Exit Success; 1 - Exit Failure]
- */
-
-// ====================== Function Code =======================
-
-/**
- * [GDSdistill]
- * @param  			[To be filled in]
- * @return          [0 - Exit Success; 1 - Exit Failure]
  */
 int GDSdistill(char *recIn, uint32_t &GDSKey, bitset<16> &bitarr,
                vector<int> &integer, vector<double> &B8Real, string &words)
@@ -315,6 +310,8 @@ string GDSkey2ASCII(unsigned int inHex)
     GDSkeys[0x2a02] = "NODETYPE";
     GDSkeys[0x2b02] = "PROPATTR";
     GDSkeys[0x2c06] = "PROPVALUE";
+    GDSkeys[0x2d00] = "BOX";
+    GDSkeys[0x2e02] = "GDS_BOXTYPE";
     GDSkeys[0x2f03] = "PLEX";
   }
 

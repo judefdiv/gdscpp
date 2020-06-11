@@ -690,7 +690,7 @@ int gdscpp::import(string fileName)
       {"\0", 1000000000}); // Add null character to structure map with index 1
                            // billion. Unlikely to be 1 billion structures
   delete[] current_readBlk;
-  resolve_heirarchy_and_bounding_boxes();
+  // resolve_heirarchy_and_bounding_boxes();
   cout << "GDS file successfully imported." << endl;
   return 0;
 }
@@ -791,9 +791,10 @@ int gdscpp::resolve_heirarchy_and_bounding_boxes()
             heirarchy.push_back(string_vector); // Push back the set
             string_vector.clear(); // Clear the temporary set container
           } else {
-            string_vector.push_back(
-                struct_to_move); // Next level already exists, simply add the
-                                 // word
+            // string_vector.push_back(
+            //     struct_to_move); // Next level already exists, simply add the
+            //                      // word
+            heir_iter->push_back(struct_to_move);//WIP
           }
           heir_iter = heirarchy.end(); // |
           heir_iter--;                 // | Return to current level.
@@ -951,13 +952,18 @@ int gdscpp::calculate_STR_bounding_box(int structure_index, int *destination)
 
     if ((referred_bound_box[0] == 0) && (referred_bound_box[1] == 0) &&
         (referred_bound_box[2] == 0) && (referred_bound_box[3] == 0)) {
-      cout << "Warning: Structure being referenced does not have an initialized"
-           << endl;
-      cout << "bounding box. Therefore, bounding boxes of references will be "
-              "inaccurate."
-           << endl;
-      cout << "Calculate bounding boxes from the lowest level (unreferenced) "
-              "upwards."
+      // cout << "Warning: Structure being referenced does not have an
+      // initialized"
+      //      << endl;
+      // cout << "bounding box. Therefore, bounding boxes of references will be
+      // "
+      //         "inaccurate."
+      //      << endl;
+      // cout << "Calculate bounding boxes from the lowest level (unreferenced)
+      // "
+      //         "upwards."
+      //      << endl;
+      cout << "Warning: Inaccuracy due to structures not being initialized."
            << endl;
     }
     if (SREF_iter->reflection == true) // Reflect about x-axis
