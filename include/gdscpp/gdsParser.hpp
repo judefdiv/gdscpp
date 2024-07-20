@@ -13,6 +13,7 @@
 #define gdsParser
 
 #include <bitset>
+#include <cstdint>
 #include <cstring>
 #include <fstream>
 #include <iostream>
